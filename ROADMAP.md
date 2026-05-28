@@ -4,71 +4,72 @@
 
 Chaque phase produit un livrable concret validé par l'humain avant d'enchaîner. Les sous-agents Claude Code attachés à chaque phase vivent dans [`.claude/agents/`](./.claude/agents/).
 
-## Phase 0 — Bootstrap
+## Phase 0 — Bootstrap ✅
 
-**Statut** : 🟢 en cours
+**Statut** : ✅ terminé (commit `9353b71`)
 
 - [x] Monorepo pnpm + Turborepo
 - [x] Configs TS strict, ESLint 9 flat, Prettier 3, Vitest 2
-- [x] Arborescence `packages/{schema,engine,blocks,functions}` + `apps/{api,runtime,editor}` (vides)
+- [x] Arborescence `packages/{schema,engine,blocks,functions}` + `apps/{api,runtime,editor}`
 - [x] `ROADMAP.md`
 
-**Critère de sortie** : `pnpm install`, `pnpm typecheck`, `pnpm lint`, `pnpm test` retournent vert sur le scaffold vide.
+## Phase 1 — Analyse ✅
 
-## Phase 1 — Analyse (`analyst`)
+**Statut** : ✅ terminé (commit incluant `docs/analysis/`)
 
-**Statut** : ⚪ à venir
+Livré :
+- [x] `docs/analysis/g6k-model.md` — modèle de données G6K
+- [x] `docs/analysis/expressions-grammar.md` — grammaire jsep-compatible
+- [x] `docs/analysis/corpus-patterns.md` — fiche par simulateur + primitives MVP
+- [x] `docs/analysis/guided-vs-expert.md` — frontière entre les deux modes
+- [x] `docs/analysis/decisions.md` — D1 fixed-point, D2 pas de littéral date, D3 connecteur `none`
 
-Produire dans `docs/analysis/` :
-- `g6k-model.md` — modèle de données G6K (Data, Steps, Field, Sources, Rules…).
-- `expressions-grammar.md` — grammaire (opérateurs, fonctions, placeholders).
-- `corpus-patterns.md` — fiche par simulateur du corpus + liste minimale des primitives.
-- `guided-vs-expert.md` — frontière entre les deux modes.
+## Phase 2 — Schéma ✅
 
-**Critère de sortie** : les 4 documents sont validés et `corpus-patterns.md` cite les 11 types de champs, 10 opérateurs, 3 connecteurs, 3 familles d'actions de [`CLAUDE.md`](./CLAUDE.md) §7.
+**Statut** : ✅ terminé (commit `76ba9b2`)
 
-## Phase 2 — Schéma (`schema-architect`)
+- [x] `packages/schema` — schéma Zod versionné (Data, Source, Condition, Action, Rule, Step, Simulator)
+- [x] JSON Schema via `zod-to-json-schema`
+- [x] 2 exemples transcrits depuis les XML
+- [x] `docs/schema.md`
+- [x] 8 tests verts (safeParse + invariants)
 
-**Statut** : ⚪ à venir
+## Phase 3 — Moteur + Fonctions ✅
 
-- `packages/schema` — schéma Zod versionné (source de vérité unique).
-- Génération JSON Schema (zod-to-json-schema).
-- `packages/schema/examples/frais-locataire.json` + `taxeLogementsVacants.json` transcrits depuis les XML.
-- `docs/schema.md` — chaque concept + exemple.
+**Statut** : ✅ terminé (commit `78e4030`). Précédé de l'**ADR-029** (build vs buy : custom retenu vs SurveyJS/JSON Logic/JEXL/JSONForms).
 
-**Critère de sortie** : `safeParse` des 2 exemples passe sans erreur ; le JSON Schema est validé par `ajv`.
+- [x] `packages/engine` TS pur (parser jsep + AST walker + condition evaluator + action applier + fixed-point pipeline)
+- [x] `packages/functions` registre standard (sum, floor, max, min, count, year, date, strftime) + extension métier
+- [x] Pas d'`eval()` / `new Function()`
+- [x] 33 tests engine (21 expression + 12 golden frais-locataire/taxeLogementsVacants) + 11 tests functions = 44 tests verts
 
-## Phase 3 — Moteur (`test-engineer` puis `engine-dev`)
+## Phase 4 — Blocs ✅ (stub)
 
-**Statut** : ⚪ à venir
+**Statut** : ✅ partiel (commit `6b22ad0`) — interface canonique + 3 blocs de référence. Les autres blocs s'ajouteront en Phases 6 et 7.
 
-### Phase 3a — Golden tests
+Livré :
+- [x] `BlockDefinition<TConfig>` (configSchema Zod, editorMeta, readsDataIds, writesDataIds, render React)
+- [x] `BlockRegistry` (register/has/get/list/validate)
+- [x] `text-section`, `field` (11 types + range), `kpi-card`
+- [x] React 19 + react-dsfr 1.32
+- [x] 14 tests blocks verts (schéma + dépendances de données)
 
-- `packages/engine/tests/fixtures/` — entrées + sorties attendues en JSON pour `frais-locataire` et `taxeLogementsVacants`.
-- Couverture transversale : 10 opérateurs, 3 connecteurs, 3 familles d'actions, résolveurs mockés.
-
-### Phase 3b — Engine
-
-- Parser jsep → AST.
-- Évaluateur d'expressions borné au registre `packages/functions` (PAS d'`eval()`).
-- Évaluateur de règles (show/hide, set/unset, notify).
-- Interfaces `DataSourceResolver` et `FunctionRegistry` injectées.
-
-**Critère de sortie** : tous les golden tests passent SANS modification. Démo d'évaluation `frais-locataire` end-to-end côté serveur (script Node).
-
-## Phase 4 — Blocs (`blocks-dev`)
-
-**Statut** : ⚪ à venir
-
-- `packages/blocks` — registre + interface `Block<TConfig>`.
-- Blocs du corpus : champs typés (11), variant `range`, `text` à variables, `section`/`chapter` conditionnels, `accordion` à items conditionnels, `kpi-card`, `breakdown-table`, `notification`, `footnote`.
-- `packages/blocks/README.md` — mécanisme d'ajout d'un bloc.
-
-**Critère de sortie** : storybook (ou équivalent) rend chaque bloc avec une config exemple. Ajouter un bloc fictif est trivial.
+Restant à implémenter (en Phase 6/7 quand consommés) :
+- `chapter` / `blockinfo` (envelopes conditionnelles)
+- `accordion` à items conditionnels (corpus `changer-de-classe`)
+- `breakdown-table` (corpus `voiture` / `poids-lourd`)
+- `notification` (sortie des `notifyError`/`notifyWarning` du moteur)
+- `footnote`, `reset-button`
 
 ## Phase 5 — API (`api-dev`)
 
-**Statut** : ⚪ à venir
+**Statut** : ⚪ à venir — **PROCHAINE PHASE**
+
+**Décisions à acter en amont** :
+- Persistance : SQLite brut vs Drizzle vs Prisma vs better-sqlite3 + kysely
+- Lock d'édition : mécanisme (timeout, take-over, user ID provenance)
+- Datasources `database` externes : pool de connexions ? credentials chiffrés en DB ?
+- Sortie OpenAPI : `hono/zod-openapi` ou écriture manuelle
 
 - `apps/api` — Hono + SQLite (accès DB isolé).
 - CRUD définitions, `/run`, datasources (`database`, `api`), lock, versions, export.
