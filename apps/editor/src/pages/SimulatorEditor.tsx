@@ -5,9 +5,12 @@ import { createStandardRegistry } from "@g6k4ever/functions";
 import { ApiError, type ApiClient } from "../api-client.js";
 import { JsonEditor } from "../widgets/JsonEditor.js";
 import { MetadataForm } from "../widgets/MetadataForm.js";
-import { ConditionTree } from "../widgets/ConditionTree.js";
+import { DataEditor } from "../widgets/DataEditor.js";
+import { SourcesEditor } from "../widgets/SourcesEditor.js";
+import { RulesEditor } from "../widgets/RulesEditor.js";
+import { StepsEditor } from "../widgets/StepsEditor.js";
 
-const HEARTBEAT_INTERVAL_MS = 5 * 60 * 1000; // 5 min, lock TTL = 15 min
+const HEARTBEAT_INTERVAL_MS = 5 * 60 * 1000;
 
 interface SimulatorEditorProps {
   api: ApiClient;
@@ -15,20 +18,26 @@ interface SimulatorEditorProps {
   onClose: () => void;
 }
 
-type Tab = "metadata" | "data" | "rules" | "json";
+type Tab = "metadata" | "data" | "sources" | "steps" | "rules" | "json";
+
+const TAB_LABELS: Record<Tab, string> = {
+  metadata: "Métadonnées",
+  data: "Données",
+  sources: "Sources",
+  steps: "Étapes & blocs",
+  rules: "Règles",
+  json: "JSON brut",
+};
 
 export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): JSX.Element {
   const [draft, setDraft] = useState<Simulator | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [lockStatus, setLockStatus] = useState<"idle" | "acquired" | "held-by-other" | "not-found">(
-    "idle",
-  );
+  const [lockStatus, setLockStatus] = useState<"idle" | "acquired" | "held-by-other" | "not-found">("idle");
   const [lockHeldBy, setLockHeldBy] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [tab, setTab] = useState<Tab>("metadata");
   const functions = useRef(createStandardRegistry()).current;
 
-  // Charge + acquiert le lock.
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -38,9 +47,8 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
         setDraft(data.simulator.draftDefinition);
         const lockRes = await api.acquireLock(slug);
         if (cancelled) return;
-        if (lockRes.status === "acquired") {
-          setLockStatus("acquired");
-        } else if (lockRes.status === "held-by-other") {
+        if (lockRes.status === "acquired") setLockStatus("acquired");
+        else if (lockRes.status === "held-by-other") {
           setLockStatus("held-by-other");
           setLockHeldBy(lockRes.heldBy ?? "?");
         }
@@ -51,14 +59,10 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
     })();
     return () => {
       cancelled = true;
-      // Best-effort : release le lock à la fermeture. Le browser unmount
-      // ne déclenche pas toujours cette branche (refresh, fermeture onglet),
-      // d'où le TTL côté serveur qui rattrape les locks orphelins.
       void api.releaseLock(slug).catch(() => undefined);
     };
   }, [api, slug]);
 
-  // Heartbeat pendant qu'on détient le lock.
   useEffect(() => {
     if (lockStatus !== "acquired") return;
     const id = setInterval(() => {
@@ -113,20 +117,14 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
       <div className="fr-container fr-py-4w">
         <div className="fr-alert fr-alert--error">
           <p>Simulateur introuvable : <code>{slug}</code></p>
-          <button type="button" className="fr-btn fr-btn--sm fr-mt-2w" onClick={onClose}>
-            Retour à la liste
-          </button>
+          <button type="button" className="fr-btn fr-btn--sm fr-mt-2w" onClick={onClose}>Retour</button>
         </div>
       </div>
     );
   }
 
   if (!draft) {
-    return (
-      <div className="fr-container fr-py-4w">
-        <p>Chargement…</p>
-      </div>
-    );
+    return <div className="fr-container fr-py-4w"><p>Chargement…</p></div>;
   }
 
   const editable = lockStatus === "acquired";
@@ -136,9 +134,7 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
       {/* Header */}
       <div className="fr-grid-row fr-grid-row--middle fr-mb-2w">
         <div className="fr-col">
-          <button type="button" className="fr-btn fr-btn--tertiary-no-outline" onClick={onClose}>
-            ← Retour
-          </button>
+          <button type="button" className="fr-btn fr-btn--tertiary-no-outline" onClick={onClose}>← Retour</button>
           <h1 className="fr-h3 fr-mt-1w" style={{ display: "inline-block", marginLeft: "1rem" }}>
             {draft.metadata.label}
           </h1>
@@ -149,7 +145,7 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
         <div className="fr-col-auto">
           {lockStatus === "held-by-other" ? (
             <span className="fr-badge fr-badge--warning fr-mr-1w">
-              Verrouillé par {lockHeldBy} —&nbsp;
+              Verrouillé par {lockHeldBy} —{" "}
               <button
                 type="button"
                 onClick={() => void handleForceTakeOver()}
@@ -181,11 +177,7 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
         </div>
       </div>
 
-      {error ? (
-        <div className="fr-alert fr-alert--error fr-mb-2w">
-          <p>{error}</p>
-        </div>
-      ) : null}
+      {error ? <div className="fr-alert fr-alert--error fr-mb-2w"><p>{error}</p></div> : null}
 
       {/* 2-pane layout */}
       <div className="fr-grid-row fr-grid-row--gutters">
@@ -193,7 +185,7 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
         <div className="fr-col-12 fr-col-md-6">
           <div className="fr-tabs">
             <ul className="fr-tabs__list" role="tablist">
-              {(["metadata", "data", "rules", "json"] as Tab[]).map((t) => (
+              {(["metadata", "data", "sources", "steps", "rules", "json"] as Tab[]).map((t) => (
                 <li key={t} role="presentation">
                   <button
                     type="button"
@@ -202,7 +194,7 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
                     aria-selected={tab === t}
                     onClick={() => setTab(t)}
                   >
-                    {t === "metadata" ? "Métadonnées" : t === "data" ? "Données" : t === "rules" ? "Règles" : "JSON brut"}
+                    {TAB_LABELS[t]}
                   </button>
                 </li>
               ))}
@@ -215,9 +207,32 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
                   slugLocked={true}
                 />
               ) : tab === "data" ? (
-                <DataList draft={draft} onChange={setDraft} editable={editable} />
+                <DataEditor
+                  data={draft.data}
+                  onChange={(data) => setDraft({ ...draft, data })}
+                  editable={editable}
+                />
+              ) : tab === "sources" ? (
+                <SourcesEditor
+                  sources={draft.sources}
+                  onChange={(sources) => setDraft({ ...draft, sources })}
+                  data={draft.data}
+                  editable={editable}
+                />
+              ) : tab === "steps" ? (
+                <StepsEditor
+                  steps={draft.steps}
+                  onChange={(steps) => setDraft({ ...draft, steps })}
+                  data={draft.data}
+                  editable={editable}
+                />
               ) : tab === "rules" ? (
-                <RulesList draft={draft} onChange={setDraft} editable={editable} />
+                <RulesEditor
+                  rules={draft.rules}
+                  onChange={(rules) => setDraft({ ...draft, rules })}
+                  data={draft.data}
+                  editable={editable}
+                />
               ) : (
                 <JsonEditor value={draft} onChange={(v) => setDraft(v)} height="60vh" />
               )}
@@ -233,6 +248,10 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
               borderRadius: 4,
               padding: "1rem",
               backgroundColor: "var(--background-default-grey)",
+              position: "sticky",
+              top: "1rem",
+              maxHeight: "calc(100vh - 2rem)",
+              overflow: "auto",
             }}
           >
             <p className="fr-text--xs fr-mb-1w" style={{ opacity: 0.7 }}>
@@ -242,106 +261,6 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
           </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-// === Sous-éditeurs ===
-
-interface SubEditorProps {
-  draft: Simulator;
-  onChange: (next: Simulator) => void;
-  editable: boolean;
-}
-
-function DataList({ draft, onChange, editable }: SubEditorProps): JSX.Element {
-  return (
-    <div>
-      <table className="fr-table">
-        <thead>
-          <tr>
-            <th>#id</th>
-            <th>Nom</th>
-            <th>Libellé</th>
-            <th>Type</th>
-          </tr>
-        </thead>
-        <tbody>
-          {draft.data.map((d, i) => (
-            <tr key={d.id}>
-              <td>{d.id}</td>
-              <td>
-                <input
-                  className="fr-input"
-                  type="text"
-                  disabled={!editable}
-                  value={d.name}
-                  onChange={(e) => {
-                    const next = [...draft.data];
-                    next[i] = { ...d, name: e.target.value };
-                    onChange({ ...draft, data: next });
-                  }}
-                />
-              </td>
-              <td>
-                <input
-                  className="fr-input"
-                  type="text"
-                  disabled={!editable}
-                  value={d.label}
-                  onChange={(e) => {
-                    const next = [...draft.data];
-                    next[i] = { ...d, label: e.target.value };
-                    onChange({ ...draft, data: next });
-                  }}
-                />
-              </td>
-              <td>
-                <code>{d.type}</code>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <p className="fr-text--xs fr-mt-1w" style={{ opacity: 0.7 }}>
-        Ajout/suppression de Data : à venir en Phase 7.2 (mode guidé complet).
-        Pour l'instant, utiliser l'onglet « JSON brut ».
-      </p>
-    </div>
-  );
-}
-
-function RulesList({ draft, onChange, editable }: SubEditorProps): JSX.Element {
-  return (
-    <div>
-      {draft.rules.length === 0 ? (
-        <p className="fr-text--lead">Aucune règle. Utiliser l'onglet « JSON brut » pour en ajouter en attendant l'éditeur visuel complet.</p>
-      ) : null}
-      {draft.rules.map((rule, i) => (
-        <details key={i} className="fr-mb-2w" open={i === 0}>
-          <summary className="fr-text--lg">
-            <strong>{rule.name ?? rule.id ?? `Règle #${i + 1}`}</strong>
-          </summary>
-          <div className="fr-pl-4w fr-pt-1w">
-            <p className="fr-text--sm" style={{ opacity: 0.7 }}>
-              Conditions :
-            </p>
-            <ConditionTree
-              value={rule.conditions}
-              onChange={(conditions) => {
-                if (!editable) return;
-                const next = [...draft.rules];
-                next[i] = { ...rule, conditions };
-                onChange({ ...draft, rules: next });
-              }}
-              data={draft.data}
-            />
-            <p className="fr-text--sm fr-mt-2w" style={{ opacity: 0.7 }}>
-              Actions si vrai : {rule.ifActions.length} · Sinon : {rule.elseActions.length}
-            </p>
-          </div>
-        </details>
-      ))}
     </div>
   );
 }

@@ -200,19 +200,35 @@ function BlocksList({ blocks, registry, state, isVisible }: BlocksListProps): JS
       {blocks.map((b) => {
         if (!isVisible(b.type, b.id)) return null;
         const def = registry.get(b.type);
+        const cfg = (b.config ?? undefined) as { blocks?: BlockLike[] } | undefined;
+        const childBlocks = cfg && Array.isArray(cfg.blocks) ? cfg.blocks : null;
+
         if (def) {
           const Component = def.render;
+          // Si le bloc a une `config.blocks` (envelope chapter/blockinfo/...),
+          // on rend son chrome PUIS les enfants en dessous, à la même profondeur.
+          if (childBlocks) {
+            return (
+              <div key={b.id} data-block={b.type}>
+                <Component config={b.config as never} state={state} />
+                <BlocksList
+                  blocks={childBlocks}
+                  registry={registry}
+                  state={state}
+                  isVisible={isVisible}
+                />
+              </div>
+            );
+          }
           return <Component key={b.id} config={b.config as never} state={state} />;
         }
-        // Block non enregistré dans le registre : fallback récursif sur
-        // `config.blocks` si présent (envelope simple). Sinon, no-op silencieux.
-        const cfg = b.config as { blocks?: BlockLike[] } | undefined;
+        // Type non enregistré : fallback récursif sur `config.blocks`.
         if (!cfg) return null;
-        if (cfg && Array.isArray(cfg.blocks)) {
+        if (childBlocks) {
           return (
             <div key={b.id} data-block-envelope={b.type}>
               <BlocksList
-                blocks={cfg.blocks}
+                blocks={childBlocks}
                 registry={registry}
                 state={state}
                 isVisible={isVisible}
