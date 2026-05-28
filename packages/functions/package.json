@@ -12,7 +12,10 @@
       "import": "./dist/index.js"
     }
   },
-  "files": ["dist", "README.md"],
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "dev": "tsc -p tsconfig.build.json --watch",
@@ -20,5 +23,8 @@
     "lint": "eslint src",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist .turbo *.tsbuildinfo"
+  },
+  "dependencies": {
+    "@g6k4ever/engine": "workspace:*"
   }
 }

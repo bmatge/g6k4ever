@@ -20,5 +20,9 @@
     "lint": "eslint src",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist .turbo *.tsbuildinfo"
+  },
+  "dependencies": {
+    "@g6k4ever/schema": "workspace:*",
+    "jsep": "^1.4.0"
   }
 }
