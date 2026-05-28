@@ -1,0 +1,805 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Simulator xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../doc/Simulator.xsd" name="TaxeAuPoids" label="Simulateur - Calculer la Taxe sur la masse en ordre de marche (ou Taxe au poids)" category="Particuliers" defaultView="dsfr-particuliers" referer="https://www.service-public.fr/particuliers/vosdroits/R60869" labelReferer="" evaluate="" dynamic="0" memo="0" locale="fr-FR" timezone="Europe/Paris" timer="">
+	<Description edition="wysihtml"><![CDATA[
+<div class="Intro">
+<p>Depuis le 1<sup>er</sup> janvier 2022, un <strong>véhicule de tourisme</strong> immatriculé pour la 1<sup>re</sup> fois en France (neuf ou importé) est soumis à une taxe au poids ou «&nbsp;Taxe sur la masse en ordre de marche » (TMOM).</p>
+<p>Le paiement de cette taxe s'effectue lors du règlement de la carte grise.</p>
+<p>Ce simulateur permet d'évaluer le montant de cette taxe selon votre situation.</p>
+</div>
+<div class=" fr-my-4w  fr-alert fr-alert--warning"> <p>Cette simulation n'est fournie qu'à titre indicatif.<br> Les informations saisies lors de cette simulation ne sont ni conservées ni enregistrées.</p></div>
+<div class="sp-panel sp-panel-open sp-blue-panel temps">
+<img src="/simulateur/calcul/assets/dsfr-particuliers/images/timer-line.png" width="24" height="24">
+<span class="">Réalisation : <strong>1 minute</strong></span>
+</div>
+<p class="fr-callout fr-my-4w fr-py-1w fr-px-3w">Sauf indication contraire, <strong>toutes les informations demandées sont nécessaires</strong></p>
+	]]></Description>
+	<DataSet dateFormat="d/m/Y" decimalPoint="," groupingSeparator=" " groupingSize="3" moneySymbol="€" symbolPosition="after" arbotypePage="simulateur" newSimulatorUrl="" dateLastVerfied="2024-01-08" userNameLastSave="admin" dateLastSave="2024-01-08 08:52:36" envLastSave="LOCAL" blockTitle="" additionalInformation="" startButtonTitle="" CloseButtonTitle="" FieldReceivingFocus="">
+		<Data id="1" name="Seuil" label="Seuil" type="integer"></Data>
+		<DataGroup id="1" name="Refaction" label="Refaction" modelgroupe="">
+			<Data id="2" name="Exoneration" label="Exonération" type="choice">
+				<Choices>
+					<Choice id="1" value="1" label="Véhicule accessible en fauteuil roulant" type="" helpchoice=""></Choice>
+					<Choice id="2" value="2" label="Véhicule fonctionnant à l'électricité (EL), à l'hydrogène (H2) ou combinant les 2 (HE, HH)" type="" helpchoice=""></Choice>
+					<Choice id="3" value="3" label="Véhicule hybride rechargeable" type="" helpchoice=""></Choice>
+					<Choice id="4" value="5" label="Véhicule hybride non-rechargeable" type="" helpchoice=""></Choice>
+					<Choice id="5" value="4" label="Un autre type de véhicule" type="" helpchoice=""></Choice>
+				</Choices>
+			</Data>
+			<Data id="3" name="Conducteur" label="Conducteur" type="choice">
+				<Choices>
+					<Choice id="1" value="1" label="Titulaire d'une carte « Mobilité inclusion mention Invalidité » ou carte d'invalidité militaire" type="" helpchoice=""></Choice>
+					<Choice id="2" value="2" label="En charge effective d'un enfant titulaire d'une carte « Mobilité inclusion mention Invalidité » ou carte d'invalidité militaire" type="" helpchoice=""></Choice>
+					<Choice id="3" value="3" label="En charge effective d'au moins 3 enfants mineurs" type="" helpchoice=""></Choice>
+					<Choice id="4" value="4" label="Une personne immatriculant un véhicule d'au moins 8 places assises affectée à son activité professionnelle" type="" helpchoice=""></Choice>
+					<Choice id="5" value="5" label="Dans une autre situation" type="" helpchoice=""></Choice>
+				</Choices>
+			</Data>
+			<Data id="4" name="NbEnfant" label="NbEnfant" type="integer" min="3"></Data>
+			<Data id="5" name="RefactionTaxeFamNombreuse" label="RefactionTaxeFamNombreuse" type="money"></Data>
+			<Data id="6" name="RefactionFinaleFamilleNombreuse" label="RefactionFinaleFamilleNombreuse" type="money"></Data>
+			<Data id="7" name="Transformation" label="Transformation" type="choice">
+				<Choices>
+					<Choice id="1" value="1" label="Non" type="" helpchoice=""></Choice>
+					<Choice id="2" value="2" label="Oui" type="" helpchoice=""></Choice>
+				</Choices>
+			</Data>
+		</DataGroup>
+		<DataGroup id="2" name="calculTmom" label="Calcul de la Tmom" modelgroupe="">
+			<Data id="8" name="dateImmatriculation" label="dateImmatriculation" type="date"></Data>
+			<Data id="9" name="annee" label="année" type="integer" content="year(#8)"></Data>
+			<Data id="10" name="poidsSaisi" label="poidsSaisi" type="integer">
+				<Description edition="wysihtml"><![CDATA[
+<div class="fr-highlight">Il s'agit de l'information « Masse du véhicule en service (en kg) » indiquée sur la carte grise à la rubrique G (et correspondant à G1 +75kg)</div>
+				]]></Description>
+			</Data>
+			<Data source="1" id="11" name="tranche" label="tranche" type="integer" index="'tranche'"></Data>
+			<Data source="1" id="12" name="report" label="reportTranche" type="integer" index="'totalTrancheAReporter'"></Data>
+			<Data source="1" id="13" name="prixKg" label="prix au kg" type="integer" index="'prixAuKg'"></Data>
+			<Data id="14" name="calculDeLaTranche" label="calculDeLaTranche" type="integer" content="(#19 - ( #15 - 1) ) * #13"></Data>
+			<Data source="1" id="15" name="debutTranche" label="debutTranche" type="integer" index="'trancheDebut'"></Data>
+			<Data id="16" name="valeurTaxe" label="valeurTaxe" type="integer" content="#12 + #14"></Data>
+			<Data id="17" name="reductionPoidsFamNb" label="reductionPoidsFamNb" type="integer" default="(#4 * 200)"></Data>
+			<Data id="18" name="reductionPoidsEnKg" label="reductionPoidsEnKg" type="integer" default="0" content="#20 + #21"></Data>
+			<Data id="19" name="poidsRetenu" label="poidsRetenu" type="integer" content="#10 - #18"></Data>
+			<Data id="20" name="reductionPoidsHybride" label="reductionPoidsHybride" type="integer" default="0"></Data>
+			<Data id="21" name="reductionPoidsPersMorale" label="reductionPoidsPersMorale" type="integer" default="500"></Data>
+		</DataGroup>
+		<DataGroup id="3" name="2024" label="2024" modelgroupe="">
+			<Data id="22" name="demarche" label="demarche" type="choice">
+				<Choices>
+					<Choice id="1" value="VP" label="Immatriculation d'un véhicule acheté neuf en France ou à l'étranger" type="" helpchoice=""></Choice>
+					<Choice id="2" value="Pivo" label="Immatriculation d'un véhicule importé en France après avoir été immatriculé dans un autre pays" type="" helpchoice=""></Choice>
+					<Choice id="3" value="Transfo" label="Tranformation d'un véhicule en véhicule de tourisme" type="" helpchoice=""></Choice>
+					<Choice id="4" value="Autre" label="Autre situation" type="" helpchoice=""></Choice>
+				</Choices>
+			</Data>
+			<Data id="23" name="typeVehicule" label="typeVehicule" type="choice">
+				<Description edition="wysihtml"><![CDATA[
+<div class="fr-highlight"><p>Le genre national du véhicule est mentionné à la rubrique «J.1 » de la carte grise.</p>
+</div>
+				]]></Description>
+				<Choices>
+					<Choice id="1" value="VT" label="Véhicule de tourisme (VT ou M1) ex-Voiture particulière (VP)" type="" helpchoice=""></Choice>
+					<Choice id="2" value="N1" label="Camionnette, Utilitaire pour le transport de marchandises jusqu'à 3,5 tonnes (CTTE, N1)" type="" helpchoice=""></Choice>
+					<Choice id="3" value="Autre" label="Autre" type="" helpchoice=""></Choice>
+				</Choices>
+			</Data>
+			<Data id="24" name="genreN1classeVT" label="genreN1classeVT" type="choice">
+				<Choices>
+					<Choice id="1" value="PickUp" label="Un camion pick-up" type="" helpchoice=""></Choice>
+					<Choice id="2" value="Ctte" label="Une camionette" type="" helpchoice=""></Choice>
+					<Choice id="3" value="Autre" label="Autre" type="" helpchoice=""></Choice>
+				</Choices>
+			</Data>
+			<Data id="25" name="typePickUp5pl" label="tyePickUp5pl" type="choice">
+				<Choices>
+					<Choice id="1" value="Oui" label="Oui" type="" helpchoice=""></Choice>
+					<Choice id="2" value="Non" label="Non" type="" helpchoice=""></Choice>
+				</Choices>
+			</Data>
+			<Data id="26" name="typePickUpSki" label="tyePickUpSki" type="choice">
+				<Choices>
+					<Choice id="1" value="Oui" label="Oui" type="" helpchoice=""></Choice>
+					<Choice id="2" value="Non" label="Non" type="" helpchoice=""></Choice>
+				</Choices>
+			</Data>
+			<Data id="27" name="typeCtte2rangs" label="typeCtte2rangs" type="choice">
+				<Choices>
+					<Choice id="1" value="Oui" label="Oui" type="" helpchoice=""></Choice>
+					<Choice id="2" value="Non" label="Non" type="" helpchoice=""></Choice>
+				</Choices>
+			</Data>
+			<Data id="28" name="typeCtteTranspPers" label="typeCtteTranspPers" type="choice">
+				<Choices>
+					<Choice id="1" value="Oui" label="Oui" type="" helpchoice=""></Choice>
+					<Choice id="2" value="Non" label="Non" type="" helpchoice=""></Choice>
+				</Choices>
+			</Data>
+			<Data id="30" name="Autonomie" label="Autonomie" type="choice">
+				<Choices>
+					<Choice id="1" value="Oui" label="Oui" type="" helpchoice=""></Choice>
+					<Choice id="2" value="Non" label="Non" type="" helpchoice=""></Choice>
+				</Choices>
+			</Data>
+		</DataGroup>
+		<Data id="29" name="complementPivo" label="complementPivo" type="textarea"></Data>
+	</DataSet>
+	<Steps>
+		<Step output="normal" id="1" name="Calcul" label="Calcul" template="pages:article.html.twig" dynamic="1">
+			<Panels>
+				<Panel id="1" name="2024" label="">
+					<FieldSet datagroupesteep="0" id="1">
+						<Field label="Quel est le poids du véhicule ?" position="1" data="10" usage="input" newline="0" required="0" visibleRequired="0" colon="0" help="1" helpbefore="1"></Field>
+						<Field label="Votre recherche concerne :" position="2" data="22" usage="input" newline="0" required="0" visibleRequired="0" colon="0" help="0" helpbefore="0" expandedcolumnar="1"></Field>
+						<Field label="La demande concerne quel genre de véhicule ?" helpfield="Le genre national du véhicule est mentionné à la rubrique «J.1 » de la carte grise. Le montant du certificat varie selon le genre du véhicule." position="3" data="23" usage="input" newline="0" required="0" visibleRequired="0" colon="0" help="1" helpbefore="0" expandedcolumnar="1"></Field>
+						<Field label="Quelle est la date de mise en circulation ?" position="4" data="8" usage="input" newline="0" required="0" visibleRequired="0" colon="0" help="0" helpbefore="0" widget="abDatepicker"></Field>
+					</FieldSet>
+					<BlockInfo id="2" name="Info1" label="">
+						<Chapter id="1" name="ExoVehicule" label="">
+							<Section id="1" name="ExoTypeVehiculeOK" label="" role="">
+								<Content edition="wysihtml"><![CDATA[
+<div class=" fr-my-4w  fr-alert fr-alert--success">
+	<p>Ce type de véhicule permet de bénéficier d'une exonération de la taxe sur la masse en ordre de marche. En effet, seuls les véhicules de plus de #1 kg sont concernés.</p>
+</div>
+								]]></Content>
+							</Section>
+							<Section id="2" name="ExoDemarche" label="" role="">
+								<Content edition="wysihtml"><![CDATA[
+<div class=" fr-my-4w  fr-alert fr-alert--success">
+	<p>Vous n'êtes pas concerné par la taxe en ordre de marche (TMOM).</p>
+	<p>En effet, cette taxe ne concerne que la 1<sup>re</sup> immatriculation d'un véhicule en France ou la tranformation d'un véhicule en véhicule de tourisme.</p>
+</div>
+								]]></Content>
+							</Section>
+							<Section id="3" name="ExoAutreGenreVehiculeOK" label="" role="">
+								<Content edition="wysihtml"><![CDATA[
+<div class=" fr-my-4w  fr-alert fr-alert--success">
+		<p>La taxe sur la masse en ordre de marche ne concerne que les véhicules de tourisme ou certains utilitaires.</p>
+	</div>
+								]]></Content>
+							</Section>
+							<Section id="4" name="ExoTypeUtilitaireOK" label="" role="">
+								<Content edition="wysihtml"><![CDATA[
+<div class=" fr-my-4w  fr-alert fr-alert--warning">
+		<p>La taxe sur la masse en ordre de marche va concerner certains utilitaires, à l'exception de ceux affectés à l’exploitation des remontées mécaniques et des domaines skiables.</p>
+		<p>Cependant, les caractéristiques de ces véhicules ne sont pas encore connues. Elle seront précisées dans un décret qui doit être prochainement publié.</p>
+	</div>
+								]]></Content>
+							</Section>
+						</Chapter>
+						<Chapter id="2" name="Resultats" label="">
+							<Section id="1" name="ResultatNul" label="" role="">
+								<Content edition="wysihtml"><![CDATA[
+<div class=" fr-my-4w  fr-alert fr-alert--success">
+	<p>Ce véhicule est exonéré de la taxe sur la masse en ordre de marche. </p>
+	<p>En effet, cette taxe ne s'applique qu'aux véhicules immatriculés à partir du 1<sup>er</sup> janvier 2022.</p>
+</div>
+								]]></Content>
+							</Section>
+							<Section id="2" name="ResultatNul2" label="" role="">
+								<Content edition="wysihtml"><![CDATA[
+<div class=" fr-my-4w  fr-alert fr-alert--info">
+	<p>La taxe sur la masse en ordre de marche ne concerne que la 1<sup>re</sup> immatriculation d'un véhicule en France ou la tranformation d'un véhicule en véhicule de tourisme.</p>
+	<p>Un véhicule déjà immatriculé en France n'est pas concerné par la taxe au poids</p>
+</div>
+								]]></Content>
+							</Section>
+						</Chapter>
+					</BlockInfo>
+					<FieldSet datagroupesteep="0" id="3">
+						<Field label="Le véhicule est :" position="1" data="2" usage="input" newline="0" required="0" visibleRequired="0" colon="0" help="0" helpbefore="0" expandedcolumnar="1"></Field>
+						<Field label="Son autonomie en mode tout électrique est-il supérieure à 50 km ?" position="2" data="30" usage="input" newline="0" required="0" visibleRequired="0" colon="0" help="0" helpbefore="0" expanded="1"></Field>
+						<Field label="Vous êtes :" position="3" data="3" usage="input" newline="0" required="0" visibleRequired="0" colon="0" help="0" helpbefore="0" expandedcolumnar="1"></Field>
+						<Field label="Combien d'enfants mineurs sont à votre charge ?" position="4" data="4" usage="input" newline="0" required="0" visibleRequired="0" colon="0" help="0" helpbefore="0"></Field>
+					</FieldSet>
+					<BlockInfo id="4" name="Exo" label="">
+						<Chapter id="1" name="ExoVehicule" label="">
+							<Section id="1" name="ExoVehiculeOK" label="" role="">
+								<Content edition="wysihtml"><![CDATA[
+<div class=" fr-my-4w  fr-alert fr-alert--success">
+	<p>Ce type de véhicule permet de bénéficier d'une exonération de la taxe sur la masse en ordre de marche.</p>
+</div>
+								]]></Content>
+							</Section>
+						</Chapter>
+						<Chapter id="2" name="ExoConduc" label="">
+							<Section id="1" name="ExoConductInclusion" label="" role="">
+								<Content edition="wysihtml"><![CDATA[
+<div class=" fr-my-4w  fr-alert fr-alert--success">
+	<p>Dans votre situation, vous êtes exonéré de la taxe sur la masse en ordre de marche.</p>
+</div>
+								]]></Content>
+							</Section>
+							<Section id="2" name="ExoConduc1" label="" role="">
+								<Content edition="wysihtml"><![CDATA[
+<div class=" fr-my-4w  fr-alert fr-alert--info">
+	<p>La taxe sur la masse en ordre de marche devrait donc être de <b>#16 €</b>.</p>
+	<br>
+	<p>Cependant, dans votre situation, vous pourrez bénéficier d'une réduction d'une partie de la taxe sur la masse en ordre de marche si votre véhicule comporte au moins 5 places. Vous ne pouvez bénéficier de cette réduction qu'une fois <strong>par période de 2 ans</strong>.</p>
+	<p>Cette réduction devra être réclamée après le paiement de votre carte grise à votre service des impôts.</p>
+	<p>Vous bénéficiez d'une réduction de 200 kg par enfant à charge.</p>
+	<p>Pour en savoir plus sur cette réduction, consultez notre simulateur <a href="https://www.service-public.fr/simulateur/calcul/RemboursementMalus" rel="nofollow" target="_blank" title="Malus CO2/Malus au poids : à quels remboursements avez-vous droit ?">Malus CO<sub>2</sub>/Malus au poids : à quels remboursements avez-vous droit ?</a></p>
+</div>
+								]]></Content>
+							</Section>
+							<Section id="3" name="ExoHybride" label="" role="">
+								<Content edition="wysihtml"><![CDATA[
+<div class=" fr-my-4w  fr-alert fr-alert--info">
+	<p>La taxe sur la masse en ordre de marche devrait donc être de <b>#16 €</b>.</p>
+	<br>
+	<p><strong>À noter</strong></p>
+	<p>Votre véhicule est un véhicule hybride, non rechargeable ou rechargeable avec une autonomie éléctrique inférieure à 50 km.</p>
+	<p>De ce fait, vous bénéficiez d'une réduction de 100kg sur la masse retenue de votre véhicule. Le calcul se fait ainsi sur une base de #19 kg au lieu des #10 kg.</p>
+</div>
+								]]></Content>
+							</Section>
+							<Section id="4" name="ExoConduc2" label="" role="">
+								<Content edition="wysihtml"><![CDATA[
+<div class=" fr-my-4w  fr-alert fr-alert--info">
+	<p>La taxe sur la masse en ordre de marche devrait donc être de <b>#16 €</b>.</p>
+	<br>
+	<p><strong>À noter</strong></p>
+	<p>Le véhicule que vous voulez immatriculer comporte au moins 8 places assises et est affecté à l'exercice de votre activité professionnelle.</p>
+	<p>Vous bénéficiez  d'une réduction d'une partie de la taxe au poids correspondant à #21 kg. Le calcul se fait ainsi sur une base de #19 kg au lieu des #10 kg.</p>
+</div>
+								]]></Content>
+							</Section>
+							<Section id="5" name="ExoConduc2" label="" role="">
+								<Content edition="wysihtml"><![CDATA[
+<div class=" fr-my-4w  fr-alert fr-alert--info">
+	<p>La taxe sur la masse en ordre de marche devrait donc être de <b>#16 €</b>.</p>
+	<br>
+	<p><strong>À noter</strong></p>
+	<p>Le véhicule que vous voulez immatriculer comporte au moins 8 places assises et est affecté à l'exercice de votre activité professionnelle.</p>
+	<p>Vous bénéficiez d'une réduction d'une partie de la taxe au poids correspondant à #21 kg, cumulable avec la réduction pour l'acquisition d'un véhicule hybride (100kg).</p>
+	<p>Le calcul se fait ainsi sur une base de #19 kg au lieu des #10 kg.</p>
+</div>
+								]]></Content>
+							</Section>
+						</Chapter>
+						<Chapter id="3" name="Paye" label="">
+							<Section id="1" name="Resultat" label="" role="">
+								<Content edition="wysihtml"><![CDATA[
+<div class=" fr-my-4w  fr-alert fr-alert--info">
+	<p>La taxe sur la masse en ordre de marche devrait donc être de <b>#16 €</b>.</p>
+</div>
+								]]></Content>
+							</Section>
+							<Section id="2" name="ResultatAncien" label="" role="">
+								<Content edition="wysihtml"><![CDATA[
+<div class=" fr-my-4w  fr-alert fr-alert--info">
+	<p>La taxe sur la masse en ordre de marche de base devrait donc être de <b>#16 €</b>.</p>
+	#29
+</div>
+								]]></Content>
+							</Section>
+						</Chapter>
+						<Chapter id="4" name="Attention" label="">
+							<Section id="1" name="Plafond" label="" role="">
+								<Content edition="wysihtml"><![CDATA[
+<div class=" fr-my-4w  fr-alert fr-alert--warning docs">
+	<h2>À noter : </h2>
+	<p>La taxe est plafonnée de sorte que la somme du malus CO2 et de la taxe sur la masse ne dépasse pas la taxe CO2 maximale de l'année (40.000€ en 2022, 50.000€ en 2023, 60.000€ en 2024)</p>
+</div>
+								]]></Content>
+							</Section>
+						</Chapter>
+						<Chapter id="5" name="Trans" label="">
+							<Section id="1" name="ReducTranfo" label="" role="">
+								<Content edition="wysihtml"><![CDATA[
+<div class=" fr-my-4w  fr-alert fr-alert--info">
+	<p>Si le véhicule, immatriculé pour la 1<sup>re</sup> fois en 2022, est transformé en véhicule de tourisme, la taxe sur la masse en ordre de marche est à payer.</p>
+	<p>Elle pourrait être de <b>#16 €</b>.</p>
+	<p>Cependant, celle-ci peut parfois être réduite de 10% par année d'ancienneté selon les cas.</p>
+</div>
+								]]></Content>
+							</Section>
+						</Chapter>
+					</BlockInfo>
+				</Panel>
+			</Panels>
+			<ActionList>
+				<Action label="Recommencer" class="btn-primary" location="bottom" name="Recommencer" shape="button" what="submit" for="newSimulation"></Action>
+			</ActionList>
+		</Step>
+	</Steps>
+	<Sources>
+		<Source returnPath="0" returnType="assocArray" label="Tmom" id="1" datasource="cout-certificat-immatriculation" request="SELECT annee, tranchedebut as trancheDebut, tranchefin as trancheFin, tranche, totaltrancheareporter as totalTrancheAReporter, prixaukg as prixAuKg FROM Tmom WHERE %2$d = annee AND %1$d &lt;= trancheFin AND %1$d &gt;= trancheDebut">
+			<Parameter name="poids" data="19" type="columnValue" origin="data"></Parameter>
+			<Parameter name="annee" data="9" type="columnValue" origin="data"></Parameter>
+		</Source>
+	</Sources>
+	<BusinessRules>
+		<BusinessRule id="1" name="R1" attributactive="" label="Affiche la question sur la démarche">
+			<Conditions value="defined(#10)">
+				<Condition operand="poidsSaisi" operator="present"></Condition>
+			</Conditions>
+			<IfActions>
+				<Action step="1" panel="1" fieldset="1" field="2" id="1" name="showObject" target="field"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action step="1" panel="1" fieldset="1" field="2" id="1" name="hideObject" target="field"></Action>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="2" name="R2" attributactive="" label="User ne fait pas une 1re immatriculation">
+			<Conditions value="defined(#22) &amp;&amp; #22 = 'Autre'">
+				<Connector type="all">
+					<Condition operand="demarche" operator="present"></Condition>
+					<Condition operand="demarche" operator="=" expression="Autre"></Condition>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action step="1" panel="1" blockinfo="2" chapter="1" section="2" id="1" name="showObject" target="section"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action step="1" panel="1" blockinfo="2" chapter="1" section="2" id="1" name="hideObject" target="section"></Action>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="3" name="R3" attributactive="" label="Affiche la question sur le genre de véhicule">
+			<Conditions value="defined(#22) &amp;&amp; #22 != 'Autre'">
+				<Connector type="all">
+					<Condition operand="demarche" operator="present"></Condition>
+					<Condition operand="demarche" operator="!=" expression="Autre"></Condition>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action step="1" panel="1" fieldset="1" field="3" id="1" name="showObject" target="field"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action step="1" panel="1" fieldset="1" field="3" id="1" name="hideObject" target="field"></Action>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="4" name="R4" attributactive="" label="La demande ne concerne pas un VT">
+			<Conditions value="defined(#23) &amp;&amp; #23 = 'Autre'">
+				<Connector type="all">
+					<Condition operand="typeVehicule" operator="present"></Condition>
+					<Condition operand="typeVehicule" operator="=" expression="Autre"></Condition>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action step="1" panel="1" blockinfo="2" chapter="1" section="3" id="1" name="showObject" target="section"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action step="1" panel="1" blockinfo="2" chapter="1" section="3" id="1" name="hideObject" target="section"></Action>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="5" name="R5" attributactive="" label="La demande concerne un utilitaire">
+			<Conditions value="defined(#23) &amp;&amp; #23 = 'N1'">
+				<Connector type="all">
+					<Condition operand="typeVehicule" operator="present"></Condition>
+					<Condition operand="typeVehicule" operator="=" expression="N1"></Condition>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action step="1" panel="1" blockinfo="2" chapter="1" section="4" id="1" name="showObject" target="section"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action step="1" panel="1" blockinfo="2" chapter="1" section="4" id="1" name="hideObject" target="section"></Action>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="6" name="R6" attributactive="" label="Affiche la question sur la date d'immat">
+			<Conditions value="defined(#23) &amp;&amp; #23 = 'VT'">
+				<Connector type="all">
+					<Condition operand="typeVehicule" operator="present"></Condition>
+					<Condition operand="typeVehicule" operator="=" expression="VT"></Condition>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action step="1" panel="1" fieldset="1" field="4" id="1" name="showObject" target="field"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action step="1" panel="1" fieldset="1" field="4" id="1" name="hideObject" target="field"></Action>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="7" name="R7" attributactive="" label="fixe le seuil">
+			<Conditions value="#8 &lt; 1/1/2024">
+				<Condition operand="dateImmatriculation" operator="&lt;" expression="1/1/2024"></Condition>
+			</Conditions>
+			<IfActions>
+				<Action data="1" value="1800" id="1" name="setAttribute" target="content"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action data="1" value="1600" id="1" name="setAttribute" target="content"></Action>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="8" name="R8" attributactive="" label="Le véhicule est trop léger">
+			<Conditions value="defined(#10) &amp;&amp; defined(#22) &amp;&amp; #22 != 'Autre' &amp;&amp; #23 = 'VT' &amp;&amp; #10 &lt; #1">
+				<Connector type="all">
+					<Condition operand="poidsSaisi" operator="present"></Condition>
+					<Condition operand="demarche" operator="present"></Condition>
+					<Condition operand="demarche" operator="!=" expression="Autre"></Condition>
+					<Condition operand="typeVehicule" operator="=" expression="VT"></Condition>
+					<Condition operand="poidsSaisi" operator="&lt;" expression="#1"></Condition>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action step="1" panel="1" blockinfo="2" chapter="1" section="1" id="1" name="showObject" target="section"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action step="1" panel="1" blockinfo="2" chapter="1" section="1" id="1" name="hideObject" target="section"></Action>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="9" name="R9" attributactive="" label="Le véhicule est antérieur à 1/1/2022">
+			<Conditions value="defined(#8) &amp;&amp; #8 &lt; 01/01/2022">
+				<Connector type="all">
+					<Condition operand="dateImmatriculation" operator="present"></Condition>
+					<Condition operand="dateImmatriculation" operator="&lt;" expression="01/01/2022"></Condition>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action step="1" panel="1" blockinfo="2" chapter="2" section="1" id="1" name="showObject" target="section"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action step="1" panel="1" blockinfo="2" chapter="2" section="1" id="1" name="hideObject" target="section"></Action>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="10" name="R10" attributactive="" label="User veut immatriculer un véhicule d'occasion">
+			<Conditions value="defined(#10) &amp;&amp; defined(#22) &amp;&amp; #22 = 'VP' &amp;&amp; #8 &lt; (today - 30) &amp;&amp; #10 &gt;= #1">
+				<Connector type="all">
+					<Condition operand="poidsSaisi" operator="present"></Condition>
+					<Condition operand="demarche" operator="present"></Condition>
+					<Condition operand="demarche" operator="=" expression="VP"></Condition>
+					<Condition operand="dateImmatriculation" operator="&lt;" expression="(today - 30)"></Condition>
+					<Condition operand="poidsSaisi" operator="&gt;=" expression="#1"></Condition>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action step="1" panel="1" blockinfo="2" chapter="2" section="2" id="1" name="showObject" target="section"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action step="1" panel="1" blockinfo="2" chapter="2" section="2" id="1" name="hideObject" target="section"></Action>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="11" name="R11" attributactive="" label="Affiche la question sur les exonérations possibles">
+			<Conditions value="defined(#8) &amp;&amp; #8 &gt;= 1/1/2022 &amp;&amp; (!((#22 = 'VP' &amp;&amp; #8 &lt; (today - 30)) || (defined(#10) &amp;&amp; #10 &lt; #1)))">
+				<Connector type="all">
+					<Condition operand="dateImmatriculation" operator="present"></Condition>
+					<Condition operand="dateImmatriculation" operator="&gt;=" expression="1/1/2022"></Condition>
+					<Connector type="none">
+						<Connector type="all">
+							<Condition operand="demarche" operator="=" expression="VP"></Condition>
+							<Condition operand="dateImmatriculation" operator="&lt;" expression="(today - 30)"></Condition>
+						</Connector>
+						<Connector type="all">
+							<Condition operand="poidsSaisi" operator="present"></Condition>
+							<Condition operand="poidsSaisi" operator="&lt;" expression="#1"></Condition>
+						</Connector>
+					</Connector>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action step="1" panel="1" fieldset="3" field="1" id="1" name="showObject" target="field"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action step="1" panel="1" fieldset="3" field="1" id="1" name="hideObject" target="field"></Action>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="12" name="R12" attributactive="" label="Véhicule permet l'exonération">
+			<Conditions value="defined(#2) &amp;&amp; (#2 = 1 || #2 = 2 || (#2 = 3 &amp;&amp; #30 = 'Oui' &amp;&amp; defined(#30)))">
+				<Connector type="all">
+					<Condition operand="Exoneration" operator="present"></Condition>
+					<Connector type="any">
+						<Condition operand="Exoneration" operator="=" expression="1"></Condition>
+						<Condition operand="Exoneration" operator="=" expression="2"></Condition>
+						<Connector type="all">
+							<Condition operand="Exoneration" operator="=" expression="3"></Condition>
+							<Condition operand="Autonomie" operator="=" expression="Oui"></Condition>
+							<Condition operand="Autonomie" operator="present"></Condition>
+						</Connector>
+					</Connector>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action step="1" panel="1" blockinfo="4" chapter="1" section="1" id="1" name="showObject" target="section"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action step="1" panel="1" blockinfo="4" chapter="1" section="1" id="1" name="hideObject" target="section"></Action>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="13" name="R13" attributactive="" label="Affiche question sur le conducteur">
+			<Conditions value="defined(#2) &amp;&amp; (#2 = 4 || #2 = 5 || (#2 = 3 &amp;&amp; defined(#30) &amp;&amp; #30 = 'Non'))">
+				<Connector type="all">
+					<Condition operand="Exoneration" operator="present"></Condition>
+					<Connector type="any">
+						<Condition operand="Exoneration" operator="=" expression="4"></Condition>
+						<Condition operand="Exoneration" operator="=" expression="5"></Condition>
+						<Connector type="all">
+							<Condition operand="Exoneration" operator="=" expression="3"></Condition>
+							<Condition operand="Autonomie" operator="present"></Condition>
+							<Condition operand="Autonomie" operator="=" expression="Non"></Condition>
+						</Connector>
+					</Connector>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action step="1" panel="1" fieldset="3" field="3" id="1" name="showObject" target="field"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action step="1" panel="1" fieldset="3" field="3" id="1" name="hideObject" target="field"></Action>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="14" name="R14" attributactive="" label="User est handicapé">
+			<Conditions value="defined(#3) &amp;&amp; (#3 = 1 || #3 = 2)">
+				<Connector type="all">
+					<Condition operand="Conducteur" operator="present"></Condition>
+					<Connector type="any">
+						<Condition operand="Conducteur" operator="=" expression="1"></Condition>
+						<Condition operand="Conducteur" operator="=" expression="2"></Condition>
+					</Connector>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action step="1" panel="1" blockinfo="4" chapter="2" section="1" id="1" name="showObject" target="section"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action step="1" panel="1" blockinfo="4" chapter="2" section="1" id="1" name="hideObject" target="section"></Action>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="15" name="R15" attributactive="" label="User a une famille nombreuse">
+			<Conditions value="defined(#3) &amp;&amp; #3 = 3">
+				<Connector type="all">
+					<Condition operand="Conducteur" operator="present"></Condition>
+					<Condition operand="Conducteur" operator="=" expression="3"></Condition>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action step="1" panel="1" fieldset="3" field="4" id="1" name="showObject" target="field"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action step="1" panel="1" fieldset="3" field="4" id="1" name="hideObject" target="field"></Action>
+				<Action data="4" id="2" name="unsetAttribute" target="content"></Action>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="16" name="R16" attributactive="" label="Affiche résultat de famille nombreuse">
+			<Conditions value="defined(#4) &amp;&amp; #4 &gt;= 3 &amp;&amp; defined(#3) &amp;&amp; #3 = 3">
+				<Connector type="all">
+					<Condition operand="NbEnfant" operator="present"></Condition>
+					<Condition operand="NbEnfant" operator="&gt;=" expression="3"></Condition>
+					<Condition operand="Conducteur" operator="present"></Condition>
+					<Condition operand="Conducteur" operator="=" expression="3"></Condition>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action step="1" panel="1" blockinfo="4" chapter="2" section="2" id="1" name="showObject" target="section"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action step="1" panel="1" blockinfo="4" chapter="2" section="2" id="1" name="hideObject" target="section"></Action>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="17" name="R17" attributactive="" label="User est une personne morale sauf hybride">
+			<Conditions value="defined(#3) &amp;&amp; #3 = 4 &amp;&amp; defined(#2) &amp;&amp; #2 = 4">
+				<Connector type="all">
+					<Condition operand="Conducteur" operator="present"></Condition>
+					<Condition operand="Conducteur" operator="=" expression="4"></Condition>
+					<Condition operand="Exoneration" operator="present"></Condition>
+					<Condition operand="Exoneration" operator="=" expression="4"></Condition>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action step="1" panel="1" blockinfo="4" chapter="2" section="4" id="1" name="showObject" target="section"></Action>
+				<Action data="4" id="2" name="unsetAttribute" target="content"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action step="1" panel="1" blockinfo="4" chapter="2" section="4" id="1" name="hideObject" target="section"></Action>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="18" name="R18" attributactive="" label="Affiche résultat final sauf pour un véhicule hybride">
+			<Conditions value="defined(#22) &amp;&amp; defined(#10) &amp;&amp; #22 = 'VP' &amp;&amp; defined(#2) &amp;&amp; #2 = 4 &amp;&amp; defined(#3) &amp;&amp; #3 = 5">
+				<Connector type="all">
+					<Condition operand="demarche" operator="present"></Condition>
+					<Condition operand="poidsSaisi" operator="present"></Condition>
+					<Condition operand="demarche" operator="=" expression="VP"></Condition>
+					<Condition operand="Exoneration" operator="present"></Condition>
+					<Condition operand="Exoneration" operator="=" expression="4"></Condition>
+					<Condition operand="Conducteur" operator="present"></Condition>
+					<Condition operand="Conducteur" operator="=" expression="5"></Condition>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action step="1" panel="1" blockinfo="4" chapter="3" section="1" id="1" name="showObject" target="section"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action step="1" panel="1" blockinfo="4" chapter="3" section="1" id="1" name="hideObject" target="section"></Action>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="19" name="R19" attributactive="" label="Affiche résultat final hybride">
+			<Conditions value="defined(#22) &amp;&amp; defined(#10) &amp;&amp; #22 = 'VP' &amp;&amp; defined(#2) &amp;&amp; defined(#3) &amp;&amp; #3 = 5 &amp;&amp; ((#2 = 3 &amp;&amp; defined(#30) &amp;&amp; #30 = 'Non') || #2 = 5)">
+				<Connector type="all">
+					<Condition operand="demarche" operator="present"></Condition>
+					<Condition operand="poidsSaisi" operator="present"></Condition>
+					<Condition operand="demarche" operator="=" expression="VP"></Condition>
+					<Condition operand="Exoneration" operator="present"></Condition>
+					<Condition operand="Conducteur" operator="present"></Condition>
+					<Condition operand="Conducteur" operator="=" expression="5"></Condition>
+					<Connector type="any">
+						<Connector type="all">
+							<Condition operand="Exoneration" operator="=" expression="3"></Condition>
+							<Condition operand="Autonomie" operator="present"></Condition>
+							<Condition operand="Autonomie" operator="=" expression="Non"></Condition>
+						</Connector>
+						<Condition operand="Exoneration" operator="=" expression="5"></Condition>
+					</Connector>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action step="1" panel="1" blockinfo="4" chapter="2" section="3" id="1" name="showObject" target="section"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action step="1" panel="1" blockinfo="4" chapter="2" section="3" id="1" name="hideObject" target="section"></Action>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="20" name="R20" attributactive="" label="Affiche résultat final cas Pivo">
+			<Conditions value="defined(#3) &amp;&amp; #3 = 5 &amp;&amp; defined(#22) &amp;&amp; #22 = 'Pivo'">
+				<Connector type="all">
+					<Condition operand="Conducteur" operator="present"></Condition>
+					<Condition operand="Conducteur" operator="=" expression="5"></Condition>
+					<Condition operand="demarche" operator="present"></Condition>
+					<Condition operand="demarche" operator="=" expression="Pivo"></Condition>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action step="1" panel="1" blockinfo="4" chapter="3" section="2" id="1" name="showObject" target="section"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action step="1" panel="1" blockinfo="4" chapter="3" section="2" id="1" name="hideObject" target="section"></Action>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="21" name="R21" attributactive="" label="Affiche les À noter">
+			<Conditions value="defined(#3) &amp;&amp; (#3 = 5 || #3 = 4 || (#3 = 3 &amp;&amp; defined(#4))) &amp;&amp; #16 &gt; 100">
+				<Connector type="all">
+					<Condition operand="Conducteur" operator="present"></Condition>
+					<Connector type="any">
+						<Condition operand="Conducteur" operator="=" expression="5"></Condition>
+						<Condition operand="Conducteur" operator="=" expression="4"></Condition>
+						<Connector type="all">
+							<Condition operand="Conducteur" operator="=" expression="3"></Condition>
+							<Condition operand="NbEnfant" operator="present"></Condition>
+						</Connector>
+					</Connector>
+					<Condition operand="valeurTaxe" operator="&gt;" expression="100"></Condition>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action step="1" panel="1" blockinfo="4" chapter="4" id="1" name="showObject" target="chapter"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action step="1" panel="1" blockinfo="4" chapter="4" id="1" name="hideObject" target="chapter"></Action>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="22" name="R22" attributactive="" label="Affiche pour un véhicule transformé">
+			<Conditions value="defined(#22) &amp;&amp; #22 = 'Transfo' &amp;&amp; #23 = 'VT' &amp;&amp; (#2 = 5 || #2 = 4 || (#2 = 3 &amp;&amp; defined(#30) &amp;&amp; #30 = 'Non')) &amp;&amp; #3 != 4">
+				<Connector type="all">
+					<Condition operand="demarche" operator="present"></Condition>
+					<Condition operand="demarche" operator="=" expression="Transfo"></Condition>
+					<Condition operand="typeVehicule" operator="=" expression="VT"></Condition>
+					<Connector type="any">
+						<Condition operand="Exoneration" operator="=" expression="5"></Condition>
+						<Condition operand="Exoneration" operator="=" expression="4"></Condition>
+						<Connector type="all">
+							<Condition operand="Exoneration" operator="=" expression="3"></Condition>
+							<Condition operand="Autonomie" operator="present"></Condition>
+							<Condition operand="Autonomie" operator="=" expression="Non"></Condition>
+						</Connector>
+					</Connector>
+					<Condition operand="Conducteur" operator="!=" expression="4"></Condition>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action step="1" panel="1" blockinfo="4" chapter="5" section="1" id="1" name="showObject" target="section"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action step="1" panel="1" blockinfo="4" chapter="5" section="1" id="1" name="hideObject" target="section"></Action>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="23" name="R23" attributactive="" label="Affiche réduction pour les personnes morales avant 2024">
+			<Conditions value="#3 = 4 &amp;&amp; #8 &lt; 1/1/2024">
+				<Connector type="all">
+					<Condition operand="Conducteur" operator="=" expression="4"></Condition>
+					<Condition operand="dateImmatriculation" operator="&lt;" expression="1/1/2024"></Condition>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action data="21" value="400" id="1" name="setAttribute" target="content"></Action>
+			</IfActions>
+			<ElseActions>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="24" name="R24" attributactive="" label="Véhicule est hybride ET réduction possible">
+			<Conditions value="defined(#2) &amp;&amp; #8 &gt; 1/1/2024 &amp;&amp; (#2 = 5 || (#2 = 3 &amp;&amp; defined(#30) &amp;&amp; #30 = 'Non'))">
+				<Connector type="all">
+					<Condition operand="Exoneration" operator="present"></Condition>
+					<Condition operand="dateImmatriculation" operator="&gt;" expression="1/1/2024"></Condition>
+					<Connector type="any">
+						<Condition operand="Exoneration" operator="=" expression="5"></Condition>
+						<Connector type="all">
+							<Condition operand="Exoneration" operator="=" expression="3"></Condition>
+							<Condition operand="Autonomie" operator="present"></Condition>
+							<Condition operand="Autonomie" operator="=" expression="Non"></Condition>
+						</Connector>
+					</Connector>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action data="20" value="100" id="1" name="setAttribute" target="content"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action data="20" value="0" id="1" name="setAttribute" target="content"></Action>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="25" name="R25" attributactive="" label="Affiche réduction pour les personnes morales à partir de 2024">
+			<Conditions value="#3 = 4 &amp;&amp; #8 &gt; 1/1/2024">
+				<Connector type="all">
+					<Condition operand="Conducteur" operator="=" expression="4"></Condition>
+					<Condition operand="dateImmatriculation" operator="&gt;" expression="1/1/2024"></Condition>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action data="21" value="500" id="1" name="setAttribute" target="content"></Action>
+			</IfActions>
+			<ElseActions>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="26" name="R26" attributactive="" label="User est une personne morale et hybride">
+			<Conditions value="defined(#3) &amp;&amp; #3 = 4 &amp;&amp; defined(#2) &amp;&amp; (#2 = 5 || (#2 = 3 &amp;&amp; defined(#30) &amp;&amp; #30 = 'Non'))">
+				<Connector type="all">
+					<Condition operand="Conducteur" operator="present"></Condition>
+					<Condition operand="Conducteur" operator="=" expression="4"></Condition>
+					<Condition operand="Exoneration" operator="present"></Condition>
+					<Connector type="any">
+						<Condition operand="Exoneration" operator="=" expression="5"></Condition>
+						<Connector type="all">
+							<Condition operand="Exoneration" operator="=" expression="3"></Condition>
+							<Condition operand="Autonomie" operator="present"></Condition>
+							<Condition operand="Autonomie" operator="=" expression="Non"></Condition>
+						</Connector>
+					</Connector>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action step="1" panel="1" blockinfo="4" chapter="2" section="5" id="1" name="showObject" target="section"></Action>
+				<Action data="4" id="2" name="unsetAttribute" target="content"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action step="1" panel="1" blockinfo="4" chapter="2" section="5" id="1" name="hideObject" target="section"></Action>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="27" name="R27" attributactive="" label="User est une personne morale">
+			<Conditions value="#3 != 4">
+				<Condition operand="Conducteur" operator="!=" expression="4"></Condition>
+			</Conditions>
+			<IfActions>
+				<Action data="21" value="0" id="1" name="setAttribute" target="content"></Action>
+			</IfActions>
+			<ElseActions>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="28" name="R28" attributactive="" label="Insère le complément d'info ou non">
+			<Conditions value="#22 = 'Pivo' &amp;&amp; #16 &gt; 1">
+				<Connector type="all">
+					<Condition operand="demarche" operator="=" expression="Pivo"></Condition>
+					<Condition operand="valeurTaxe" operator="&gt;" expression="1"></Condition>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action data="29" value="'&lt;p&gt;Cependant, comme vous avez indiqué que le véhicule est importé de l\'étranger, la taxe est réduite de 10% par année d\'ancienneté si :&lt;/p&gt;  &lt;ul&gt;   &lt;li&gt;le véhicule est immatriculé à l\'étranger après le 1&lt;sup&gt;er&lt;/sup&gt; janvier 2022,&lt;/li&gt;   &lt;li&gt;et cette immatriculation date d\'au moins 6 mois.&lt;/li&gt;  &lt;/ul&gt;'" id="1" name="setAttribute" target="content"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action data="29" id="1" name="unsetAttribute" target="content"></Action>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="29" name="R29" attributactive="" label="Affiche question sur l'autonomie du véhicule">
+			<Conditions value="defined(#2) &amp;&amp; #2 = 3">
+				<Connector type="all">
+					<Condition operand="Exoneration" operator="present"></Condition>
+					<Condition operand="Exoneration" operator="=" expression="3"></Condition>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action step="1" panel="1" fieldset="3" field="2" id="1" name="showObject" target="field"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action step="1" panel="1" fieldset="3" field="2" id="1" name="hideObject" target="field"></Action>
+			</ElseActions>
+		</BusinessRule>
+	</BusinessRules>
+</Simulator>

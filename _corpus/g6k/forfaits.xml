@@ -1,0 +1,1232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Simulator xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../doc/Simulator.xsd" name="forfaits" label="Simulateur d'aide au choix d'un forfait BOAMP" defaultView="boamp-acheteur" dynamic="1" memo="0">
+	<Description><![CDATA[
+Comment utiliser le simulateur ?
+Pour connaitre le forfait le mieux adapté à vos besoins, il suffit d'estimer le nombre total d'avis de marché, de résultats de marchés, d'avis d'intention de conclure et d'avis rectificatif et d'annulation que vous allez publier dans l'année (sur la base de l'année précédente par exemple) puis de reporter l'ensemble de ces éléments dans le simulateur.
+	]]></Description>
+	<DataSet dateFormat="d/m/Y" decimalPoint="," moneySymbol="€" symbolPosition="after">
+		<DataGroup id="1" name="avisInitiaux" label="Avis initiaux">
+			<Data id="1" name="nbAvisInitiauxMapa" label="Nombre d'avis initiaux MAPA" type="integer" min="0" />
+			<Data id="2" name="nbAvisInitiauxNational" label="Nombre d'avis initiaux de marchés nationaux" type="integer" min="0" />
+			<Data id="3" name="nbAvisInitiauxEuropeen" label="Nombre d'avis initiaux de marchés européens" type="integer" min="0" />
+		</DataGroup>
+		<DataGroup id="2" name="avisResultats" label="Avis de résultats de marché">
+			<Data id="4" name="nbAvisResultatsMapa" label="Nombre d'avis de résultats MAPA" type="integer" min="0" />
+			<Data id="5" name="nbAvisResultatsNational" label="Nombre d'avis de résultats de marchés nationaux" type="integer" min="0" />
+			<Data id="6" name="nbAvisResultatsEuropeen" label="Nombre d'avis de résultats de marchés européens" type="integer" min="0" />
+		</DataGroup>
+		<DataGroup id="3" name="avisIntentionConclure" label="Avis d'intention de conclure">
+			<Data id="7" name="nbAvisIntentionConclureMapa" label="Nombre d'avis d'intention de conclure MAPA" type="integer" min="0" />
+			<Data id="8" name="nbAvisIntentionConclureNational" label="Nombre d'avis d'intention de conclure de marchés nationaux" type="integer" min="0" />
+			<Data id="9" name="nbAvisIntentionConclureEuropeen" label="Nombre d'avis d'intention de conclure de marchés européens" type="integer" min="0" />
+		</DataGroup>
+		<DataGroup id="4" name="avisRectificatifs" label="Avis rectificatifs">
+			<Data id="10" name="nbAvisRectificatifsMapa" label="Nombre d'avis rectificatifs MAPA" type="integer" min="0" />
+			<Data id="11" name="nbAvisRectificatifsNational" label="Nombre d'avis rectificatifs de marchés nationaux" type="integer" min="0" />
+			<Data id="12" name="nbAvisRectificatifsEuropeen" label="Nombre d'avis rectificatifs de marchés européens" type="integer" min="0" />
+		</DataGroup>
+		<DataGroup id="5" name="avisAnnulation" label="Avis d'annulation">
+			<Data id="13" name="nbAvisAnnulationMapa" label="Nombre d'avis d'annulation Mapa" type="integer" min="0" />
+			<Data id="14" name="nbAvisAnnulationNational" label="Nombre d'avis d'annulation de marchés nationaux" type="integer" min="0" />
+			<Data id="15" name="nbAvisAnnulationEuropeen" label="Nombre d'avis d'annulation de marchés européens" type="integer" min="0" />
+		</DataGroup>
+		<Data id="16" name="AvisMapaNationalUP" label="AvisMapaNationalUP" type="integer" content="sum(#1, #2 * 8, #4, #5 * 3, #7, #8)" />
+		<Data id="17" name="AvisEuropeenUP" label="AvisEuropeenUP" type="integer" content="sum(#3 * 10, #6 * 5, #9)" />
+		<Data id="18" name="AvisMapaNational" label="AvisMapaNational" type="boolean" />
+		<Data id="19" name="AvisEuropeen" label="AvisEuropeen" type="boolean" />
+		<Data id="21" name="gridOK" label="Saisie OK" type="boolean" />
+		<Data id="25" name="prixUP" label="Prix d'un UP" type="money" content="90" />
+		<Data id="30" name="nbUPForfait1" label="Nombre d'UP du forfait 1" type="integer" content="15" />
+		<Data id="31" name="nbUPForfait2" label="Nombre d'UP du forfait 2" type="integer" content="30" />
+		<Data id="32" name="nbUPForfait3" label="Nombre d'UP du forfait 3" type="integer" content="60" />
+		<Data id="33" name="nbUPForfait4" label="Nombre d'UP du forfait 4" type="integer" content="120" />
+		<Data id="34" name="nbUPForfait5" label="Nombre d'UP du forfait 5" type="integer" content="240" />
+		<Data id="35" name="nbUPForfait6" label="Nombre d'UP du forfait 6" type="integer" content="360" />
+		<Data id="36" name="nbUPForfait7" label="Nombre d'UP du forfait 7" type="integer" content="480" />
+		<Data id="40" name="nbUPOffertsForfait1" label="Nombre d'UP offerts du forfait 1" type="integer" content="1" />
+		<Data id="41" name="nbUPOffertsForfait2" label="Nombre d'UP offerts du forfait 2" type="integer" content="3" />
+		<Data id="42" name="nbUPOffertsForfait3" label="Nombre d'UP offerts du forfait 3" type="integer" content="6" />
+		<Data id="43" name="nbUPOffertsForfait4" label="Nombre d'UP offerts du forfait 4" type="integer" content="14" />
+		<Data id="44" name="nbUPOffertsForfait5" label="Nombre d'UP offerts du forfait 5" type="integer" content="30" />
+		<Data id="45" name="nbUPOffertsForfait6" label="Nombre d'UP offerts du forfait 6" type="integer" content="48" />
+		<Data id="46" name="nbUPOffertsForfait7" label="Nombre d'UP offerts du forfait 7" type="integer" content="72" />
+		<Data id="50" name="prixForfait1" label="Prix du forfait 1" type="money" content="1350" />
+		<Data id="51" name="prixForfait2" label="Prix du forfait 2" type="money" content="2700" />
+		<Data id="52" name="prixForfait3" label="Prix du forfait 3" type="money" content="5400" />
+		<Data id="53" name="prixForfait4" label="Prix du forfait 4" type="money" content="10800" />
+		<Data id="54" name="prixForfait5" label="Prix du forfait 5" type="money" content="21600" />
+		<Data id="55" name="prixForfait6" label="Prix du forfait 6" type="money" content="32400" />
+		<Data id="56" name="prixForfait7" label="Prix du forfait 7" type="money" content="43200" />
+		<Data id="60" name="nbForfait7MapaNational" label="nbForfait7MapaNational" type="integer" content="floor(#16 / (#36 + #46))" />
+		<Data id="61" name="PR6MapaNational" label="PR6MapaNational" type="integer" content="#16 - (#60 * (#36 + #46))" />
+		<Data id="62" name="nbForfait6MapaNational" label="nbForfait6MapaNational" type="integer" content="floor(#61 / (#35 + #45))" />
+		<Data id="63" name="PR5MapaNational" label="PR5MapaNational" type="integer" content="#61 - (#62 * (#35 + #45))" />
+		<Data id="64" name="nbForfait5MapaNational" label="nbForfait5MapaNational" type="integer" content="floor(#63 / (#34 + #44))" />
+		<Data id="65" name="PR4MapaNational" label="PR4MapaNational" type="integer" content="#63 - (#64 * (#34 + #44))" />
+		<Data id="66" name="nbForfait4MapaNational" label="nbForfait4MapaNational" type="integer" content="floor(#65 / (#33 + #43))" />
+		<Data id="67" name="PR3MapaNational" label="PR3MapaNational" type="integer" content="#65 - (#66 * (#33 + #43))" />
+		<Data id="68" name="nbForfait3MapaNational" label="nbForfait3MapaNational" type="integer" content="floor(#67 / (#32 + #42))" />
+		<Data id="69" name="PR2MapaNational" label="PR2MapaNational" type="integer" content="#67 - (#68 * (#32 + #42))" />
+		<Data id="70" name="nbForfait2MapaNational" label="nbForfait2MapaNational" type="integer" content="floor(#69 / (#31 + #41))" />
+		<Data id="71" name="PR1MapaNational" label="PR1MapaNational" type="integer" content="#69 - (#70 * (#31 + #41))" />
+		<Data id="72" name="nbForfait1MapaNational" label="nbForfait1MapaNational" type="integer" content="floor(#71 / (#30 + #40))" />
+		<Data id="73" name="nbComplementMapaNational" label="nbComplementMapaNational" type="integer" content="#71 - (#72 * (#30 + #40))" />
+		<Data id="80" name="nbForfait7Europeen" label="nbForfait7Europeen" type="integer" content="floor(#17 / (#36 + #46))" />
+		<Data id="81" name="PR6Europeen" label="PR6Europeen" type="integer" content="#17 - (#80 * (#36 + #46))" />
+		<Data id="82" name="nbForfait6Europeen" label="nbForfait6Europeen" type="integer" content="floor(#81 / (#35 + #45))" />
+		<Data id="83" name="PR5Europeen" label="PR5Europeen" type="integer" content="#81 - (#82 * (#35 + #45))" />
+		<Data id="84" name="nbForfait5Europeen" label="nbForfait5Europeen" type="integer" content="floor(#83 / (#34 + #44))" />
+		<Data id="85" name="PR4Europeen" label="PR4Europeen" type="integer" content="#83 - (#84 * (#34 + #44))" />
+		<Data id="86" name="nbForfait4Europeen" label="nbForfait4Europeen" type="integer" content="floor(#85 / (#33 + #43))" />
+		<Data id="87" name="PR3Europeen" label="PR3Europeen" type="integer" content="#85 - (#86 * (#33 + #43))" />
+		<Data id="88" name="nbForfait3Europeen" label="nbForfait3Europeen" type="integer" content="floor(#87 / (#32 + #42))" />
+		<Data id="89" name="PR2Europeen" label="PR2Europeen" type="integer" content="#87 - (#88 * (#32 + #42))" />
+		<Data id="90" name="nbForfait2Europeen" label="nbForfait2Europeen" type="integer" content="floor(#89 / (#31 + #41))" />
+		<Data id="91" name="PR1Europeen" label="PR1Europeen" type="integer" content="#89 - (#90 * (#31 + #41))" />
+		<Data id="92" name="nbForfait1Europeen" label="nbForfait1Europeen" type="integer" content="floor(#91 / (#30 + #40))" />
+		<Data id="93" name="nbComplementEuropeen" label="nbComplementEuropeen" type="integer" content="#91 - (#92 * (#30 + #40))" />
+		<Data id="100" name="AvisMapaNationalPrixNormalHT" label="AvisMapaNationalPrixNormalHT" type="money" content="#16 * #25" />
+		<Data id="101" name="AvisEuropeenPrixNormalHT" label="AvisEuropeenPrixNormalHT" type="money" content="#17 * #25" />
+		<Data id="102" name="AvisPrixNormalHT" label="AvisPrixNormalHT" type="money" content="#100 + #101" />
+		<Data id="103" name="AvisMapaNationalPrixForfaitHT" label="AvisMapaNationalPrixForfaitHT" type="money" content="#73 * #25 + #72 * #50 + #70 * #51 + #68 * #52 + #66 * #53 + #64 * #54 + #62 * #55 + #60 * #56" />
+		<Data id="104" name="AvisEuropeenPrixForfaitHT" label="AvisEuropeenPrixForfaitHT" type="money" content="#93 * #25 + #92 * #50 + #90 * #51 + #88 * #52 + #86 * #53 + #84 * #54 + #82 * #55 + #80 * #56" />
+		<Data id="105" name="AvisPrixForfaitHT" label="AvisPrixForfaitHT" type="money" content="#103 + #104" />
+		<Data id="106" name="pourcentRemise" label="Pourcentage de remise" type="percent" content="((#102 - #105) / #102) * 100" />
+	</DataSet>
+	<Steps>
+		<Step id="0" name="choix" label="Choix forfaits (dynamique)" template="pages:article.html.twig">
+			<Panels>
+				<Panel id="1" name="panel1" label="">
+					<FieldSet id="1" disposition="grid">
+						<Legend><![CDATA[
+Nombre d'avis annuel
+						]]></Legend>
+						<Columns>
+							<Column id="1" name="mapa" type="integer" label="MAPA&#xA0;&lt;&#xA0;90 K€" />
+							<Column id="2" name="marchesNationaux" type="integer" label="Marchés nationaux" />
+							<Column id="3" name="marchesEuropeens" type="integer" label="Marchés européens" />
+						</Columns>
+						<FieldRow id="1" label="Nombre d'avis initiaux" datagroup="1">
+							<Field position="1" usage="input" expanded="0" required="0" visibleRequired="0" underlabel="0" help="0" data="1" />
+							<Field position="2" usage="input" expanded="0" required="0" visibleRequired="0" underlabel="0" help="0" data="2" />
+							<Field position="3" usage="input" expanded="0" required="0" visibleRequired="0" underlabel="0" help="0" data="3" />
+						</FieldRow>
+						<FieldRow id="2" label="Nombre d'avis de résultats de marché" datagroup="2">
+							<Field position="1" usage="input" expanded="0" required="0" visibleRequired="0" underlabel="0" help="0" data="4" />
+							<Field position="2" usage="input" expanded="0" required="0" visibleRequired="0" underlabel="0" help="0" data="5" />
+							<Field position="3" usage="input" expanded="0" required="0" visibleRequired="0" underlabel="0" help="0" data="6" />
+						</FieldRow>
+						<FieldRow id="3" label="Nombre d'avis d'intention de conclure" datagroup="3">
+							<Field position="1" usage="input" expanded="0" required="0" visibleRequired="0" underlabel="0" help="0" data="7" />
+							<Field position="2" usage="input" expanded="0" required="0" visibleRequired="0" underlabel="0" help="0" data="8" />
+							<Field position="3" usage="input" expanded="0" required="0" visibleRequired="0" underlabel="0" help="0" data="9" />
+						</FieldRow>
+						<FieldRow id="4" label="Nombre d'avis rectificatifs" datagroup="4">
+							<Field position="1" usage="input" expanded="0" required="0" visibleRequired="0" underlabel="0" help="0" data="10" />
+							<Field position="2" usage="input" expanded="0" required="0" visibleRequired="0" underlabel="0" help="0" data="11" />
+							<Field position="3" usage="input" expanded="0" required="0" visibleRequired="0" underlabel="0" help="0" data="12" />
+						</FieldRow>
+						<FieldRow id="5" label="Nombre d'avis d'annulation" datagroup="5">
+							<Field position="1" usage="input" expanded="0" required="0" visibleRequired="0" underlabel="0" help="0" data="13" />
+							<Field position="2" usage="input" expanded="0" required="0" visibleRequired="0" underlabel="0" help="0" data="14" />
+							<Field position="3" usage="input" expanded="0" required="0" visibleRequired="0" underlabel="0" help="0" data="15" />
+						</FieldRow>
+					</FieldSet>
+				</Panel>
+			</Panels>
+			<ActionList>
+				<Action name="calculer" label="Lancer la simulation" class="btn-primary" what="submit" for="currentStep" />
+				<Action name="effacer" label="Effacer le formulaire" class="btn-default" what="reset" for="currentStep" />
+				<Action name="imprimer" label="Imprimer la simulation (PDF)" class="btn-primary" what="submit" for="jumpToStep" uri="2" />
+			</ActionList>
+			<FootNotes position="afterActions">
+				<FootNote id="1"><![CDATA[
+Sur la base de votre estimation, voici le(s) forfait(s) le(s) plus adapté(s) à vos besoins
+				]]></FootNote>
+				<FootNote id="2"><![CDATA[
+<strong>MAPA < 90 K€ / Marchés Nationaux (#16 UP) :</strong>
+				]]></FootNote>
+				<FootNote id="3"><![CDATA[
+#60 forfait(s) de #36 UP / 12 mois + #46 UP offerte(s)
+				]]></FootNote>
+				<FootNote id="4"><![CDATA[
+#62 forfait(s) de #35 UP / 12 mois + #45 UP offerte(s)
+				]]></FootNote>
+				<FootNote id="5"><![CDATA[
+#64 forfait(s) de #34 UP / 12 mois + #44 UP offerte(s)
+				]]></FootNote>
+				<FootNote id="6"><![CDATA[
+#66 forfait(s) de #33 UP / 12 mois + #43 UP offerte(s)
+				]]></FootNote>
+				<FootNote id="7"><![CDATA[
+#68 forfait(s) de #32 UP / 12 mois + #42 UP offerte(s)
+				]]></FootNote>
+				<FootNote id="8"><![CDATA[
+#70 forfait(s) de #31 UP / 12 mois + #41 UP offerte(s)
+				]]></FootNote>
+				<FootNote id="9"><![CDATA[
+#72 forfait(s) de #30 UP / 12 mois + #40 UP offerte(s)
+				]]></FootNote>
+				<FootNote id="10"><![CDATA[
+complété de <strong>#73</strong> unité(s) de publication à la demande
+				]]></FootNote>
+				<FootNote id="11"><![CDATA[
+<strong>#73</strong> unité(s) de publication(s) unitaire(s)
+				]]></FootNote>
+				<FootNote id="12"><![CDATA[
+<strong>Marchés européens (#17 UP) :</strong>
+				]]></FootNote>
+				<FootNote id="13"><![CDATA[
+#80 forfait(s) de #36 UP / 12 mois + #46 UP offerte(s)
+				]]></FootNote>
+				<FootNote id="14"><![CDATA[
+#82 forfait(s) de #35 UP / 12 mois + #45 UP offerte(s)
+				]]></FootNote>
+				<FootNote id="15"><![CDATA[
+#84 forfait(s) de #34 UP / 12 mois + #44 UP offerte(s)
+				]]></FootNote>
+				<FootNote id="16"><![CDATA[
+#86 forfait(s) de #33 UP / 12 mois + #43 UP offerte(s)
+				]]></FootNote>
+				<FootNote id="17"><![CDATA[
+#88 forfait(s) de #32 UP / 12 mois + #42 UP offerte(s)
+				]]></FootNote>
+				<FootNote id="18"><![CDATA[
+#90 forfait(s) de #31 UP / 12 mois + #41 UP offerte(s)
+				]]></FootNote>
+				<FootNote id="19"><![CDATA[
+#92 forfait(s) de #30 UP / 12 mois + #40 UP offerte(s)
+				]]></FootNote>
+				<FootNote id="20"><![CDATA[
+complété de <strong>#93</strong> unité(s) de publication à la demande
+				]]></FootNote>
+				<FootNote id="21"><![CDATA[
+<strong>#93</strong> unité(s) de publication(s) unitaire(s)
+				]]></FootNote>
+				<FootNote id="22"><![CDATA[
+Soit un total de <strong>#105</strong> euros HT.
+				]]></FootNote>
+				<FootNote id="23"><![CDATA[
+En choisissant ce(s) forfait(s), vous bénéficiez de <strong>#106</strong>% de remise sur le tarif de base et vos avis rectificatifs/annulations sont offerts.
+				]]></FootNote>
+				<FootNote id="24"><![CDATA[
+En choisissant cette offre, vous ne bénéficiez pas des remises prévues dans le cadre de forfait. Vos rectificatifs et annulation vous seront facturés 1 UP.
+				]]></FootNote>
+				<FootNote id="25"><![CDATA[
+<p class="lien-acheter-container">
+<a href="http://www.boamp.fr/Espace-acheteurs/Publier-un-avis-de-marche" target="_blank" title="Nouvelle fenêtre">Acheter mon forfait ou mes UP</a>
+</p>
+				]]></FootNote>
+			</FootNotes>
+		</Step>
+		<Step id="1" name="choix2" label="Choix forfaits" template="pages:article.html.twig">
+			<Panels>
+				<Panel id="1" name="panel1" label="">
+					<FieldSet id="1" disposition="grid">
+						<Legend><![CDATA[
+Nombre d'avis annuel
+						]]></Legend>
+						<Columns>
+							<Column id="1" name="mapa" type="integer" label="MAPA&#xA0;&lt;&#xA0;90 K€" />
+							<Column id="2" name="marchesNationaux" type="integer" label="Marchés nationaux" />
+							<Column id="3" name="marchesEuropeens" type="integer" label="Marchés européens" />
+						</Columns>
+						<FieldRow id="1" label="Nombre d'avis initiaux" datagroup="1">
+							<Field position="1" usage="input" expanded="0" required="0" visibleRequired="0" underlabel="0" help="0" data="1" />
+							<Field position="2" usage="input" expanded="0" required="0" visibleRequired="0" underlabel="0" help="0" data="2" />
+							<Field position="3" usage="input" expanded="0" required="0" visibleRequired="0" underlabel="0" help="0" data="3" />
+						</FieldRow>
+						<FieldRow id="2" label="Nombre d'avis de résultats de marché" datagroup="2">
+							<Field position="1" usage="input" expanded="0" required="0" visibleRequired="0" underlabel="0" help="0" data="4" />
+							<Field position="2" usage="input" expanded="0" required="0" visibleRequired="0" underlabel="0" help="0" data="5" />
+							<Field position="3" usage="input" expanded="0" required="0" visibleRequired="0" underlabel="0" help="0" data="6" />
+						</FieldRow>
+						<FieldRow id="3" label="Nombre d'avis d'intention de conclure" datagroup="3">
+							<Field position="1" usage="input" expanded="0" required="0" visibleRequired="0" underlabel="0" help="0" data="7" />
+							<Field position="2" usage="input" expanded="0" required="0" visibleRequired="0" underlabel="0" help="0" data="8" />
+							<Field position="3" usage="input" expanded="0" required="0" visibleRequired="0" underlabel="0" help="0" data="9" />
+						</FieldRow>
+						<FieldRow id="4" label="Nombre d'avis rectificatifs" datagroup="4">
+							<Field position="1" usage="input" expanded="0" required="0" visibleRequired="0" underlabel="0" help="0" data="10" />
+							<Field position="2" usage="input" expanded="0" required="0" visibleRequired="0" underlabel="0" help="0" data="11" />
+							<Field position="3" usage="input" expanded="0" required="0" visibleRequired="0" underlabel="0" help="0" data="12" />
+						</FieldRow>
+						<FieldRow id="5" label="Nombre d'avis d'annulation" datagroup="5">
+							<Field position="1" usage="input" expanded="0" required="0" visibleRequired="0" underlabel="0" help="0" data="13" />
+							<Field position="2" usage="input" expanded="0" required="0" visibleRequired="0" underlabel="0" help="0" data="14" />
+							<Field position="3" usage="input" expanded="0" required="0" visibleRequired="0" underlabel="0" help="0" data="15" />
+						</FieldRow>
+					</FieldSet>
+				</Panel>
+			</Panels>
+			<ActionList>
+				<Action name="calculer" label="Lancer la simulation" class="btn-primary" what="submit" for="currentStep" />
+				<Action name="effacer" label="Effacer le formulaire" class="btn-default" what="reset" for="currentStep" />
+				<Action name="imprimer" label="Imprimer la simulation (PDF)" class="btn-primary" what="submit" for="nextStep" />
+			</ActionList>
+			<FootNotes position="afterActions">
+				<FootNote id="1"><![CDATA[
+Sur la base de votre estimation, voici le(s) forfait(s) le(s) plus adapté(s) à vos besoins
+				]]></FootNote>
+				<FootNote id="2"><![CDATA[
+<strong>MAPA < 90 K€ / Marchés Nationaux (#16 UP) :</strong>
+				]]></FootNote>
+				<FootNote id="3"><![CDATA[
+#60 forfait(s) de #36 UP / 12 mois + #46 UP offerte(s)
+				]]></FootNote>
+				<FootNote id="4"><![CDATA[
+#62 forfait(s) de #35 UP / 12 mois + #45 UP offerte(s)
+				]]></FootNote>
+				<FootNote id="5"><![CDATA[
+#64 forfait(s) de #34 UP / 12 mois + #44 UP offerte(s)
+				]]></FootNote>
+				<FootNote id="6"><![CDATA[
+#66 forfait(s) de #33 UP / 12 mois + #43 UP offerte(s)
+				]]></FootNote>
+				<FootNote id="7"><![CDATA[
+#68 forfait(s) de #32 UP / 12 mois + #42 UP offerte(s)
+				]]></FootNote>
+				<FootNote id="8"><![CDATA[
+#70 forfait(s) de #31 UP / 12 mois + #41 UP offerte(s)
+				]]></FootNote>
+				<FootNote id="9"><![CDATA[
+#72 forfait(s) de #30 UP / 12 mois + #40 UP offerte(s)
+				]]></FootNote>
+				<FootNote id="10"><![CDATA[
+complété de #73 unité(s) de publication à la demande
+				]]></FootNote>
+				<FootNote id="11"><![CDATA[
+<strong>#73</strong> unité(s) de publication(s) unitaire(s)
+				]]></FootNote>
+				<FootNote id="12"><![CDATA[
+<strong>Marchés européens (#17 UP) :</strong>
+				]]></FootNote>
+				<FootNote id="13"><![CDATA[
+#80 forfait(s) de #36 UP / 12 mois + #46 UP offerte(s)
+				]]></FootNote>
+				<FootNote id="14"><![CDATA[
+#82 forfait(s) de #35 UP / 12 mois + #45 UP offerte(s)
+				]]></FootNote>
+				<FootNote id="15"><![CDATA[
+#84 forfait(s) de #34 UP / 12 mois + #44 UP offerte(s)
+				]]></FootNote>
+				<FootNote id="16"><![CDATA[
+#86 forfait(s) de #33 UP / 12 mois + #43 UP offerte(s)
+				]]></FootNote>
+				<FootNote id="17"><![CDATA[
+#88 forfait(s) de #32 UP / 12 mois + #42 UP offerte(s)
+				]]></FootNote>
+				<FootNote id="18"><![CDATA[
+#90 forfait(s) de #31 UP / 12 mois + #41 UP offerte(s)
+				]]></FootNote>
+				<FootNote id="19"><![CDATA[
+#92 forfait(s) de #30 UP / 12 mois + #40 UP offerte(s)
+				]]></FootNote>
+				<FootNote id="20"><![CDATA[
+complété de #93 unité(s) de publication à la demande
+				]]></FootNote>
+				<FootNote id="21"><![CDATA[
+<strong>#93</strong> unité(s) de publication(s) unitaire(s)
+				]]></FootNote>
+				<FootNote id="22"><![CDATA[
+Soit un total de <strong>#105</strong> euros HT.
+				]]></FootNote>
+				<FootNote id="23"><![CDATA[
+En choisissant ce(s) forfait(s), vous bénéficiez de <strong>#106</strong>% de remise sur le tarif de base et vos avis rectificatifs/annulations sont offerts.
+				]]></FootNote>
+				<FootNote id="24"><![CDATA[
+En choisissant cette offre, vous ne bénéficiez pas des remises prévues dans le cadre de forfait. Vos rectificatifs et annulation vous seront facturés 1 UP.
+				]]></FootNote>
+				<FootNote id="25"><![CDATA[
+<p class="lien-acheter-container">
+<a href="http://www.boamp.fr/Espace-acheteurs/Publier-un-avis-de-marche" target="_blank" title="Nouvelle fenêtre">Acheter mon forfait ou mes UP</a>
+</p>
+				]]></FootNote>
+			</FootNotes>
+		</Step>
+		<Step id="2" name="impressionPDF" label="Impression PDF" output="downloadablePDF" template="pages:forfaits.print.html.twig">
+			<Panels>
+				<Panel id="1" name="panel1" label="">
+					<FieldSet id="1">
+						<Field position="1" label="" usage="output" help="0" data="1" />
+					</FieldSet>
+				</Panel>
+			</Panels>
+		</Step>
+	</Steps>
+	<Sites>
+		<Site id="1" name="BOAMP" home="http://www.boamp.fr" />
+	</Sites>
+	<BusinessRules>
+		<BusinessRule id="1" name="R1" label="Contrôle du nombre d'avis initiaux MAPA">
+			<Conditions value="#1 &lt; 0">
+				<Condition operand="nbAvisInitiauxMapa" operator="&lt;" expression="0" />
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="notifyError" target="data" data="1" value="Cette valeur doit être positive" />
+			</IfActions>
+			<ElseActions>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="2" name="R2" label="Contrôle du nombre d'avis initiaux de marchés nationaux">
+			<Conditions value="#2 &lt; 0">
+				<Condition operand="nbAvisInitiauxNational" operator="&lt;" expression="0" />
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="notifyError" target="data" data="2" value="Cette valeur doit être positive" />
+			</IfActions>
+			<ElseActions>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="3" name="R3" label="Contrôle du nombre d'avis initiaux de marchés européens">
+			<Conditions value="#3 &lt; 0">
+				<Condition operand="nbAvisInitiauxEuropeen" operator="&lt;" expression="0" />
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="notifyError" target="data" data="3" value="Cette valeur doit être positive" />
+			</IfActions>
+			<ElseActions>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="4" name="R4" label="Contrôle du nombre d'avis de résultats MAPA">
+			<Conditions value="#4 &lt; 0">
+				<Condition operand="nbAvisResultatsMapa" operator="&lt;" expression="0" />
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="notifyError" target="data" data="4" value="Cette valeur doit être positive" />
+			</IfActions>
+			<ElseActions>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="5" name="R5" label="Contrôle du nombre d'avis de résultats de marchés nationaux">
+			<Conditions value="#5 &lt; 0">
+				<Condition operand="nbAvisResultatsNational" operator="&lt;" expression="0" />
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="notifyError" target="data" data="5" value="Cette valeur doit être positive" />
+			</IfActions>
+			<ElseActions>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="6" name="R6" label="Contrôle du nombre d'avis de résultats de marchés européens">
+			<Conditions value="#6 &lt; 0">
+				<Condition operand="nbAvisResultatsEuropeen" operator="&lt;" expression="0" />
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="notifyError" target="data" data="6" value="Cette valeur doit être positive" />
+			</IfActions>
+			<ElseActions>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="7" name="R7" label="Contrôle du nombre d'avis d'intention de conclure MAPA">
+			<Conditions value="#7 &lt; 0">
+				<Condition operand="nbAvisIntentionConclureMapa" operator="&lt;" expression="0" />
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="notifyError" target="data" data="7" value="Cette valeur doit être positive" />
+			</IfActions>
+			<ElseActions>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="8" name="R8" label="Contrôle du nombre d'avis d'intention de conclure de marchés nationaux">
+			<Conditions value="#8 &lt; 0">
+				<Condition operand="nbAvisIntentionConclureNational" operator="&lt;" expression="0" />
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="notifyError" target="data" data="8" value="Cette valeur doit être positive" />
+			</IfActions>
+			<ElseActions>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="9" name="R9" label="Contrôle du nombre d'avis d'intention de conclure de marchés européens">
+			<Conditions value="#9 &lt; 0">
+				<Condition operand="nbAvisIntentionConclureEuropeen" operator="&lt;" expression="0" />
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="notifyError" target="data" data="9" value="Cette valeur doit être positive" />
+			</IfActions>
+			<ElseActions>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="10" name="R10" label="Contrôle du nombre d'avis rectificatifs MAPA">
+			<Conditions value="#10 &lt; 0">
+				<Condition operand="nbAvisRectificatifsMapa" operator="&lt;" expression="0" />
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="notifyError" target="data" data="10" value="Cette valeur doit être positive" />
+			</IfActions>
+			<ElseActions>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="11" name="R11" label="Contrôle du nombre d'avis rectificatifs de marchés nationaux">
+			<Conditions value="#11 &lt; 0">
+				<Condition operand="nbAvisRectificatifsNational" operator="&lt;" expression="0" />
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="notifyError" target="data" data="11" value="Cette valeur doit être positive" />
+			</IfActions>
+			<ElseActions>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="12" name="R12" label="Contrôle du nombre d'avis rectificatifs de marchés européens">
+			<Conditions value="#12 &lt; 0">
+				<Condition operand="nbAvisRectificatifsEuropeen" operator="&lt;" expression="0" />
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="notifyError" target="data" data="12" value="Cette valeur doit être positive" />
+			</IfActions>
+			<ElseActions>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="13" name="R13" label="Contrôle du nombre d'avis d'annulation MAPA">
+			<Conditions value="#13 &lt; 0">
+				<Condition operand="nbAvisAnnulationMapa" operator="&lt;" expression="0" />
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="notifyError" target="data" data="13" value="Cette valeur doit être positive" />
+			</IfActions>
+			<ElseActions>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="14" name="R14" label="Contrôle du nombre d'avis d'annulation de marchés nationaux">
+			<Conditions value="#14 &lt; 0">
+				<Condition operand="nbAvisAnnulationNational" operator="&lt;" expression="0" />
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="notifyError" target="data" data="14" value="Cette valeur doit être positive" />
+			</IfActions>
+			<ElseActions>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="15" name="R15" label="Contrôle du nombre d'avis d'annulation de marchés européens">
+			<Conditions value="#15 &lt; 0">
+				<Condition operand="nbAvisAnnulationEuropeen" operator="&lt;" expression="0" />
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="notifyError" target="data" data="15" value="Cette valeur doit être positive" />
+			</IfActions>
+			<ElseActions>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="16" name="R16" label="Condition d'affichage du bouton 'Lancer la simulation'">
+			<Conditions value="dynamic = 0">
+				<Condition operand="dynamic" operator="=" expression="0" />
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="showObject" target="action" step="0" action="calculer" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="hideObject" target="action" step="0" action="calculer" />
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="17" name="R17" label="Condition d'affichage du bouton 'Effacer le formulaire'">
+			<Conditions value="dynamic = 1 &amp;&amp; !#21">
+				<Connector type="all">
+					<Condition operand="dynamic" operator="=" expression="1" />
+					<Condition operand="gridOK" operator="isFalse" />
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="hideObject" target="action" step="0" action="effacer" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="showObject" target="action" step="0" action="effacer" />
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="18" name="R18" label="Condition d'affichage du bouton 'Imprimer la simulation (PDF)'">
+			<Conditions value="dynamic = 1 &amp;&amp; !#21">
+				<Connector type="all">
+					<Condition operand="dynamic" operator="=" expression="1" />
+					<Condition operand="gridOK" operator="isFalse" />
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="hideObject" target="action" step="0" action="imprimer" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="showObject" target="action" step="0" action="imprimer" />
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="19" name="R19" label="Conditions d'affichage de la note de bas de page 1">
+			<Conditions value="#21">
+				<Condition operand="gridOK" operator="isTrue" />
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="showObject" target="footnote" step="0" footnote="1" />
+				<Action id="2" name="showObject" target="footnote" step="1" footnote="1" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="hideObject" target="footnote" step="0" footnote="1" />
+				<Action id="2" name="hideObject" target="footnote" step="1" footnote="1" />
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="20" name="R20" label="Conditions d'affichage de la note de bas de page 2">
+			<Conditions value="!#21 || !defined(#18) || !#18 || #16 &lt;= 0">
+				<Connector type="any">
+					<Condition operand="gridOK" operator="isFalse" />
+					<Condition operand="AvisMapaNational" operator="blank" />
+					<Condition operand="AvisMapaNational" operator="isFalse" />
+					<Condition operand="AvisMapaNationalUP" operator="&lt;=" expression="0" />
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="hideObject" target="footnote" step="0" footnote="2" />
+				<Action id="2" name="hideObject" target="footnote" step="1" footnote="2" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="showObject" target="footnote" step="0" footnote="2" />
+				<Action id="2" name="showObject" target="footnote" step="1" footnote="2" />
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="21" name="R21" label="Conditions d'affichage de la note de bas de page 3">
+			<Conditions value="!#21 || !defined(#60) || #60 &lt;= 0">
+				<Connector type="any">
+					<Condition operand="gridOK" operator="isFalse" />
+					<Condition operand="nbForfait7MapaNational" operator="blank" />
+					<Condition operand="nbForfait7MapaNational" operator="&lt;=" expression="0" />
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="hideObject" target="footnote" step="0" footnote="3" />
+				<Action id="2" name="hideObject" target="footnote" step="1" footnote="3" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="showObject" target="footnote" step="0" footnote="3" />
+				<Action id="2" name="showObject" target="footnote" step="1" footnote="3" />
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="22" name="R22" label="Conditions d'affichage de la note de bas de page 4">
+			<Conditions value="!#21 || !defined(#62) || #62 &lt;= 0">
+				<Connector type="any">
+					<Condition operand="gridOK" operator="isFalse" />
+					<Condition operand="nbForfait6MapaNational" operator="blank" />
+					<Condition operand="nbForfait6MapaNational" operator="&lt;=" expression="0" />
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="hideObject" target="footnote" step="0" footnote="4" />
+				<Action id="2" name="hideObject" target="footnote" step="1" footnote="4" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="showObject" target="footnote" step="0" footnote="4" />
+				<Action id="2" name="showObject" target="footnote" step="1" footnote="4" />
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="23" name="R23" label="Conditions d'affichage de la note de bas de page 5">
+			<Conditions value="!#21 || !defined(#64) || #64 &lt;= 0">
+				<Connector type="any">
+					<Condition operand="gridOK" operator="isFalse" />
+					<Condition operand="nbForfait5MapaNational" operator="blank" />
+					<Condition operand="nbForfait5MapaNational" operator="&lt;=" expression="0" />
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="hideObject" target="footnote" step="0" footnote="5" />
+				<Action id="2" name="hideObject" target="footnote" step="1" footnote="5" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="showObject" target="footnote" step="0" footnote="5" />
+				<Action id="2" name="showObject" target="footnote" step="1" footnote="5" />
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="24" name="R24" label="Conditions d'affichage de la note de bas de page 6">
+			<Conditions value="!#21 || !defined(#66) || #66 &lt;= 0">
+				<Connector type="any">
+					<Condition operand="gridOK" operator="isFalse" />
+					<Condition operand="nbForfait4MapaNational" operator="blank" />
+					<Condition operand="nbForfait4MapaNational" operator="&lt;=" expression="0" />
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="hideObject" target="footnote" step="0" footnote="6" />
+				<Action id="2" name="hideObject" target="footnote" step="1" footnote="6" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="showObject" target="footnote" step="0" footnote="6" />
+				<Action id="2" name="showObject" target="footnote" step="1" footnote="6" />
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="25" name="R25" label="Conditions d'affichage de la note de bas de page 7">
+			<Conditions value="!#21 || !defined(#68) || #68 &lt;= 0">
+				<Connector type="any">
+					<Condition operand="gridOK" operator="isFalse" />
+					<Condition operand="nbForfait3MapaNational" operator="blank" />
+					<Condition operand="nbForfait3MapaNational" operator="&lt;=" expression="0" />
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="hideObject" target="footnote" step="0" footnote="7" />
+				<Action id="2" name="hideObject" target="footnote" step="1" footnote="7" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="showObject" target="footnote" step="0" footnote="7" />
+				<Action id="2" name="showObject" target="footnote" step="1" footnote="7" />
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="26" name="R26" label="Conditions d'affichage de la note de bas de page 8">
+			<Conditions value="!#21 || !defined(#70) || #70 &lt;= 0">
+				<Connector type="any">
+					<Condition operand="gridOK" operator="isFalse" />
+					<Condition operand="nbForfait2MapaNational" operator="blank" />
+					<Condition operand="nbForfait2MapaNational" operator="&lt;=" expression="0" />
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="hideObject" target="footnote" step="0" footnote="8" />
+				<Action id="2" name="hideObject" target="footnote" step="1" footnote="8" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="showObject" target="footnote" step="0" footnote="8" />
+				<Action id="2" name="showObject" target="footnote" step="1" footnote="8" />
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="27" name="R27" label="Conditions d'affichage de la note de bas de page 9">
+			<Conditions value="!#21 || !defined(#72) || #72 &lt;= 0">
+				<Connector type="any">
+					<Condition operand="gridOK" operator="isFalse" />
+					<Condition operand="nbForfait1MapaNational" operator="blank" />
+					<Condition operand="nbForfait1MapaNational" operator="&lt;=" expression="0" />
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="hideObject" target="footnote" step="0" footnote="9" />
+				<Action id="2" name="hideObject" target="footnote" step="1" footnote="9" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="showObject" target="footnote" step="0" footnote="9" />
+				<Action id="2" name="showObject" target="footnote" step="1" footnote="9" />
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="28" name="R28" label="Conditions d'affichage de la note de bas de page 10">
+			<Conditions value="#21 &amp;&amp; defined(#73) &amp;&amp; #73 > 0 &amp;&amp; ((defined(#60) &amp;&amp; #60 > 0) || (defined(#62) &amp;&amp; #62 > 0) || (defined(#64) &amp;&amp; #64 > 0) || (defined(#66) &amp;&amp; #66 > 0) || (defined(#68) &amp;&amp; #68 > 0) || (defined(#70) &amp;&amp; #70 > 0) || (defined(#72) &amp;&amp; #72 > 0))">
+				<Connector type="all">
+					<Condition operand="gridOK" operator="isTrue" />
+					<Condition operand="nbComplementMapaNational" operator="present" />
+					<Condition operand="nbComplementMapaNational" operator=">" expression="0" />
+					<Connector type="any">
+						<Connector type="all">
+							<Condition operand="nbForfait7MapaNational" operator="present" />
+							<Condition operand="nbForfait7MapaNational" operator=">" expression="0" />
+						</Connector>
+						<Connector type="all">
+							<Condition operand="nbForfait6MapaNational" operator="present" />
+							<Condition operand="nbForfait6MapaNational" operator=">" expression="0" />
+						</Connector>
+						<Connector type="all">
+							<Condition operand="nbForfait5MapaNational" operator="present" />
+							<Condition operand="nbForfait5MapaNational" operator=">" expression="0" />
+						</Connector>
+						<Connector type="all">
+							<Condition operand="nbForfait4MapaNational" operator="present" />
+							<Condition operand="nbForfait4MapaNational" operator=">" expression="0" />
+						</Connector>
+						<Connector type="all">
+							<Condition operand="nbForfait3MapaNational" operator="present" />
+							<Condition operand="nbForfait3MapaNational" operator=">" expression="0" />
+						</Connector>
+						<Connector type="all">
+							<Condition operand="nbForfait2MapaNational" operator="present" />
+							<Condition operand="nbForfait2MapaNational" operator=">" expression="0" />
+						</Connector>
+						<Connector type="all">
+							<Condition operand="nbForfait1MapaNational" operator="present" />
+							<Condition operand="nbForfait1MapaNational" operator=">" expression="0" />
+						</Connector>
+					</Connector>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="showObject" target="footnote" step="0" footnote="10" />
+				<Action id="2" name="showObject" target="footnote" step="1" footnote="10" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="hideObject" target="footnote" step="0" footnote="10" />
+				<Action id="2" name="hideObject" target="footnote" step="1" footnote="10" />
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="29" name="R29" label="Conditions d'affichage de la note de bas de page 11">
+			<Conditions value="#21 &amp;&amp; defined(#73) &amp;&amp; #73 > 0 &amp;&amp; ((!defined(#60) || #60 = 0) &amp;&amp; (!defined(#62) || #62 = 0) &amp;&amp; (!defined(#64) || #64 = 0) &amp;&amp; (!defined(#66) || #66 = 0) &amp;&amp; (!defined(#68) || #68 = 0) &amp;&amp; (!defined(#70) || #70 = 0) &amp;&amp; (!defined(#72) || #72 = 0))">
+				<Connector type="all">
+					<Condition operand="gridOK" operator="isTrue" />
+					<Condition operand="nbComplementMapaNational" operator="present" />
+					<Condition operand="nbComplementMapaNational" operator=">" expression="0" />
+					<Connector type="all">
+						<Connector type="any">
+							<Condition operand="nbForfait7MapaNational" operator="blank" />
+							<Condition operand="nbForfait7MapaNational" operator="=" expression="0" />
+						</Connector>
+						<Connector type="any">
+							<Condition operand="nbForfait6MapaNational" operator="blank" />
+							<Condition operand="nbForfait6MapaNational" operator="=" expression="0" />
+						</Connector>
+						<Connector type="any">
+							<Condition operand="nbForfait5MapaNational" operator="blank" />
+							<Condition operand="nbForfait5MapaNational" operator="=" expression="0" />
+						</Connector>
+						<Connector type="any">
+							<Condition operand="nbForfait4MapaNational" operator="blank" />
+							<Condition operand="nbForfait4MapaNational" operator="=" expression="0" />
+						</Connector>
+						<Connector type="any">
+							<Condition operand="nbForfait3MapaNational" operator="blank" />
+							<Condition operand="nbForfait3MapaNational" operator="=" expression="0" />
+						</Connector>
+						<Connector type="any">
+							<Condition operand="nbForfait2MapaNational" operator="blank" />
+							<Condition operand="nbForfait2MapaNational" operator="=" expression="0" />
+						</Connector>
+						<Connector type="any">
+							<Condition operand="nbForfait1MapaNational" operator="blank" />
+							<Condition operand="nbForfait1MapaNational" operator="=" expression="0" />
+						</Connector>
+					</Connector>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="showObject" target="footnote" step="0" footnote="11" />
+				<Action id="2" name="showObject" target="footnote" step="1" footnote="11" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="hideObject" target="footnote" step="0" footnote="11" />
+				<Action id="2" name="hideObject" target="footnote" step="1" footnote="11" />
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="30" name="R29" label="Conditions d'affichage de la note de bas de page 12">
+			<Conditions value="!#21 || !defined(#19) || !#19 || #17 &lt;= 0">
+				<Connector type="any">
+					<Condition operand="gridOK" operator="isFalse" />
+					<Condition operand="AvisEuropeen" operator="blank" />
+					<Condition operand="AvisEuropeen" operator="isFalse" />
+					<Condition operand="AvisEuropeenUP" operator="&lt;=" expression="0" />
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="hideObject" target="footnote" step="0" footnote="12" />
+				<Action id="2" name="hideObject" target="footnote" step="1" footnote="12" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="showObject" target="footnote" step="0" footnote="12" />
+				<Action id="2" name="showObject" target="footnote" step="1" footnote="12" />
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="31" name="R30" label="Conditions d'affichage de la note de bas de page 13">
+			<Conditions value="!#21 || !defined(#80) || #80 &lt;= 0">
+				<Connector type="any">
+					<Condition operand="gridOK" operator="isFalse" />
+					<Condition operand="nbForfait7Europeen" operator="blank" />
+					<Condition operand="nbForfait7Europeen" operator="&lt;=" expression="0" />
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="hideObject" target="footnote" step="0" footnote="13" />
+				<Action id="2" name="hideObject" target="footnote" step="1" footnote="13" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="showObject" target="footnote" step="0" footnote="13" />
+				<Action id="2" name="showObject" target="footnote" step="1" footnote="13" />
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="32" name="R31" label="Conditions d'affichage de la note de bas de page 14">
+			<Conditions value="!#21 || !defined(#82) || #82 &lt;= 0">
+				<Connector type="any">
+					<Condition operand="gridOK" operator="isFalse" />
+					<Condition operand="nbForfait6Europeen" operator="blank" />
+					<Condition operand="nbForfait6Europeen" operator="&lt;=" expression="0" />
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="hideObject" target="footnote" step="0" footnote="14" />
+				<Action id="2" name="hideObject" target="footnote" step="1" footnote="14" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="showObject" target="footnote" step="0" footnote="14" />
+				<Action id="2" name="showObject" target="footnote" step="1" footnote="14" />
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="33" name="R32" label="Conditions d'affichage de la note de bas de page 15">
+			<Conditions value="!#21 || !defined(#84) || #84 &lt;= 0">
+				<Connector type="any">
+					<Condition operand="gridOK" operator="isFalse" />
+					<Condition operand="nbForfait5Europeen" operator="blank" />
+					<Condition operand="nbForfait5Europeen" operator="&lt;=" expression="0" />
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="hideObject" target="footnote" step="0" footnote="15" />
+				<Action id="2" name="hideObject" target="footnote" step="1" footnote="15" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="showObject" target="footnote" step="0" footnote="15" />
+				<Action id="2" name="showObject" target="footnote" step="1" footnote="15" />
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="34" name="R33" label="Conditions d'affichage de la note de bas de page 16">
+			<Conditions value="!#21 || !defined(#86) || #86 &lt;= 0">
+				<Connector type="any">
+					<Condition operand="gridOK" operator="isFalse" />
+					<Condition operand="nbForfait4Europeen" operator="blank" />
+					<Condition operand="nbForfait4Europeen" operator="&lt;=" expression="0" />
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="hideObject" target="footnote" step="0" footnote="16" />
+				<Action id="2" name="hideObject" target="footnote" step="1" footnote="16" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="showObject" target="footnote" step="0" footnote="16" />
+				<Action id="2" name="showObject" target="footnote" step="1" footnote="16" />
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="35" name="R34" label="Conditions d'affichage de la note de bas de page 17">
+			<Conditions value="!#21 || !defined(#88) || #88 &lt;= 0">
+				<Connector type="any">
+					<Condition operand="gridOK" operator="isFalse" />
+					<Condition operand="nbForfait3Europeen" operator="blank" />
+					<Condition operand="nbForfait3Europeen" operator="&lt;=" expression="0" />
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="hideObject" target="footnote" step="0" footnote="17" />
+				<Action id="2" name="hideObject" target="footnote" step="1" footnote="17" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="showObject" target="footnote" step="0" footnote="17" />
+				<Action id="2" name="showObject" target="footnote" step="1" footnote="17" />
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="36" name="R35" label="Conditions d'affichage de la note de bas de page 18">
+			<Conditions value="!#21 || !defined(#90) || #90 &lt;= 0">
+				<Connector type="any">
+					<Condition operand="gridOK" operator="isFalse" />
+					<Condition operand="nbForfait2Europeen" operator="blank" />
+					<Condition operand="nbForfait2Europeen" operator="&lt;=" expression="0" />
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="hideObject" target="footnote" step="0" footnote="18" />
+				<Action id="2" name="hideObject" target="footnote" step="1" footnote="18" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="showObject" target="footnote" step="0" footnote="18" />
+				<Action id="2" name="showObject" target="footnote" step="1" footnote="18" />
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="37" name="R36" label="Conditions d'affichage de la note de bas de page 19">
+			<Conditions value="!#21 || !defined(#92) || #92 &lt;= 0">
+				<Connector type="any">
+					<Condition operand="gridOK" operator="isFalse" />
+					<Condition operand="nbForfait1Europeen" operator="blank" />
+					<Condition operand="nbForfait1Europeen" operator="&lt;=" expression="0" />
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="hideObject" target="footnote" step="0" footnote="19" />
+				<Action id="2" name="hideObject" target="footnote" step="1" footnote="19" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="showObject" target="footnote" step="0" footnote="19" />
+				<Action id="2" name="showObject" target="footnote" step="1" footnote="19" />
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="38" name="R37" label="Conditions d'affichage de la note de bas de page 20">
+			<Conditions value="#21 &amp;&amp; defined(#93) &amp;&amp; #93 > 0 &amp;&amp; ((defined(#80) &amp;&amp; #80 > 0) || (defined(#82) &amp;&amp; #82 > 0) || (defined(#84) &amp;&amp; #84 > 0) || (defined(#86) &amp;&amp; #86 > 0) || (defined(#88) &amp;&amp; #88 > 0) || (defined(#90) &amp;&amp; #90 > 0) || (defined(#92) &amp;&amp; #92 > 0))">
+				<Connector type="all">
+					<Condition operand="gridOK" operator="isTrue" />
+					<Condition operand="nbComplementEuropeen" operator="present" />
+					<Condition operand="nbComplementEuropeen" operator=">" expression="0" />
+					<Connector type="any">
+						<Connector type="all">
+							<Condition operand="nbForfait7Europeen" operator="present" />
+							<Condition operand="nbForfait7Europeen" operator=">" expression="0" />
+						</Connector>
+						<Connector type="all">
+							<Condition operand="nbForfait6Europeen" operator="present" />
+							<Condition operand="nbForfait6Europeen" operator=">" expression="0" />
+						</Connector>
+						<Connector type="all">
+							<Condition operand="nbForfait5Europeen" operator="present" />
+							<Condition operand="nbForfait5Europeen" operator=">" expression="0" />
+						</Connector>
+						<Connector type="all">
+							<Condition operand="nbForfait4Europeen" operator="present" />
+							<Condition operand="nbForfait4Europeen" operator=">" expression="0" />
+						</Connector>
+						<Connector type="all">
+							<Condition operand="nbForfait3Europeen" operator="present" />
+							<Condition operand="nbForfait3Europeen" operator=">" expression="0" />
+						</Connector>
+						<Connector type="all">
+							<Condition operand="nbForfait2Europeen" operator="present" />
+							<Condition operand="nbForfait2Europeen" operator=">" expression="0" />
+						</Connector>
+						<Connector type="all">
+							<Condition operand="nbForfait1Europeen" operator="present" />
+							<Condition operand="nbForfait1Europeen" operator=">" expression="0" />
+						</Connector>
+					</Connector>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="showObject" target="footnote" step="0" footnote="20" />
+				<Action id="2" name="showObject" target="footnote" step="1" footnote="20" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="hideObject" target="footnote" step="0" footnote="20" />
+				<Action id="2" name="hideObject" target="footnote" step="1" footnote="20" />
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="39" name="R39" label="Conditions d'affichage de la note de bas de page 21">
+			<Conditions value="#21 &amp;&amp; defined(#93) &amp;&amp; #93 > 0 &amp;&amp; ((!defined(#80) || #80 = 0) &amp;&amp; (!defined(#82) || #82 = 0) &amp;&amp; (!defined(#84) || #84 = 0) &amp;&amp; (!defined(#86) || #86 = 0) &amp;&amp; (!defined(#88) || #88 = 0) &amp;&amp; (!defined(#90) || #90 = 0) &amp;&amp; (!defined(#92) || #92 = 0))">
+				<Connector type="all">
+					<Condition operand="gridOK" operator="isTrue" />
+					<Condition operand="nbComplementEuropeen" operator="present" />
+					<Condition operand="nbComplementEuropeen" operator=">" expression="0" />
+					<Connector type="all">
+						<Connector type="any">
+							<Condition operand="nbForfait7Europeen" operator="blank" />
+							<Condition operand="nbForfait7Europeen" operator="=" expression="0" />
+						</Connector>
+						<Connector type="any">
+							<Condition operand="nbForfait6Europeen" operator="blank" />
+							<Condition operand="nbForfait6Europeen" operator="=" expression="0" />
+						</Connector>
+						<Connector type="any">
+							<Condition operand="nbForfait5Europeen" operator="blank" />
+							<Condition operand="nbForfait5Europeen" operator="=" expression="0" />
+						</Connector>
+						<Connector type="any">
+							<Condition operand="nbForfait4Europeen" operator="blank" />
+							<Condition operand="nbForfait4Europeen" operator="=" expression="0" />
+						</Connector>
+						<Connector type="any">
+							<Condition operand="nbForfait3Europeen" operator="blank" />
+							<Condition operand="nbForfait3Europeen" operator="=" expression="0" />
+						</Connector>
+						<Connector type="any">
+							<Condition operand="nbForfait2Europeen" operator="blank" />
+							<Condition operand="nbForfait2Europeen" operator="=" expression="0" />
+						</Connector>
+						<Connector type="any">
+							<Condition operand="nbForfait1Europeen" operator="blank" />
+							<Condition operand="nbForfait1Europeen" operator="=" expression="0" />
+						</Connector>
+					</Connector>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="showObject" target="footnote" step="0" footnote="21" />
+				<Action id="2" name="showObject" target="footnote" step="1" footnote="21" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="hideObject" target="footnote" step="0" footnote="21" />
+				<Action id="2" name="hideObject" target="footnote" step="1" footnote="21" />
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="40" name="R38" label="Conditions d'affichage de la note de bas de page 22">
+			<Conditions value="!#21 || !defined(#105) || #105 &lt;= 0">
+				<Connector type="any">
+					<Condition operand="gridOK" operator="isFalse" />
+					<Condition operand="AvisPrixForfaitHT" operator="blank" />
+					<Condition operand="AvisPrixForfaitHT" operator="&lt;=" expression="0" />
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="hideObject" target="footnote" step="0" footnote="22" />
+				<Action id="2" name="hideObject" target="footnote" step="1" footnote="22" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="showObject" target="footnote" step="0" footnote="22" />
+				<Action id="2" name="showObject" target="footnote" step="1" footnote="22" />
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="41" name="R39" label="Conditions d'affichage de la note de bas de page 23">
+			<Conditions value="#21 &amp;&amp; defined(#106) &amp;&amp; #106 > 0">
+				<Connector type="all">
+					<Condition operand="gridOK" operator="isTrue" />
+					<Condition operand="pourcentRemise" operator="present" />
+					<Condition operand="pourcentRemise" operator=">" expression="0" />
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="showObject" target="footnote" step="0" footnote="23" />
+				<Action id="2" name="showObject" target="footnote" step="1" footnote="23" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="hideObject" target="footnote" step="0" footnote="23" />
+				<Action id="2" name="hideObject" target="footnote" step="1" footnote="23" />
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="42" name="R39" label="Conditions d'affichage de la note de bas de page 24">
+			<Conditions value="#21 &amp;&amp; (!defined(#106) || #106 &lt;= 0)">
+				<Connector type="all">
+					<Condition operand="gridOK" operator="isTrue" />
+					<Connector type="any">
+						<Condition operand="pourcentRemise" operator="blank" />
+						<Condition operand="pourcentRemise" operator="&lt;=" expression="0" />
+					</Connector>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="showObject" target="footnote" step="0" footnote="24" />
+				<Action id="2" name="showObject" target="footnote" step="1" footnote="24" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="hideObject" target="footnote" step="0" footnote="24" />
+				<Action id="2" name="hideObject" target="footnote" step="1" footnote="24" />
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="43" name="R61" label="Détermination s'il existe des MAPA">
+			<Conditions value="defined(#1) || defined(#2) || defined(#4) || defined(#5) || defined(#7) || defined(#8) || defined(#10) || defined(#11) || defined(#13) || defined(#14)">
+				<Connector type="any">
+					<Condition operand="nbAvisInitiauxMapa" operator="present" />
+					<Condition operand="nbAvisInitiauxNational" operator="present" />
+					<Condition operand="nbAvisResultatsMapa" operator="present" />
+					<Condition operand="nbAvisResultatsNational" operator="present" />
+					<Condition operand="nbAvisIntentionConclureMapa" operator="present" />
+					<Condition operand="nbAvisIntentionConclureNational" operator="present" />
+					<Condition operand="nbAvisRectificatifsMapa" operator="present" />
+					<Condition operand="nbAvisRectificatifsNational" operator="present" />
+					<Condition operand="nbAvisAnnulationMapa" operator="present" />
+					<Condition operand="nbAvisAnnulationNational" operator="present" />
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="setAttribute" target="content" data="18" value="true" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="setAttribute" target="content" data="18" value="false" />
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="44" name="R62" label="Détermination s'il existe des avis européens">
+			<Conditions value="defined(#3) || defined(#6) || defined(#9) || defined(#12) || defined(#15)">
+				<Connector type="any">
+					<Condition operand="nbAvisInitiauxEuropeen" operator="present" />
+					<Condition operand="nbAvisResultatsEuropeen" operator="present" />
+					<Condition operand="nbAvisIntentionConclureEuropeen" operator="present" />
+					<Condition operand="nbAvisRectificatifsEuropeen" operator="present" />
+					<Condition operand="nbAvisAnnulationEuropeen" operator="present" />
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="setAttribute" target="content" data="19" value="true" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="setAttribute" target="content" data="19" value="false" />
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="45" name="R63" label="Détermination pourcentage de remise">
+			<Conditions value="defined(#105) &amp;&amp; defined(#102) &amp;&amp; #102 > 0">
+				<Connector type="all">
+					<Condition operand="AvisPrixForfaitHT" operator="present" />
+					<Condition operand="AvisPrixNormalHT" operator="present" />
+					<Condition operand="AvisPrixNormalHT" operator=">" expression="0" />
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="setAttribute" target="content" data="106" value="((#102 - #105) / #102) * 100" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="setAttribute" target="content" data="106" value="0" />
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="46" name="R64" label="Détermination si saisie Ok">
+			<Conditions value="((!defined(#1) || #1 >= 0) &amp;&amp; (!defined(#2) || #2 >= 0) &amp;&amp; (!defined(#3) || #3 >= 0) &amp;&amp; (!defined(#4) || #4 >= 0) &amp;&amp; (!defined(#5) || #5 >= 0) &amp;&amp; (!defined(#6) || #6 >= 0) &amp;&amp; (!defined(#7) || #7 >= 0) &amp;&amp; (!defined(#8) || #8 >= 0) &amp;&amp; (!defined(#9) || #9 >= 0) &amp;&amp; (!defined(#10) || #10 >= 0) &amp;&amp; (!defined(#11) || #11 >= 0) &amp;&amp; (!defined(#12) || #12 >= 0) &amp;&amp; (!defined(#13) || #13 >= 0) &amp;&amp; (!defined(#14) || #14 >= 0) &amp;&amp; (!defined(#15) || #15 >= 0)) &amp;&amp; ((defined(#18) &amp;&amp; #18 &amp;&amp; #16 > 0) || (defined(#19) &amp;&amp; #19 &amp;&amp; #17 > 0))">
+				<Connector type="all">
+					<Connector type="all">
+						<Connector type="any">
+							<Condition operand="nbAvisInitiauxMapa" operator="blank" />
+							<Condition operand="nbAvisInitiauxMapa" operator=">=" expression="0" />
+						</Connector>
+						<Connector type="any">
+							<Condition operand="nbAvisInitiauxNational" operator="blank" />
+							<Condition operand="nbAvisInitiauxNational" operator=">=" expression="0" />
+						</Connector>
+						<Connector type="any">
+							<Condition operand="nbAvisInitiauxEuropeen" operator="blank" />
+							<Condition operand="nbAvisInitiauxEuropeen" operator=">=" expression="0" />
+						</Connector>
+						<Connector type="any">
+							<Condition operand="nbAvisResultatsMapa" operator="blank" />
+							<Condition operand="nbAvisResultatsMapa" operator=">=" expression="0" />
+						</Connector>
+						<Connector type="any">
+							<Condition operand="nbAvisResultatsNational" operator="blank" />
+							<Condition operand="nbAvisResultatsNational" operator=">=" expression="0" />
+						</Connector>
+						<Connector type="any">
+							<Condition operand="nbAvisResultatsEuropeen" operator="blank" />
+							<Condition operand="nbAvisResultatsEuropeen" operator=">=" expression="0" />
+						</Connector>
+						<Connector type="any">
+							<Condition operand="nbAvisIntentionConclureMapa" operator="blank" />
+							<Condition operand="nbAvisIntentionConclureMapa" operator=">=" expression="0" />
+						</Connector>
+						<Connector type="any">
+							<Condition operand="nbAvisIntentionConclureNational" operator="blank" />
+							<Condition operand="nbAvisIntentionConclureNational" operator=">=" expression="0" />
+						</Connector>
+						<Connector type="any">
+							<Condition operand="nbAvisIntentionConclureEuropeen" operator="blank" />
+							<Condition operand="nbAvisIntentionConclureEuropeen" operator=">=" expression="0" />
+						</Connector>
+						<Connector type="any">
+							<Condition operand="nbAvisRectificatifsMapa" operator="blank" />
+							<Condition operand="nbAvisRectificatifsMapa" operator=">=" expression="0" />
+						</Connector>
+						<Connector type="any">
+							<Condition operand="nbAvisRectificatifsNational" operator="blank" />
+							<Condition operand="nbAvisRectificatifsNational" operator=">=" expression="0" />
+						</Connector>
+						<Connector type="any">
+							<Condition operand="nbAvisRectificatifsEuropeen" operator="blank" />
+							<Condition operand="nbAvisRectificatifsEuropeen" operator=">=" expression="0" />
+						</Connector>
+						<Connector type="any">
+							<Condition operand="nbAvisAnnulationMapa" operator="blank" />
+							<Condition operand="nbAvisAnnulationMapa" operator=">=" expression="0" />
+						</Connector>
+						<Connector type="any">
+							<Condition operand="nbAvisAnnulationNational" operator="blank" />
+							<Condition operand="nbAvisAnnulationNational" operator=">=" expression="0" />
+						</Connector>
+						<Connector type="any">
+							<Condition operand="nbAvisAnnulationEuropeen" operator="blank" />
+							<Condition operand="nbAvisAnnulationEuropeen" operator=">=" expression="0" />
+						</Connector>
+					</Connector>
+					<Connector type="any">
+						<Connector type="all">
+							<Condition operand="AvisMapaNational" operator="present" />
+							<Condition operand="AvisMapaNational" operator="isTrue" />
+							<Condition operand="AvisMapaNationalUP" operator=">" expression="0" />
+						</Connector>
+						<Connector type="all">
+							<Condition operand="AvisEuropeen" operator="present" />
+							<Condition operand="AvisEuropeen" operator="isTrue" />
+							<Condition operand="AvisEuropeenUP" operator=">" expression="0" />
+						</Connector>
+					</Connector>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="setAttribute" target="content" data="21" value="true" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="setAttribute" target="content" data="21" value="false" />
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="47" name="R65" label="Conditions d'affichage de la note de bas de page 25">
+			<Conditions value="#21">
+				<Condition operand="gridOK" operator="isTrue" />
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="showObject" target="footnote" step="0" footnote="25" />
+				<Action id="2" name="showObject" target="footnote" step="1" footnote="25" />
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="hideObject" target="footnote" step="0" footnote="25" />
+				<Action id="2" name="hideObject" target="footnote" step="1" footnote="25" />
+			</ElseActions>
+		</BusinessRule>
+	</BusinessRules>
+</Simulator>

@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="fr" data-fr-scheme="system">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#000091">
+  <title>Avec l'électrique, changez de classe — Portail simulateurs</title>
+  <meta name="description" content="Les économies de carburant et d'entretien d'un véhicule électrique dégagent une capacité d'emprunt supplémentaire — à mensualité équivalente, vous pouvez viser un véhicule de gamme supérieure.">
+
+  <link rel="apple-touch-icon" href="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.14.4/dist/favicon/apple-touch-icon.png">
+  <link rel="icon" href="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.14.4/dist/favicon/favicon.svg" type="image/svg+xml">
+  <link rel="shortcut icon" href="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.14.4/dist/favicon/favicon.ico" type="image/x-icon">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.14.4/dist/dsfr.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.14.4/dist/utility/utility.min.css">
+
+  <link rel="stylesheet" href="/shared/portal-bar.css">
+  <script src="/shared/portal-bar.js" defer></script>
+
+  <link rel="stylesheet" href="/shared/business-modal.css">
+
+  <style>
+    main { padding-top: var(--portal-bar-height, 0); }
+
+    /* Sections de paramètres */
+    .cdc-section {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-left: 4px solid #6a6af4;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .cdc-section__title {
+      margin: 0 0 .25rem;
+      font-size: 1rem;
+      color: #000091;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+    .cdc-section__hint {
+      margin: 0 0 1rem;
+      font-size: .8125rem;
+      color: #666;
+    }
+
+    /* Sliders */
+    .cdc-slider { margin-bottom: 1.25rem; }
+    .cdc-slider:last-child { margin-bottom: 0; }
+    .cdc-slider__head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: .5rem;
+      margin-bottom: .35rem;
+    }
+    .cdc-slider__label {
+      font-size: .9375rem;
+      color: #161616;
+      font-weight: 500;
+    }
+    .cdc-slider__value {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: #000091;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .cdc-slider__hint {
+      font-size: .75rem;
+      color: #666;
+      margin-bottom: .35rem;
+      font-style: italic;
+    }
+    .cdc-slider input[type="range"] {
+      width: 100%;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 6px;
+      background: #e5e5e5;
+      border-radius: 3px;
+      outline: none;
+      cursor: pointer;
+    }
+    .cdc-slider input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: #000091;
+      border: 3px solid #fff;
+      box-shadow: 0 0 0 1px #000091;
+      cursor: grab;
+    }
+    .cdc-slider input[type="range"]::-moz-range-thumb {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: #000091;
+      border: 3px solid #fff;
+      box-shadow: 0 0 0 1px #000091;
+      cursor: grab;
+    }
+    .cdc-slider input[type="range"]:focus-visible {
+      outline: 2px solid #0a76f6;
+      outline-offset: 4px;
+    }
+    .cdc-slider__bounds {
+      display: flex;
+      justify-content: space-between;
+      font-size: .75rem;
+      color: #999;
+      margin-top: .25rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Bloc résultats hero */
+    .cdc-hero {
+      background: linear-gradient(135deg, #000091 0%, #1212ff 100%);
+      color: #fff;
+      padding: 1.75rem 1.75rem;
+      margin-bottom: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .cdc-hero::before {
+      content: "";
+      position: absolute;
+      top: -50px; right: -50px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(255,208,90,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cdc-hero__label {
+      font-size: .75rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      opacity: .8;
+      margin: 0 0 .35rem;
+      position: relative;
+      z-index: 1;
+    }
+    .cdc-hero__value {
+      font-size: clamp(2rem, 6vw, 3.25rem);
+      font-weight: 800;
+      line-height: 1.05;
+      font-variant-numeric: tabular-nums;
+      margin: 0 0 .35rem;
+      position: relative;
+      z-index: 1;
+    }
+    .cdc-hero__sub {
+      font-size: .9375rem;
+      opacity: .9;
+      line-height: 1.5;
+      margin: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Décomposition mensuelle */
+    .cdc-breakdown {
+      background: #f5f5fe;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .cdc-breakdown__title {
+      font-size: .75rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #000091;
+      font-weight: 700;
+      margin: 0 0 1rem;
+    }
+    .cdc-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: .625rem 0;
+      border-bottom: 1px solid #e5e5e5;
+      gap: 1rem;
+    }
+    .cdc-row:last-child { border-bottom: none; }
+    .cdc-row__label {
+      font-size: .9375rem;
+      color: #3a3a3a;
+    }
+    .cdc-row__sub {
+      font-size: .75rem;
+      color: #666;
+      margin-top: .15rem;
+    }
+    .cdc-row__value {
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      font-size: 1.0625rem;
+    }
+    .cdc-row__value--pos { color: #1e7c52; }
+    .cdc-row__value--neg { color: #b34000; }
+    .cdc-row--total {
+      border-top: 2px solid #000091;
+      border-bottom: none;
+      padding-top: .875rem;
+      margin-top: .25rem;
+    }
+    .cdc-row--total .cdc-row__label { font-weight: 700; color: #161616; }
+    .cdc-row--total .cdc-row__value { font-size: 1.25rem; }
+
+    /* Barre de progression couverture */
+    .cdc-coverage {
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .cdc-coverage__title {
+      font-size: .75rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #000091;
+      font-weight: 700;
+      margin: 0 0 .75rem;
+    }
+    .cdc-bar {
+      height: 14px;
+      background: #f0f0f0;
+      border-radius: 7px;
+      overflow: hidden;
+      margin: .5rem 0 .25rem;
+    }
+    .cdc-bar__fill {
+      height: 100%;
+      background: linear-gradient(90deg, #1e7c52, #4faf7f);
+      transition: width .3s ease;
+    }
+    .cdc-bar__fill--warn {
+      background: linear-gradient(90deg, #b34000, #d97758);
+    }
+    .cdc-bar__legend {
+      display: flex;
+      justify-content: space-between;
+      font-size: .8125rem;
+      color: #666;
+    }
+
+    /* Paliers de surclassement (accordéons DSFR) */
+    .cdc-tiers-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: .5rem;
+      margin: 1rem 0 .5rem;
+    }
+    .cdc-tiers-head h3 { margin: 0; color: #000091; }
+    .cdc-tiers-intro {
+      font-size: .8125rem;
+      color: #666;
+      margin: 0 0 .75rem;
+    }
+    .cdc-tier-btn {
+      display: flex !important;
+      align-items: center;
+      gap: .75rem;
+      width: 100%;
+    }
+    .cdc-tier-btn__title {
+      flex: 1;
+      text-align: left;
+    }
+    .cdc-tier-btn__amount {
+      font-variant-numeric: tabular-nums;
+      color: #000091;
+      font-weight: 700;
+      font-size: .9375rem;
+      white-space: nowrap;
+    }
+    /* État actif : bordure jaune + étoile */
+    .cdc-tier--active > .fr-accordion__title > .fr-accordion__btn {
+      background: linear-gradient(90deg, #fff7e0 0%, #fff 70%);
+      box-shadow: inset 4px 0 0 #ffd05a;
+    }
+    .cdc-tier--active .cdc-tier-btn__star {
+      color: #b3236a;
+      font-weight: 700;
+      flex: 0 0 auto;
+    }
+    .cdc-tier__example {
+      font-size: .8125rem;
+      color: #666;
+      margin: .35rem 0 0;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <a class="fr-skiplink" href="#contenu">Contenu</a>
+
+  <header role="banner" class="fr-header">
+    <div class="fr-header__body">
+      <div class="fr-container">
+        <div class="fr-header__body-row">
+          <div class="fr-header__brand fr-enlarge-link">
+            <div class="fr-header__brand-top">
+              <div class="fr-header__logo">
+                <p class="fr-logo">République<br>Française</p>
+              </div>
+            </div>
+            <div class="fr-header__service">
+              <a href="/" title="Accueil — Portail simulateurs">
+                <p class="fr-header__service-title">Avec l'électrique, changez de classe</p>
+              </a>
+              <p class="fr-header__service-tagline">À mensualité équivalente, visez un véhicule de gamme supérieure</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main role="main" id="contenu">
+    <div class="fr-container fr-py-6w">
+
+      <div class="fr-alert fr-alert--info fr-alert--sm fr-mb-3w">
+        <p>Les coûts de carburant et d'entretien diminuent fortement avec un véhicule électrique. Sur la durée d'un crédit, ces économies dégagent une <strong>capacité d'emprunt supplémentaire</strong> — autrement dit, à mensualité totale équivalente à votre voiture actuelle, vous pouvez viser une catégorie au-dessus. Hypothèses indicatives, à valider par la DGEC.</p>
+      </div>
+
+      <div class="fr-grid-row fr-grid-row--gutters">
+
+        <!-- Colonne gauche : paramètres -->
+        <div class="fr-col-12 fr-col-lg-6">
+
+          <div class="cdc-section">
+            <h2 class="cdc-section__title">Votre voiture thermique actuelle</h2>
+            <p class="cdc-section__hint">Pour estimer vos coûts d'usage et la marge dégagée par l'électrification.</p>
+
+            <div class="cdc-slider">
+              <div class="cdc-slider__head">
+                <label class="cdc-slider__label" for="km">Kilométrage annuel</label>
+                <span class="cdc-slider__value"><span id="km-v">15 000</span> km</span>
+              </div>
+              <input type="range" id="km" min="5000" max="50000" step="1000" value="15000">
+              <div class="cdc-slider__bounds"><span>5 000</span><span>50 000</span></div>
+            </div>
+
+            <div class="cdc-slider">
+              <div class="cdc-slider__head">
+                <label class="cdc-slider__label" for="conso">Consommation thermique</label>
+                <span class="cdc-slider__value"><span id="conso-v">7,0</span> L/100 km</span>
+              </div>
+              <p class="cdc-slider__hint" id="conso-hint"></p>
+              <input type="range" id="conso" min="4" max="15" step="0.5" value="7">
+              <div class="cdc-slider__bounds"><span>4 L</span><span>15 L</span></div>
+            </div>
+
+            <div class="cdc-slider">
+              <div class="cdc-slider__head">
+                <label class="cdc-slider__label" for="fuel">Prix du carburant</label>
+                <span class="cdc-slider__value"><span id="fuel-v">1,85</span> €/L</span>
+              </div>
+              <input type="range" id="fuel" min="1.40" max="2.50" step="0.05" value="1.85">
+              <div class="cdc-slider__bounds"><span>1,40 €</span><span>2,50 €</span></div>
+            </div>
+          </div>
+
+          <div class="cdc-section">
+            <h2 class="cdc-section__title">Aides et financement</h2>
+            <p class="cdc-section__hint">Le bonus écologique et le crédit auto déterminent la mensualité supportable.</p>
+
+            <div class="cdc-slider">
+              <div class="cdc-slider__head">
+                <label class="cdc-slider__label" for="bonus">Bonus écologique</label>
+                <span class="cdc-slider__value"><span id="bonus-v">5 000</span> €</span>
+              </div>
+              <p class="cdc-slider__hint">Jusqu'à 7 000 € pour les ménages au RFR inférieur à 15 400 €.</p>
+              <input type="range" id="bonus" min="0" max="7000" step="500" value="5000">
+              <div class="cdc-slider__bounds"><span>0 €</span><span>7 000 €</span></div>
+            </div>
+
+            <div class="cdc-slider">
+              <div class="cdc-slider__head">
+                <label class="cdc-slider__label" for="months">Durée du crédit</label>
+                <span class="cdc-slider__value"><span id="months-v">60</span> mois</span>
+              </div>
+              <input type="range" id="months" min="24" max="84" step="12" value="60">
+              <div class="cdc-slider__bounds"><span>24 mois</span><span>84 mois</span></div>
+            </div>
+
+            <div class="cdc-slider">
+              <div class="cdc-slider__head">
+                <label class="cdc-slider__label" for="rate">Taux du crédit auto</label>
+                <span class="cdc-slider__value"><span id="rate-v">5,5</span> %</span>
+              </div>
+              <p class="cdc-slider__hint">Taux moyen crédit auto France 2024 : 5,0 à 6,5 %.</p>
+              <input type="range" id="rate" min="0" max="10" step="0.1" value="5.5">
+              <div class="cdc-slider__bounds"><span>0 %</span><span>10 %</span></div>
+            </div>
+          </div>
+
+          <details class="cdc-section">
+            <summary style="cursor:pointer;color:#000091;font-weight:600;">Paramètres avancés (consommation VE, entretien)</summary>
+            <div style="margin-top:1rem;">
+
+              <div class="cdc-slider">
+                <div class="cdc-slider__head">
+                  <label class="cdc-slider__label" for="evconso">Consommation du VE</label>
+                  <span class="cdc-slider__value"><span id="evconso-v">16,0</span> kWh/100 km</span>
+                </div>
+                <input type="range" id="evconso" min="10" max="25" step="0.5" value="16">
+                <div class="cdc-slider__bounds"><span>10 kWh</span><span>25 kWh</span></div>
+              </div>
+
+              <div class="cdc-slider">
+                <div class="cdc-slider__head">
+                  <label class="cdc-slider__label" for="elec">Prix de l'électricité</label>
+                  <span class="cdc-slider__value"><span id="elec-v">0,17</span> €/kWh</span>
+                </div>
+                <p class="cdc-slider__hint">Heures creuses ≈ 0,17 €/kWh · plein tarif ≈ 0,25 €/kWh.</p>
+                <input type="range" id="elec" min="0.10" max="0.35" step="0.01" value="0.17">
+                <div class="cdc-slider__bounds"><span>0,10 €</span><span>0,35 €</span></div>
+              </div>
+
+              <div class="cdc-slider">
+                <div class="cdc-slider__head">
+                  <label class="cdc-slider__label" for="maint">Économie d'entretien</label>
+                  <span class="cdc-slider__value"><span id="maint-v">40</span> €/mois</span>
+                </div>
+                <p class="cdc-slider__hint">Moyenne constatée : −40 % d'entretien (vidanges, distribution, embrayage évités).</p>
+                <input type="range" id="maint" min="0" max="100" step="5" value="40">
+                <div class="cdc-slider__bounds"><span>0 €</span><span>100 €</span></div>
+              </div>
+            </div>
+          </details>
+        </div>
+
+        <!-- Colonne droite : résultats -->
+        <div class="fr-col-12 fr-col-lg-6">
+
+          <!-- Hero : capital de surclassement -->
+          <div class="cdc-hero">
+            <p class="cdc-hero__label">Capital de surclassement</p>
+            <p class="cdc-hero__value"><span id="hero-cap">9 800</span> €</p>
+            <p class="cdc-hero__sub">
+              <strong id="hero-sub">À mensualité équivalente à votre voiture actuelle, vous pouvez viser un véhicule électrique jusqu'à 9 800 € plus cher.</strong>
+            </p>
+          </div>
+
+          <!-- Paliers de surclassement (accordéons) -->
+          <div class="cdc-tiers-head">
+            <h3 class="fr-h5">Ce que ce capital vous permet</h3>
+          </div>
+          <p class="cdc-tiers-intro">Le palier qui correspond à votre capital est ouvert ci-dessous. Modèles cités à titre indicatif, sans partenariat commercial.</p>
+
+          <div class="fr-accordions-group" id="tiers"></div>
+
+          <!-- Décomposition -->
+          <div class="cdc-breakdown fr-mt-3w">
+            <h3 class="cdc-breakdown__title">Décomposition mensuelle</h3>
+
+            <div class="cdc-row">
+              <div>
+                <div class="cdc-row__label">Économie de carburant</div>
+                <div class="cdc-row__sub" id="row-fuel-sub">175 € essence → 40 € électricité</div>
+              </div>
+              <div class="cdc-row__value cdc-row__value--pos">+<span id="row-fuel">135</span> €</div>
+            </div>
+
+            <div class="cdc-row">
+              <div class="cdc-row__label">Économie d'entretien</div>
+              <div class="cdc-row__value cdc-row__value--pos">+<span id="row-maint">40</span> €</div>
+            </div>
+
+            <div class="cdc-row cdc-row--total">
+              <div class="cdc-row__label">Total mensuel dégagé</div>
+              <div class="cdc-row__value cdc-row__value--pos">+<span id="row-total">175</span> €/mois</div>
+            </div>
+          </div>
+
+          <!-- Couverture -->
+          <div class="cdc-coverage">
+            <h3 class="cdc-coverage__title">Effet sur votre budget mensuel</h3>
+            <p class="fr-text--sm" style="margin:0 0 .25rem;">
+              Vos économies génèrent une capacité d'emprunt de
+              <strong id="cap-emprunt">9 800 €</strong> sur <span id="cap-mois">60 mois</span> à <span id="cap-taux">5,5 %</span>.
+              Ajoutez le bonus écologique (<strong id="cap-bonus">5 000 €</strong>) pour obtenir le capital total disponible.
+            </p>
+            <div class="cdc-bar" aria-hidden="true">
+              <div class="cdc-bar__fill" id="cap-fill" style="width: 100%;"></div>
+            </div>
+            <div class="cdc-bar__legend">
+              <span>Capital emprunté grâce aux économies</span>
+              <span><strong id="cap-vs-bonus">9 800 € + 5 000 € bonus</strong></span>
+            </div>
+          </div>
+
+          <p class="fr-text--xs fr-mt-2w" style="color:#666;font-style:italic;">
+            Calcul indicatif. La capacité d'emprunt suppose que la mensualité totale du couple <em>voiture + énergie + entretien</em> reste constante.
+            Les économies sont calculées sur les paramètres ci-contre. Les exemples de surclassement reposent sur les prix catalogue 2024–2025
+            et restent à actualiser. Voir « Méthode, données et arbitrages » pour le détail.
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="fr-footer" role="contentinfo">
+    <div class="fr-container">
+      <div class="fr-footer__body">
+        <div class="fr-footer__brand fr-enlarge-link">
+          <p class="fr-logo">République<br>Française</p>
+        </div>
+        <div class="fr-footer__content">
+          <p class="fr-footer__content-desc">
+            Simulateur de capacité d'emprunt liée aux économies d'usage du véhicule électrique.
+          </p>
+        </div>
+      </div>
+      <div class="fr-footer__bottom">
+        <ul class="fr-footer__bottom-list">
+          <li class="fr-footer__bottom-item">
+            <a class="fr-footer__bottom-link" href="https://legifrance.gouv.fr" target="_blank" rel="noopener">legifrance.gouv.fr</a>
+          </li>
+          <li class="fr-footer__bottom-item">
+            <a class="fr-footer__bottom-link" href="https://service-public.fr" target="_blank" rel="noopener">service-public.fr</a>
+          </li>
+          <li class="fr-footer__bottom-item">
+            <a class="fr-footer__bottom-link" href="https://gouvernement.fr" target="_blank" rel="noopener">gouvernement.fr</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <script type="application/json" id="business-modal-data">
+  {
+    "title": "Méthode, données et arbitrages — Avec l'électrique, changez de classe",
+    "audience": "DGEC / chargés de communication / acteurs métier",
+    "intro": "Outil pédagogique destiné au grand public. L'idée : matérialiser le 'capital de surclassement' que les économies d'usage du VE permettent de mobiliser via le crédit. Voici les hypothèses, sources et points à valider.",
+    "sections": {
+      "perimetre": [
+        "Cible : ménages envisageant le passage à l'électrique et hésitant sur la gamme accessible.",
+        "Périmètre : voiture particulière. Le poids lourd et l'utilitaire sont traités par d'autres simulateurs.",
+        { "q": "Élargir à un comparatif leasing social vs achat ?", "status": "open", "note": "Hors v1." }
+      ],
+      "arbitrages": [
+        { "q": "Logique inversée : le simulateur calcule le capital dégagé, l'utilisateur ne saisit pas le surcoût VE.", "status": "ok", "note": "Plus narratif que le proto initial." },
+        { "q": "Hypothèse forte : la mensualité du véhicule actuel reste un plafond. Le simulateur ne couvre pas les ménages qui souhaitent réduire leur budget auto.", "status": "open" },
+        { "q": "Exemples de modèles cités à titre indicatif — aucun partenariat commercial. À déplacer vers le système 'partner-offers' quand il sera opérationnel.", "status": "todo" },
+        { "q": "Wording institutionnel factuel — pas de jargon publicitaire ('vous méritez', 'offrez-vous', etc.).", "status": "ok" }
+      ],
+      "sources": [
+        { "q": "Prix catalogue VE / thermique mis à jour — actuellement saisis manuellement (2024–2025).", "status": "todo" },
+        { "q": "Taux moyen crédit auto Banque de France à actualiser trimestriellement.", "status": "open" },
+        { "q": "Barème bonus écologique à jour (5 000 € / 7 000 € modestes / 1 000 € prime conversion).", "status": "open" }
+      ],
+      "hypotheses": [
+        { "q": "Conso VE moyenne : 16 kWh/100 km (mix usage urbain/route).", "status": "ok" },
+        { "q": "Économie entretien estimée : 40 €/mois (−40 % constatés ADEME / études fleet).", "status": "ok" },
+        { "q": "Calcul de mensualité : formule classique du prêt amortissable à mensualité constante.", "status": "ok" },
+        { "q": "Le bonus écologique s'ajoute au capital de surclassement sans entrer dans le calcul d'emprunt (c'est une remise, pas un emprunt).", "status": "ok" }
+      ],
+      "attention": [
+        { "q": "Effet psychologique du 'surclassement' à manier avec prudence — éviter de pousser à la consommation.", "status": "open" },
+        { "q": "Cas du ménage qui ne change pas de voiture régulièrement : le calcul perd son sens si l'horizon est > 8 ans.", "status": "open" },
+        { "q": "Accessibilité des sliders : tester avec lecteur d'écran.", "status": "todo" }
+      ]
+    },
+    "updated": "2026-05-20"
+  }
+  </script>
+  <script src="/shared/business-modal.js" defer></script>
+
+  <script type="module"
+          src="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.14.4/dist/dsfr.module.min.js"></script>
+  <script type="text/javascript" nomodule
+          src="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.14.4/dist/dsfr.nomodule.min.js"></script>
+
+  <script>
+    (function () {
+      const $ = id => document.getElementById(id);
+
+      // Paliers de surclassement (capital total disponible = capacité d'emprunt + bonus)
+      const TIERS = [
+        {
+          min: 0, max: 3000,
+          title: "Améliorer l'équipement",
+          desc: "Vous restez dans la même catégorie qu'aujourd'hui, mais accédez à une finition supérieure ou à une autonomie un peu plus confortable.",
+          example: "Exemple indicatif : passer d'une finition entrée de gamme à une finition intermédiaire sur le même modèle."
+        },
+        {
+          min: 3000, max: 7000,
+          title: "Monter d'un demi-segment",
+          desc: "Vous accédez à un modèle légèrement supérieur ou à la version « grande autonomie » du même modèle.",
+          example: "Exemple indicatif : Renault 5 E-Tech → Peugeot e-208 GT, ou Renault 5 grande autonomie."
+        },
+        {
+          min: 7000, max: 14000,
+          title: "Monter d'un segment",
+          desc: "Vous passez à une catégorie au-dessus (citadine → compacte familiale, ou compacte → crossover compact).",
+          example: "Exemple indicatif : Peugeot e-208 → Peugeot e-3008, ou Renault 5 → Megane E-Tech longue autonomie."
+        },
+        {
+          min: 14000, max: 22000,
+          title: "Accéder à une berline grande autonomie ou un SUV familial",
+          desc: "Le capital dégagé permet d'envisager une berline électrique ou un SUV compact familial, avec une autonomie de 500 km et plus.",
+          example: "Exemple indicatif : Tesla Model 3, Renault Scenic E-Tech, Hyundai Ioniq 5, BMW i4."
+        },
+        {
+          min: 22000, max: 1000000,
+          title: "Accéder au haut de gamme",
+          desc: "Le capital permet d'envisager des modèles premium grande taille ou très grande autonomie.",
+          example: "Exemple indicatif : Tesla Model Y Long Range, BMW iX, Mercedes EQE, Audi Q6 e-tron."
+        }
+      ];
+
+      const inputs = ["km", "conso", "fuel", "bonus", "months", "rate", "evconso", "elec", "maint"]
+        .map(id => $(id));
+
+      function fmt(n, dec = 0) {
+        return new Intl.NumberFormat("fr-FR", {
+          minimumFractionDigits: dec, maximumFractionDigits: dec
+        }).format(n);
+      }
+      function fmtComma(n, dec = 1) {
+        return new Intl.NumberFormat("fr-FR", {
+          minimumFractionDigits: dec, maximumFractionDigits: dec
+        }).format(n);
+      }
+
+      function loanCapacity(monthly, annualRatePct, months) {
+        if (monthly <= 0 || months <= 0) return 0;
+        if (annualRatePct === 0) return monthly * months;
+        const r = annualRatePct / 100 / 12;
+        return (monthly * (1 - Math.pow(1 + r, -months))) / r;
+      }
+
+      function compute() {
+        const km = +$("km").value;
+        const conso = +$("conso").value;
+        const fuel = +$("fuel").value;
+        const bonus = +$("bonus").value;
+        const months = +$("months").value;
+        const rate = +$("rate").value;
+        const evconso = +$("evconso").value;
+        const elec = +$("elec").value;
+        const maint = +$("maint").value;
+
+        // Mises à jour des libellés
+        $("km-v").textContent = fmt(km);
+        $("conso-v").textContent = fmtComma(conso);
+        $("fuel-v").textContent = fmtComma(fuel, 2);
+        $("bonus-v").textContent = fmt(bonus);
+        $("months-v").textContent = fmt(months);
+        $("rate-v").textContent = fmtComma(rate, 1);
+        $("evconso-v").textContent = fmtComma(evconso);
+        $("elec-v").textContent = fmtComma(elec, 2);
+        $("maint-v").textContent = fmt(maint);
+
+        const fuelMonthly = (km / 100 * conso * fuel) / 12;
+        const elecMonthly = (km / 100 * evconso * elec) / 12;
+        const fuelSaving = Math.max(0, fuelMonthly - elecMonthly);
+        const totalSaving = fuelSaving + maint;
+
+        $("conso-hint").textContent = `Coût carburant ≈ ${fmt(fuelMonthly)} €/mois.`;
+
+        // Décomposition
+        $("row-fuel").textContent = fmt(fuelSaving);
+        $("row-fuel-sub").textContent = `${fmt(fuelMonthly)} €/mois carburant → ${fmt(elecMonthly)} €/mois électricité`;
+        $("row-maint").textContent = fmt(maint);
+        $("row-total").textContent = fmt(totalSaving);
+
+        // Capital
+        const borrow = loanCapacity(totalSaving, rate, months);
+        const capital = borrow + bonus;
+
+        $("hero-cap").textContent = fmt(capital);
+        $("hero-sub").textContent = capital > 0
+          ? `À mensualité totale équivalente à votre voiture actuelle, vous pouvez viser un véhicule électrique jusqu'à ${fmt(capital)} € plus cher.`
+          : `Avec vos paramètres actuels, les économies générées ne dégagent pas de capital additionnel.`;
+
+        $("cap-emprunt").textContent = fmt(borrow) + " €";
+        $("cap-mois").textContent = fmt(months) + " mois";
+        $("cap-taux").textContent = fmtComma(rate, 1) + " %";
+        $("cap-bonus").textContent = fmt(bonus) + " €";
+        $("cap-vs-bonus").textContent = `${fmt(borrow)} € + ${fmt(bonus)} € bonus`;
+
+        const max = Math.max(capital, 30000);
+        const pct = Math.min(100, (capital / max) * 100);
+        const fill = $("cap-fill");
+        fill.style.width = pct + "%";
+        fill.classList.toggle("cdc-bar__fill--warn", capital === 0);
+
+        // Paliers
+        renderTiers(capital);
+      }
+
+      let lastActiveIdx = null;
+      function renderTiers(capital) {
+        const activeIdx = TIERS.findIndex(t => capital >= t.min && capital < t.max);
+        // On ne reconstruit que si le palier actif change — pour préserver
+        // les ouvertures manuelles de l'utilisateur sur les autres accordéons.
+        if (activeIdx === lastActiveIdx) return;
+        lastActiveIdx = activeIdx;
+
+        const html = TIERS.map((t, i) => {
+          const active = i === activeIdx;
+          const range = t.max >= 1000000
+            ? `> ${fmt(t.min)} €`
+            : `${fmt(t.min)} – ${fmt(t.max)} €`;
+          return `
+            <section class="fr-accordion${active ? " cdc-tier--active" : ""}">
+              <h3 class="fr-accordion__title">
+                <button class="fr-accordion__btn cdc-tier-btn"
+                        aria-expanded="${active ? "true" : "false"}"
+                        aria-controls="cdc-tier-${i}"
+                        type="button">
+                  ${active ? '<span class="cdc-tier-btn__star" aria-hidden="true">★</span>' : ""}
+                  <span class="cdc-tier-btn__title">${t.title}</span>
+                  <span class="cdc-tier-btn__amount">${range}</span>
+                </button>
+              </h3>
+              <div class="fr-collapse${active ? " fr-collapse--expanded" : ""}" id="cdc-tier-${i}">
+                <p>${t.desc}</p>
+                <p class="cdc-tier__example">${t.example}</p>
+              </div>
+            </section>
+          `;
+        }).join("");
+        $("tiers").innerHTML = html;
+      }
+
+      inputs.forEach(i => i.addEventListener("input", compute));
+      compute();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Simulator xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../doc/Simulator.xsd" name="frais-locataire" label="Simulateur des frais de mise en location imputables au locataire" defaultView="particuliers" referer="https://www.service-public.fr/particuliers/vosdroits/R49129" dynamic="0" memo="0">
+	<Description><![CDATA[
+Ce simulateur vous permet de connaître la zone géographique dont dépend le logement concerné.
+
+Le résultat obtenu (zone très tendue, zone tendue, reste du territoire) détermine le prix maximum TTC par m2 de surface habitable [(*)^2(Définition de surface habitable)] qui peut être demandé au locataire pour rémunérer les services de l’agent immobilier lors de la mise en location <b>(hors état des lieux)</b> : visite du logement, constitution du dossier du locataire et rédaction du contrat de bail.
+	]]></Description>
+	<DataSet dateFormat="d/m/Y" decimalPoint="," moneySymbol="€" symbolPosition="after">
+		<Data id="1" name="commune" label="Code insee de la commune" type="text"></Data>
+		<Data id="2" name="frais" label="Frais mise en location pour le locataire" type="integer" source="1" index="'frais'"></Data>
+		<Data id="3" name="nomCommune" label="Nom de la commune" type="text" source="1" index="'commune'"></Data>
+	</DataSet>
+	<Steps>
+		<Step id="1" name="zonage" label="Zonage" template="pages:article.html.twig" output="normal" dynamic="1">
+			<Panels>
+				<Panel id="1" name="zonagePanel" label="">
+					<FieldSet id="1">
+						<Field position="1" data="1" usage="input" newline="0" label="Commune (nom ou code postal)" prompt="Saisir le nom de la ville ou son code postal" required="1" visibleRequired="0" colon="0" help="0" widget="geoAPILocalities">
+							<PreNote><![CDATA[
+
+							]]></PreNote>
+						</Field>
+					</FieldSet>
+					<BlockInfo id="2" name="blocResultats" label="">
+						<Chapter id="1" name="chapitreResultats" label="">
+							<Section id="1" name="sectionResultats0" label="">
+								<Content><![CDATA[
+#3 n’est pas en zone tendue
+
+le tarif maximum imputable au locataire est de 8 euros TTC par m2 de surface habitable [(*)^2(Définition de surface habitable)]
+
+Exemple :
+Pour un logement de 26,30 m2 de surface habitable, le montant demandé au locataire ne doit pas dépasser :
+26,30 x 8 = 210,40 euros TTC
+
+<u>Attention</u> : le montant demandé au locataire ne doit pas non plus dépasser le montant imputé au bailleur.
+								]]></Content>
+							</Section>
+							<Section id="2" name="sectionResultats1" label="">
+								<Content><![CDATA[
+#3 est en zone tendue
+
+le tarif maximum imputable au locataire est de 10 euros TTC par m2 de surface habitable [(*)^2(Définition de surface habitable)]
+
+Exemple :
+Pour un logement de 26,30 m2 de surface habitable, le montant demandé au locataire ne doit pas dépasser :
+26,30 x 10 = 263 euros TTC
+
+<u>Attention</u> : le montant demandé au locataire ne doit pas non plus dépasser le montant imputé au bailleur.
+								]]></Content>
+							</Section>
+							<Section id="3" name="sectionResultats2" label="">
+								<Content><![CDATA[
+#3 est en zone très tendue
+
+le tarif maximum imputable au locataire est de 12 euros TTC par m2 de surface habitable [(*)^2(Définition de surface habitable)]
+
+Exemple :
+Pour un logement de 26,30 m2 de surface habitable, le montant demandé au locataire ne doit pas dépasser :
+26,30 x 12 = 315,16 euros TTC
+
+<u>Attention</u> : le montant demandé au locataire ne doit pas non plus dépasser le montant imputé au bailleur.
+								]]></Content>
+							</Section>
+						</Chapter>
+					</BlockInfo>
+				</Panel>
+			</Panels>
+			<FootNotes position="beforeActions">
+				<FootNote id="1"><![CDATA[
+<h2>Pour toute explication, consulter la fiche pratique :</h2><ul><li><a target="_blank" rel="nofollow" href="https://www.service-public.fr/particuliers/vosdroits/F375" title="Accès à un logement privé : frais d'agence immobilière - Nouvelle fenêtre">Accès à un logement privé : frais d'agence immobilière</a></li></ul>
+				]]></FootNote>
+				<FootNote id="2"><![CDATA[
+(*) Surface habitable : surface au sol déduction faite des murs, cloisons, marches et cages d'escaliers, gaines, embrasures de portes et de fenêtres. Certains espaces sont exclus de la surface habitable : combles non aménagés, caves, sous-sol, remise, garages, terrasses, loggias, balcons, séchoirs extérieurs, vérandas, locaux communs, dépendances, espaces dont la hauteur est inférieure à 1,80 mètre.
+				]]></FootNote>
+			</FootNotes>
+		</Step>
+	</Steps>
+	<Sources>
+		<Source id="1" datasource="zonage-commune" label="Zonage commune" request="SELECT commune, zone, preavis, frais FROM zonageCommunes WHERE codeInsee = '%1$s'" returnType="assocArray" returnPath="0">
+			<Parameter type="columnValue" origin="data" name="insee" data="1"></Parameter>
+		</Source>
+	</Sources>
+	<BusinessRules>
+		<BusinessRule id="1" name="R1" label="R1">
+			<Conditions value="defined(#3) &amp;&amp; defined(#2)">
+				<Connector type="all">
+					<Condition operand="nomCommune" operator="present"></Condition>
+					<Condition operand="frais" operator="present"></Condition>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="showObject" target="blockinfo" step="1" panel="1" blockinfo="2"></Action>
+				<Action id="2" name="showObject" target="footnote" step="1" footnote="1"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action id="1" name="hideObject" target="blockinfo" step="1" panel="1" blockinfo="2"></Action>
+				<Action id="2" name="hideObject" target="footnote" step="1" footnote="1"></Action>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="2" name="R2" label="R2">
+			<Conditions value="defined(#3) &amp;&amp; defined(#2) &amp;&amp; #2 = 0">
+				<Connector type="all">
+					<Condition operand="nomCommune" operator="present"></Condition>
+					<Condition operand="frais" operator="present"></Condition>
+					<Condition operand="frais" operator="=" expression="0"></Condition>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="showObject" target="section" step="1" panel="1" blockinfo="2" chapter="1" section="1"></Action>
+				<Action id="2" name="hideObject" target="section" step="1" panel="1" blockinfo="2" chapter="1" section="2"></Action>
+				<Action id="3" name="hideObject" target="section" step="1" panel="1" blockinfo="2" chapter="1" section="3"></Action>
+			</IfActions>
+			<ElseActions>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="3" name="R3" label="R3">
+			<Conditions value="defined(#3) &amp;&amp; defined(#2) &amp;&amp; #2 = 1">
+				<Connector type="all">
+					<Condition operand="nomCommune" operator="present"></Condition>
+					<Condition operand="frais" operator="present"></Condition>
+					<Condition operand="frais" operator="=" expression="1"></Condition>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="showObject" target="section" step="1" panel="1" blockinfo="2" chapter="1" section="2"></Action>
+				<Action id="2" name="hideObject" target="section" step="1" panel="1" blockinfo="2" chapter="1" section="1"></Action>
+				<Action id="3" name="hideObject" target="section" step="1" panel="1" blockinfo="2" chapter="1" section="3"></Action>
+			</IfActions>
+			<ElseActions>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="4" name="R4" label="R4">
+			<Conditions value="defined(#3) &amp;&amp; defined(#2) &amp;&amp; #2 = 2">
+				<Connector type="all">
+					<Condition operand="nomCommune" operator="present"></Condition>
+					<Condition operand="frais" operator="present"></Condition>
+					<Condition operand="frais" operator="=" expression="2"></Condition>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action id="1" name="showObject" target="section" step="1" panel="1" blockinfo="2" chapter="1" section="3"></Action>
+				<Action id="2" name="hideObject" target="section" step="1" panel="1" blockinfo="2" chapter="1" section="1"></Action>
+				<Action id="3" name="hideObject" target="section" step="1" panel="1" blockinfo="2" chapter="1" section="2"></Action>
+			</IfActions>
+			<ElseActions>
+			</ElseActions>
+		</BusinessRule>
+	</BusinessRules>
+</Simulator>

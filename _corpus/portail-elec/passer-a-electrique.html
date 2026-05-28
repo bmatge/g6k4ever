@@ -1,0 +1,3596 @@
+<!DOCTYPE html>
+<html lang="fr" data-fr-scheme="system">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#000091">
+  <title>Passer à l'électrique — Aides et économies pour les particuliers (2026)</title>
+  <meta name="description" content="Estimez l'ensemble des aides mobilisables pour électrifier votre quotidien : mobilité, chauffage, rénovation, solaire — et l'économie annuelle attendue." />
+
+  <link rel="apple-touch-icon" href="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.14.4/dist/favicon/apple-touch-icon.png">
+  <link rel="icon" href="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.14.4/dist/favicon/favicon.svg" type="image/svg+xml">
+  <link rel="shortcut icon" href="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.14.4/dist/favicon/favicon.ico" type="image/x-icon">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.14.4/dist/dsfr.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.14.4/dist/utility/utility.min.css">
+  <link rel="stylesheet" href="/shared/portal-bar.css">
+  <link rel="stylesheet" href="/shared/business-modal.css">
+  <script src="/shared/portal-bar.js" defer></script>
+  <script src="/shared/business-modal.js" defer></script>
+  <style>
+    :root {
+      --pae-accent: #169B62;
+      --pae-warn: #B34000;
+      --pae-mob: #0063CB;
+      --pae-log: #B34000;
+      --pae-pv: #E4794A;
+    }
+    main { background: var(--background-default-grey); }
+
+    .form-card {
+      background: var(--background-default-grey);
+      border: 1px solid var(--border-default-grey);
+      padding: 1.5rem;
+    }
+    /* Empêche la grid DSFR d'étirer la col-droite à la hauteur de la col-gauche */
+    .pae-grid { align-items: flex-start; }
+    .form-card h2 {
+      font-size: 1.0625rem;
+      margin: 0 0 1.25rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid var(--border-default-grey);
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .form-card h2 .pae-pill {
+      font-size: 0.7rem; font-weight: 600;
+      padding: 0.1rem 0.5rem; border-radius: 999px;
+      background: var(--background-alt-blue-france);
+      color: var(--text-action-high-blue-france);
+    }
+    .form-card .fr-label,
+    .form-card label { font-weight: 500; }
+
+    .form-row { display: flex; gap: 0.75rem; margin-bottom: 0.9rem; flex-wrap: wrap; }
+    .form-row > div { flex: 1; min-width: 9rem; }
+
+    .slider-wrap { display: flex; align-items: center; gap: 1rem; }
+    .slider-wrap input[type=range] {
+      flex: 1; -webkit-appearance: none; appearance: none;
+      height: 4px; background: var(--border-default-grey); border-radius: 2px;
+    }
+    .slider-wrap input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--background-active-blue-france);
+      cursor: pointer; border: 2px solid #fff;
+      box-shadow: 0 1px 4px rgba(0,0,145,.3);
+    }
+    .slider-wrap input[type=range]::-moz-range-thumb {
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--background-active-blue-france); cursor: pointer; border: 2px solid #fff;
+    }
+    .slider-value {
+      min-width: 5rem; text-align: right; font-weight: 700;
+      color: var(--text-active-blue-france); font-variant-numeric: tabular-nums;
+    }
+
+    .radio-tiles { display: grid; gap: 0.4rem; }
+    .radio-tiles.cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .radio-tiles.cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .radio-tiles.cols-4 { grid-template-columns: repeat(4, 1fr); }
+    .radio-tile {
+      background: var(--background-default-grey);
+      border: 1px solid var(--border-default-grey);
+      padding: 0.7rem 0.5rem;
+      cursor: pointer; text-align: center;
+      transition: all .15s;
+      display: flex; flex-direction: column; justify-content: center; min-height: 3.6rem;
+      font: inherit;
+    }
+    .radio-tile:not(.active):hover {
+      background: var(--background-alt-grey);
+      border-color: var(--border-action-high-blue-france);
+    }
+    .radio-tile.active {
+      background: var(--background-active-blue-france);
+      border-color: var(--background-active-blue-france);
+      color: var(--text-inverted-blue-france);
+    }
+    .radio-tile.active .tile-sub { color: rgba(255,255,255,.85); }
+    .radio-tile .tile-main { font-weight: 700; font-size: 0.875rem; line-height: 1.2; }
+    .radio-tile .tile-sub { font-size: 0.72rem; color: var(--text-mention-grey); margin-top: 0.1rem; line-height: 1.15; }
+
+    .dpe-tiles { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.25rem; }
+    .dpe-tile {
+      padding: 0.55rem 0.2rem;
+      cursor: pointer; text-align: center; font-weight: 700;
+      border: 2px solid transparent; color: #fff;
+      transition: all .15s;
+    }
+    .dpe-tile[data-dpe="A"] { background: #319834; }
+    .dpe-tile[data-dpe="B"] { background: #58a14f; }
+    .dpe-tile[data-dpe="C"] { background: #c9d156; color: #333; }
+    .dpe-tile[data-dpe="D"] { background: #f4dd4c; color: #333; }
+    .dpe-tile[data-dpe="E"] { background: #f0a541; }
+    .dpe-tile[data-dpe="F"] { background: #d96534; }
+    .dpe-tile[data-dpe="G"] { background: #c12d2d; }
+    .dpe-tile { position: relative; transition: transform 0.12s; }
+    .dpe-tile.active {
+      outline: 3px solid #000091;
+      outline-offset: -1px;
+      box-shadow: inset 0 0 0 2px #fff;
+      transform: scale(1.08);
+      z-index: 1;
+    }
+
+    .helper {
+      font-size: 0.78rem; color: var(--text-mention-grey);
+      margin-top: 0.25rem; line-height: 1.35;
+    }
+    .helper code {
+      font-size: 0.78em; background: var(--background-alt-grey);
+      padding: 0.05em 0.3em; border-radius: 3px;
+    }
+
+    /* Colonne résultats — sticky désactivé en V1 (cassait la hauteur de la grid DSFR) */
+    .results-col { position: relative; }
+
+    .kpi-block {
+      background: var(--background-default-grey);
+      border: 1px solid var(--border-default-grey);
+      padding: 1.25rem; margin-bottom: 1rem;
+    }
+    .kpi-block.primary {
+      background: linear-gradient(135deg, #169B62 0%, #0a7a4a 100%);
+      color: #fff; border-color: transparent;
+    }
+    .kpi-block.primary .kpi-label,
+    .kpi-block.primary .kpi-hint { color: rgba(255,255,255,.85); }
+    .kpi-block.state {
+      background: var(--background-alt-blue-france);
+      border-color: var(--border-action-high-blue-france);
+    }
+    .kpi-block.actuel {
+      background: #fff8f3;
+      border-color: #f0c8a8;
+      border-left: 4px solid var(--pae-warn);
+    }
+    .actuel-split {
+      display: flex; gap: 0.4rem; flex-wrap: wrap;
+      margin-top: 0.75rem;
+    }
+    .actuel-split .split-pill {
+      font-size: 0.78rem;
+      padding: 0.2rem 0.55rem;
+      background: rgba(179, 64, 0, 0.08);
+      border-radius: 999px;
+      color: var(--pae-warn);
+    }
+    .actuel-split .split-pill.warn {
+      background: rgba(179, 64, 0, 0.18);
+      font-weight: 600;
+    }
+    .actuel-split .split-pill strong {
+      font-variant-numeric: tabular-nums;
+    }
+
+    .horizon-slider {
+      margin-top: 0.9rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.25);
+    }
+    .horizon-slider label {
+      font-size: 0.78rem;
+      color: rgba(255, 255, 255, 0.85);
+      display: block;
+      margin-bottom: 0.4rem;
+    }
+    .horizon-slider input[type=range] {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Bloc courbe d'amortissement */
+    .chart-block {
+      background: var(--background-default-grey);
+      border: 1px solid var(--border-default-grey);
+      padding: 1.25rem; margin-top: 1rem;
+    }
+    .chart-block h3 {
+      font-size: 1rem; margin: 0 0 0.4rem;
+    }
+    .chart-hint {
+      font-size: 0.8rem; color: var(--text-mention-grey);
+      margin: 0 0 0.75rem;
+    }
+    .chart-legend {
+      display: flex; gap: 1rem;
+      font-size: 0.78rem;
+      margin-bottom: 0.4rem;
+    }
+    .chart-legend .lg-actuel { color: var(--pae-warn); font-weight: 600; }
+    .chart-legend .lg-projet { color: var(--pae-accent); font-weight: 600; }
+    .amort-svg {
+      width: 100%; height: auto; display: block;
+      background: #fafbfc;
+      border: 1px solid var(--border-default-grey);
+    }
+    .chart-roi {
+      margin: 0.6rem 0 0;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-action-high-blue-france);
+      text-align: center;
+    }
+    .chart-roi.no-cross {
+      color: var(--text-mention-grey);
+      font-weight: 400;
+    }
+
+    /* Accordéons hypothèses */
+    .hypotheses-section {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: var(--background-alt-grey);
+      border: 1px solid var(--border-default-grey);
+    }
+    .hypotheses-section > h2 {
+      font-size: 1.125rem;
+      margin: 0 0 0.4rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .hypotheses-section > p {
+      font-size: 0.85rem;
+      color: var(--text-mention-grey);
+      margin: 0 0 1rem;
+    }
+    .hypo-grid {
+      display: grid; gap: 0.6rem;
+      grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    }
+    .hypo-field label {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--text-mention-grey);
+      margin-bottom: 0.2rem;
+    }
+    .hypo-field input {
+      width: 100%;
+      font-variant-numeric: tabular-nums;
+    }
+    .hypo-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .hypo-table th, .hypo-table td {
+      padding: 0.3rem 0.5rem;
+      border-bottom: 1px solid var(--border-default-grey);
+      text-align: left;
+    }
+    .hypo-table th { background: var(--background-default-grey); }
+    .hypo-source {
+      font-size: 0.75rem;
+      color: var(--text-mention-grey);
+      margin: 0.5rem 0 0;
+    }
+    .hypo-reset {
+      margin-top: 1rem;
+    }
+
+    /* Toggle accordéon custom : on utilise la classe DSFR officielle
+       .fr-collapse--expanded (DSFR JS non chargé, on simule). DSFR gère le chevron. */
+
+    /* ====================================================================
+     * MODES (cf. ADR-015 : landing → wizard | expert)
+     * ================================================================== */
+    .pae-hidden { display: none !important; }
+
+    /* --- Landing : écran de choix initial (calé sur le pattern voiture) - */
+    .pae-landing {
+      display: none;
+      min-height: calc(100vh - var(--portal-bar-height, 0px));
+      background: var(--background-alt-blue-france, #f5f5fe);
+      padding-top: 3rem;
+      padding-bottom: 3rem;
+    }
+    .pae-landing:not(.pae-hidden) { display: block; }
+    .pae-landing__eyebrow {
+      color: var(--text-action-high-blue-france, #000091);
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+      margin: 0 0 .5rem;
+    }
+    .pae-landing h1 {
+      margin: 0 0 1rem;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+    }
+    .pae-landing__lede {
+      max-width: 40rem;
+      color: var(--text-default-grey, #3a3a3a);
+      line-height: 1.55;
+    }
+    .pae-landing__card {
+      background: var(--background-default-grey, #fff);
+      border: 1px solid var(--border-default-grey, #e5e5e5);
+      border-top: 4px solid var(--background-action-high-blue-france, #000091);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+      text-align: left;
+      font: inherit;
+      cursor: pointer;
+      transition: box-shadow .15s ease, transform .15s ease;
+      width: 100%;
+      height: 100%;
+    }
+    .pae-landing__card:hover, .pae-landing__card:focus-visible {
+      box-shadow: 0 6px 20px rgba(0, 0, 145, .12);
+      transform: translateY(-2px);
+      outline: 2px solid var(--background-action-high-blue-france, #000091);
+      outline-offset: 2px;
+    }
+    .pae-landing__card-icon {
+      width: 2.75rem; height: 2.75rem;
+      border-radius: 50%;
+      background: var(--background-contrast-blue-france, #e3e3fd);
+      color: var(--text-action-high-blue-france, #000091);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.375rem; line-height: 1;
+    }
+    .pae-landing__card-icon::before { --icon-size: 1.5rem; margin: 0; }
+    .pae-landing__card h2 {
+      margin: 0;
+      font-size: 1.1875rem;
+      color: var(--text-title-grey, #161616);
+    }
+    .pae-landing__card p {
+      margin: 0;
+      color: var(--text-mention-grey, #666);
+      font-size: .875rem;
+      line-height: 1.55;
+      flex: 1;
+    }
+    .pae-landing__card-cta {
+      margin-top: auto;
+      color: var(--text-action-high-blue-france, #000091);
+      font-weight: 600;
+      font-size: .875rem;
+      display: inline-flex;
+      align-items: center;
+      gap: .25rem;
+    }
+    .pae-landing__card-cta::after { content: "→"; transition: transform .15s; }
+    .pae-landing__card:hover .pae-landing__card-cta::after { transform: translateX(.25rem); }
+    .pae-landing__hint {
+      margin-top: 2rem;
+      font-size: .8125rem;
+      color: var(--text-mention-grey, #666);
+    }
+
+    /* --- Wizard overlay ----------------------------------------------- */
+    .pae-wizard {
+      min-height: calc(100vh - var(--portal-bar-height, 36px));
+      background: var(--background-alt-blue-france);
+    }
+    .pae-wizard__topbar {
+      position: sticky;
+      top: var(--portal-bar-height, 36px);
+      z-index: 100;
+      background: #fff;
+      border-bottom: 1px solid var(--border-default-grey);
+      padding: 0.75rem 1rem;
+      display: flex; align-items: center; gap: 1rem;
+    }
+    /* Stepper cliquable */
+    .pae-stepper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 0;
+      min-width: 0;
+    }
+    .pae-step {
+      flex: 1 1 0;
+      background: none;
+      border: 0;
+      padding: 0.25rem 0.25rem;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+      color: var(--text-mention-grey);
+      font-size: 0.7rem;
+      font-weight: 500;
+      text-align: center;
+      line-height: 1.15;
+      position: relative;
+      min-width: 0;
+    }
+    /* Cercle numéroté */
+    .pae-step__dot {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: #fff;
+      border: 2px solid var(--border-default-grey);
+      color: var(--text-mention-grey);
+      font-weight: 700;
+      font-size: 0.78rem;
+      transition: all 0.15s;
+      z-index: 1;
+    }
+    /* Ligne entre les cercles */
+    .pae-step:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      top: calc(0.25rem + 12px - 1px);
+      left: calc(50% + 12px + 4px);
+      right: calc(-50% + 12px + 4px);
+      height: 2px;
+      background: var(--border-default-grey);
+      z-index: 0;
+    }
+    /* États : visité (cliquable) */
+    .pae-step--visited { color: var(--text-action-high-blue-france); }
+    .pae-step--visited .pae-step__dot {
+      background: var(--background-contrast-blue-france);
+      border-color: var(--background-action-high-blue-france);
+      color: var(--text-action-high-blue-france);
+    }
+    .pae-step--visited:not(:last-child)::after { background: var(--background-action-high-blue-france); }
+    /* Étape courante */
+    .pae-step--current { color: var(--text-action-high-blue-france); font-weight: 700; }
+    .pae-step--current .pae-step__dot {
+      background: var(--background-action-high-blue-france);
+      border-color: var(--background-action-high-blue-france);
+      color: #fff;
+      box-shadow: 0 0 0 4px var(--background-contrast-blue-france);
+    }
+    /* Étape future (désactivée) */
+    .pae-step--future {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+    .pae-step--future:hover .pae-step__dot { background: #fff; }
+    /* Hover (sauf future) */
+    .pae-step:not(.pae-step--future):not(.pae-step--current):hover .pae-step__dot {
+      transform: scale(1.08);
+    }
+    /* Focus accessibilité */
+    .pae-step:focus-visible { outline: 2px solid var(--background-action-high-blue-france); outline-offset: 2px; border-radius: 4px; }
+    /* Label texte (masqué en mobile pour économiser) */
+    @media (max-width: 700px) {
+      .pae-step__lbl { display: none; }
+    }
+    .pae-wizard__switch {
+      flex: 0 0 auto;
+      background: none;
+      border: 1px solid var(--border-default-grey);
+      padding: 0.3rem 0.7rem;
+      font-size: 0.78rem;
+      cursor: pointer;
+      font-family: inherit;
+      color: var(--text-mention-grey);
+    }
+    .pae-wizard__switch:hover {
+      background: var(--background-alt-grey);
+    }
+
+    .pae-wizard__card {
+      max-width: 44rem;
+      margin: 2rem auto;
+      background: #fff;
+      border: 1px solid var(--border-default-grey);
+      padding: 2rem;
+    }
+    .pae-wizard__eyebrow {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-action-high-blue-france);
+      margin: 0 0 0.5rem;
+    }
+    .pae-wizard__card h2 {
+      font-size: 1.4rem;
+      margin: 0 0 0.4rem;
+    }
+    .pae-wizard__card .pae-wizard__lede {
+      font-size: 0.95rem;
+      color: var(--text-mention-grey);
+      margin: 0 0 1.5rem;
+    }
+    .pae-wizard__nav {
+      display: flex; justify-content: space-between; gap: 1rem;
+      margin-top: 2rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border-default-grey);
+    }
+    .pae-wizard__nav .grow { flex: 1; }
+    .pae-wizard__nav button[disabled] {
+      visibility: hidden;
+    }
+
+    /* Étape 4 : KPI recap */
+    .wizard-actuel-hero {
+      background: linear-gradient(135deg, #fff8f3 0%, #fde6d2 100%);
+      border-left: 4px solid var(--pae-warn);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .wizard-actuel-hero .big {
+      font-size: 2.5rem; font-weight: 800; line-height: 1;
+      color: var(--pae-warn); font-variant-numeric: tabular-nums;
+    }
+    .wizard-actuel-hero .lbl {
+      font-size: 0.85rem; color: var(--text-mention-grey);
+      margin-top: 0.4rem;
+    }
+    .wizard-actuel-bars {
+      display: flex; flex-direction: column; gap: 0.6rem;
+      margin-top: 1.25rem;
+    }
+    .wizard-actuel-bar {
+      display: grid; grid-template-columns: 7rem 1fr auto;
+      gap: 0.75rem; align-items: center;
+      font-size: 0.88rem;
+    }
+    .wizard-actuel-bar .bar-rail {
+      height: 14px; background: var(--background-alt-grey);
+      border-radius: 999px; overflow: hidden;
+    }
+    .wizard-actuel-bar .bar-fill {
+      height: 100%; background: var(--pae-warn);
+    }
+    .wizard-actuel-bar.carb .bar-fill { background: #c12d2d; }
+    .wizard-actuel-bar .bar-val {
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+    }
+    .wizard-pct {
+      margin-top: 1rem;
+      padding: 0.75rem 1rem;
+      background: rgba(179, 64, 0, 0.08);
+      border-radius: 4px;
+      font-size: 0.92rem;
+    }
+    .wizard-pct strong {
+      color: var(--pae-warn);
+      font-size: 1.1rem;
+    }
+
+    /* Étape 5 : solutions empilables */
+    .solution-list { display: flex; flex-direction: column; gap: 1rem; }
+    .solution-card {
+      border: 1px solid var(--border-default-grey);
+      background: var(--background-default-grey);
+      padding: 1.1rem 1.25rem;
+      display: flex; flex-direction: column; gap: 0.75rem;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .solution-card.included {
+      border-color: var(--pae-accent);
+      background: #f3fbf6;
+    }
+    .solution-card.disabled {
+      opacity: 0.55;
+      background: var(--background-alt-grey);
+    }
+    .solution-card__head {
+      display: flex; gap: 0.75rem; align-items: flex-start;
+      justify-content: space-between;
+    }
+    .solution-card__title {
+      font-size: 1rem; font-weight: 700; margin: 0;
+    }
+    .solution-card__sub {
+      font-size: 0.82rem; color: var(--text-mention-grey);
+      margin: 0.2rem 0 0;
+    }
+    .solution-card__toggle {
+      flex: 0 0 auto;
+      padding: 0.4rem 0.9rem;
+      border: 1.5px solid var(--border-default-grey);
+      background: #fff;
+      cursor: pointer;
+      font: inherit; font-size: 0.85rem; font-weight: 600;
+      white-space: nowrap;
+    }
+    .solution-card.included .solution-card__toggle {
+      background: var(--pae-accent);
+      color: #fff;
+      border-color: var(--pae-accent);
+    }
+    .solution-card__metrics {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem; font-size: 0.82rem;
+    }
+    .solution-card__metric {
+      padding: 0.5rem 0.6rem;
+      background: var(--background-alt-grey);
+      border-radius: 3px;
+    }
+    .solution-card.included .solution-card__metric {
+      background: rgba(22, 155, 98, 0.08);
+    }
+    .solution-card__metric-label {
+      color: var(--text-mention-grey);
+      font-size: 0.72rem;
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .solution-card__metric-val {
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .wizard-tally {
+      margin-top: 1.5rem;
+      padding: 1.25rem;
+      background: linear-gradient(135deg, #169B62 0%, #0a7a4a 100%);
+      color: #fff;
+    }
+    .wizard-tally.loss {
+      background: linear-gradient(135deg, #c12d2d 0%, #8b1a1a 100%);
+    }
+    .wizard-tally .tally-row {
+      display: flex; justify-content: space-between;
+      font-size: 0.95rem; padding: 0.25rem 0;
+    }
+    .wizard-tally .tally-row.total {
+      border-top: 1px solid rgba(255,255,255,0.3);
+      padding-top: 0.5rem; margin-top: 0.4rem;
+      font-size: 1.1rem; font-weight: 700;
+    }
+
+    /* Bandeau « repasser en guidé » en haut du mode expert */
+    .pae-expert-notice {
+      background: var(--background-alt-blue-france);
+      border-bottom: 1px solid var(--border-action-high-blue-france);
+      padding: 0.5rem 1rem;
+      display: flex; align-items: center; justify-content: center; gap: 1rem;
+      font-size: 0.85rem;
+    }
+    .pae-expert-notice button {
+      background: none;
+      border: 1px solid var(--text-action-high-blue-france);
+      color: var(--text-action-high-blue-france);
+      padding: 0.25rem 0.7rem;
+      cursor: pointer;
+      font: inherit; font-size: 0.82rem; font-weight: 600;
+    }
+    .pae-expert-notice button:hover {
+      background: var(--text-action-high-blue-france);
+      color: #fff;
+    }
+
+    /* Adaptation form du wizard : on réutilise .form-row mais sans bordure ni padding */
+    .pae-wizard__card .form-row { margin-bottom: 1.1rem; }
+    .pae-wizard__card .form-row:last-child { margin-bottom: 0; }
+
+    /* Étape 6 : contrôles timeline */
+    .timeline-controls {
+      display: flex; flex-direction: column; gap: 0.6rem;
+      padding: 0.9rem 1rem;
+      background: var(--background-alt-grey);
+      border: 1px solid var(--border-default-grey);
+    }
+    .timeline-row {
+      display: grid;
+      grid-template-columns: minmax(11rem, 1fr) 2fr;
+      align-items: center; gap: 1rem;
+      font-size: 0.9rem;
+    }
+    .timeline-row .timeline-name {
+      font-weight: 600;
+    }
+    .timeline-row .slider-value {
+      min-width: 4rem; font-size: 0.85rem;
+      color: var(--text-action-high-blue-france);
+    }
+    @media (max-width: 540px) {
+      .timeline-row { grid-template-columns: 1fr; gap: 0.3rem; }
+    }
+
+    /* Récap étape 6 — comparaison visuelle (orange = statu quo, vert = scénario) */
+    .wizard-recap {
+      background: var(--background-default-grey);
+      border: 1px solid var(--border-default-grey);
+      overflow: hidden;
+    }
+    .recap-compare {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: stretch;
+    }
+    .recap-col {
+      padding: 1.25rem 1.4rem;
+      display: flex; flex-direction: column; gap: 0.35rem;
+    }
+    .recap-col-label {
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 700;
+      color: var(--text-mention-grey);
+    }
+    .recap-col-value {
+      font-size: 1.55rem;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      line-height: 1.1;
+    }
+    .recap-col-sub {
+      font-size: 0.8rem;
+      color: var(--text-mention-grey);
+    }
+    .recap-actuel {
+      background: #fff8f3;
+      border-left: 4px solid var(--pae-warn);
+    }
+    .recap-actuel .recap-col-value { color: var(--pae-warn); }
+    .recap-projet {
+      background: #f3fbf6;
+      border-left: 4px solid var(--pae-accent);
+    }
+    .recap-projet .recap-col-value { color: var(--pae-accent); }
+    .recap-col-breakdown {
+      list-style: none;
+      padding: 0; margin: 0.35rem 0 0;
+      font-size: 0.82rem;
+    }
+    .recap-col-breakdown li {
+      display: flex; justify-content: space-between; gap: 0.5rem;
+      padding: 0.2rem 0;
+      border-bottom: 1px dotted rgba(0, 0, 0, 0.08);
+    }
+    .recap-col-breakdown li:last-child { border-bottom: none; }
+    .recap-col-breakdown strong {
+      font-variant-numeric: tabular-nums;
+      color: var(--text-default-grey);
+      white-space: nowrap;
+    }
+    .recap-vs {
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 0.4rem;
+      font-size: 1.5rem; font-weight: 700;
+      color: var(--text-mention-grey);
+      background: var(--background-default-grey);
+    }
+    .recap-saving {
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border-default-grey);
+    }
+    .recap-saving.gain {
+      background: linear-gradient(135deg, #169B62 0%, #0a7a4a 100%);
+      color: #fff;
+    }
+    .recap-saving.loss {
+      background: linear-gradient(135deg, #c12d2d 0%, #8b1a1a 100%);
+      color: #fff;
+    }
+    .recap-saving-label {
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+    .recap-saving-value {
+      font-size: 1.65rem;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+    }
+    .recap-aside {
+      margin: 0;
+      padding: 0.75rem 1.5rem;
+      background: var(--background-alt-blue-france);
+      border-top: 1px solid var(--border-default-grey);
+      font-size: 0.85rem;
+      color: var(--text-action-high-blue-france);
+    }
+    .recap-aside strong {
+      font-variant-numeric: tabular-nums;
+    }
+
+    @media (max-width: 600px) {
+      .recap-compare { grid-template-columns: 1fr; }
+      .recap-vs { padding: 0.5rem; transform: rotate(90deg); }
+    }
+    .kpi-label { font-size: 0.82rem; color: var(--text-mention-grey); margin-bottom: 0.15rem; }
+    .kpi-value { font-size: 1.85rem; font-weight: 800; line-height: 1.1; font-variant-numeric: tabular-nums; }
+    .kpi-block.primary .kpi-value { font-size: 2.25rem; }
+    .kpi-hint { font-size: 0.78rem; color: var(--text-mention-grey); margin-top: 0.25rem; }
+
+    .breakdown {
+      background: var(--background-default-grey);
+      border: 1px solid var(--border-default-grey);
+      padding: 1.25rem;
+    }
+    .breakdown h3 {
+      font-size: 1rem; margin: 0 0 0.8rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border-default-grey);
+    }
+    .bd-section { margin-bottom: 1rem; }
+    .bd-section:last-child { margin-bottom: 0; }
+    .bd-section-title {
+      font-size: 0.82rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.04em;
+      color: var(--text-mention-grey);
+      display: flex; align-items: center; gap: 0.4rem;
+      margin-bottom: 0.4rem;
+    }
+    .bd-section-title::before {
+      content: ""; width: 0.6rem; height: 0.6rem; border-radius: 999px;
+      background: var(--pae-mob);
+    }
+    .bd-section.logement .bd-section-title::before { background: var(--pae-log); }
+    .bd-section.solaire .bd-section-title::before { background: var(--pae-pv); }
+    .bd-section.eco .bd-section-title::before { background: var(--pae-accent); }
+
+    .bd-line {
+      display: flex; justify-content: space-between; align-items: baseline;
+      gap: 0.5rem; padding: 0.35rem 0;
+      border-top: 1px dashed var(--border-default-grey);
+      font-size: 0.9rem;
+    }
+    .bd-line:first-of-type { border-top: none; }
+    .bd-line .bd-name { flex: 1; }
+    .bd-line .bd-amount {
+      font-weight: 700; font-variant-numeric: tabular-nums;
+      color: var(--text-default-success);
+      white-space: nowrap;
+    }
+    .bd-line .bd-amount.warn { color: var(--text-default-warning); }
+    .bd-line .bd-source {
+      display: block; font-size: 0.72rem;
+      color: var(--text-mention-grey); margin-top: 0.1rem;
+    }
+    .bd-empty {
+      font-size: 0.85rem; color: var(--text-mention-grey);
+      font-style: italic; padding: 0.4rem 0;
+    }
+    .bd-subtotal {
+      display: flex; justify-content: space-between;
+      font-size: 0.85rem; font-weight: 700;
+      padding-top: 0.4rem; margin-top: 0.4rem;
+      border-top: 1px solid var(--border-default-grey);
+    }
+
+    .badge-cond {
+      display: inline-block; font-size: 0.7rem;
+      padding: 0.05em 0.45em; border-radius: 999px;
+      background: var(--background-alt-grey);
+      color: var(--text-mention-grey);
+      margin-left: 0.3rem;
+      vertical-align: middle;
+    }
+    .badge-cond.ok {
+      background: #dffce5;
+      color: var(--text-default-success);
+    }
+
+    .pae-disclaimer {
+      background: var(--background-alt-yellow-tournesol);
+      border-left: 4px solid #b34000;
+      padding: 0.9rem 1.1rem;
+      font-size: 0.85rem;
+      margin: 2rem 0 1rem;
+    }
+    .pae-disclaimer strong { color: #b34000; }
+
+  </style>
+</head>
+<body>
+
+  <a class="fr-skiplink" href="#contenu">Contenu</a>
+
+  <!-- ====================================================================
+       LANDING : choix Mode guidé / Mode expert (ADR-015)
+       Visible au chargement initial, masquée dès le 1er choix.
+       ================================================================== -->
+  <section class="pae-landing" id="pae-landing" aria-labelledby="landing-title">
+    <div class="fr-container">
+      <p class="pae-landing__eyebrow">Simulateur · aide à passer à l'électrique</p>
+      <h1 id="landing-title" class="fr-mb-2w">Comment souhaitez-vous démarrer&nbsp;?</h1>
+      <p class="fr-text--lead pae-landing__lede fr-mb-5w">
+        Ce simulateur croise votre foyer, votre logement et votre mobilité pour estimer
+        tout ce que vous pouvez faire, combien vous gagnez via les aides publiques,
+        et l'économie annuelle attendue. Choisissez la manière dont vous voulez l'utiliser&nbsp;:
+      </p>
+
+      <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12 fr-col-md-6">
+          <button type="button" class="pae-landing__card" id="landing-guided" aria-describedby="landing-guided-desc">
+            <span class="pae-landing__card-icon fr-icon-compass-3-line" aria-hidden="true"></span>
+            <h2>Mode guidé</h2>
+            <p id="landing-guided-desc">
+              Six étapes simples, dans un format pas à pas, pour évaluer
+              les solutions (PAC, rénovation, VE, solaire) sans avoir à connaître
+              les barèmes ni les paramètres techniques.
+            </p>
+            <span class="pae-landing__card-cta">Démarrer le guide</span>
+          </button>
+        </div>
+        <div class="fr-col-12 fr-col-md-6">
+          <button type="button" class="pae-landing__card" id="landing-expert" aria-describedby="landing-expert-desc">
+            <span class="pae-landing__card-icon fr-icon-settings-5-line" aria-hidden="true"></span>
+            <h2>Mode expert</h2>
+            <p id="landing-expert-desc">
+              Formulaire complet sur une page&nbsp;: tous les paramètres modifiables,
+              barèmes, hypothèses, courbe d'amortissement et horizon ajustable.
+            </p>
+            <span class="pae-landing__card-cta">Aller au formulaire</span>
+          </button>
+        </div>
+      </div>
+
+      <p class="pae-landing__hint">
+        Vous pourrez basculer d'un mode à l'autre à tout moment, vos saisies sont conservées.
+      </p>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       WIZARD : parcours guidé en 5 étapes
+       ================================================================== -->
+  <section class="pae-wizard pae-hidden" id="pae-wizard" aria-labelledby="wizard-title">
+    <div class="pae-wizard__topbar">
+      <div class="pae-stepper" id="wizard-stepper" role="tablist" aria-label="Étapes du parcours guidé"></div>
+      <button type="button" class="pae-wizard__switch" id="wizard-to-expert" title="Passer en mode expert">
+        <span class="fr-icon-settings-5-line" aria-hidden="true"></span>&nbsp;Mode expert
+      </button>
+    </div>
+    <div class="pae-wizard__card" id="wizard-card">
+      <!-- Contenu rendu dynamiquement par renderWizard() -->
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       MODE EXPERT (formulaire dense)
+       ================================================================== -->
+  <div id="pae-expert" class="pae-hidden">
+
+    <header role="banner" class="fr-header">
+      <div class="fr-header__body">
+        <div class="fr-container">
+          <div class="fr-header__body-row">
+            <div class="fr-header__brand fr-enlarge-link">
+              <div class="fr-header__brand-top">
+                <div class="fr-header__logo"><p class="fr-logo">République<br>Française</p></div>
+              </div>
+              <div class="fr-header__service">
+                <a href="/passer-a-electrique/" title="Aide à passer à l'électrique">
+                  <p class="fr-header__service-title">Aide à passer à l'électrique</p>
+                </a>
+                <p class="fr-header__service-tagline">Foyer · synthèse des aides et économies attendues · 2026</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main role="main" id="contenu" class="fr-container fr-py-4w">
+
+      <!-- Bandeau : retour mode guidé -->
+      <div class="pae-expert-notice">
+        <span><span class="fr-icon-compass-3-line" aria-hidden="true"></span>&nbsp;Préférez-vous être guidé pas à pas&nbsp;?</span>
+        <button type="button" id="expert-to-wizard">Repasser en mode guidé</button>
+      </div>
+
+      <h1 class="fr-h3 fr-mb-1w">Renseignez votre situation</h1>
+      <p class="fr-text--lead fr-mb-4w">
+        Foyer, logement, mobilité&nbsp;: nous estimons <strong>tout ce que vous pouvez faire</strong>,
+        <strong>combien vous gagnez</strong> via les aides publiques, et l'<strong>économie annuelle récurrente</strong> attendue.
+      </p>
+
+      <!-- CONTENU PRINCIPAL -->
+      <section class="fr-py-2w">
+        <div class="fr-grid-row fr-grid-row--gutters pae-grid">
+
+          <!-- COLONNE FORMULAIRE -->
+          <div class="fr-col-12 fr-col-lg-7">
+
+            <!-- CARTE 1 : FOYER -->
+            <div class="form-card fr-mb-2w">
+              <h2>
+                <span class="fr-icon-team-line" aria-hidden="true"></span>
+                Votre foyer
+                <span class="pae-pill">1/3</span>
+              </h2>
+
+              <div class="form-row">
+                <div>
+                  <label class="fr-label" for="f_personnes">
+                    Nombre de personnes au foyer
+                  </label>
+                  <div class="slider-wrap">
+                    <input id="f_personnes" type="range" min="1" max="6" step="1" value="3" />
+                    <span class="slider-value" id="f_personnes_v">3</span>
+                  </div>
+                  <p class="helper">Adultes + enfants à charge. Détermine le profil revenus Anah.</p>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div>
+                  <label class="fr-label" for="f_rfr">
+                    Revenu fiscal de référence (€/an)
+                  </label>
+                  <input class="fr-input" type="number" id="f_rfr" value="32000" step="500" min="0" />
+                  <p class="helper">Page&nbsp;1 de l'avis d'imposition. On en déduit votre tranche d'aides.</p>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div>
+                  <label class="fr-label">Zone géographique</label>
+                  <div class="radio-tiles cols-2" id="f_zone_tiles">
+                    <button type="button" class="radio-tile active" data-zone="hors_idf">
+                      <span class="tile-main">Hors Île-de-France</span>
+                      <span class="tile-sub">métropole + outre-mer</span>
+                    </button>
+                    <button type="button" class="radio-tile" data-zone="idf">
+                      <span class="tile-main">Île-de-France</span>
+                      <span class="tile-sub">plafonds revenus + élevés</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div>
+                  <label class="fr-label">Profil revenus Anah calculé</label>
+                  <div id="f_profil_display" style="
+                    padding: 0.5rem 0.75rem; background: var(--background-alt-grey);
+                    border-left: 3px solid var(--background-active-blue-france);
+                    font-size: 0.88rem;">
+                    <strong id="f_profil_label">Intermédiaires (violet)</strong>
+                    <span class="helper" style="display: block; margin-top: 0.15rem;" id="f_profil_hint">
+                      Conditionne les barèmes MaPrimeRénov' et CEE.
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- CARTE 2 : LOGEMENT -->
+            <div class="form-card fr-mb-2w">
+              <h2>
+                <span class="fr-icon-home-4-line" aria-hidden="true"></span>
+                Votre logement
+                <span class="pae-pill">2/3</span>
+              </h2>
+
+              <div class="form-row">
+                <div>
+                  <label class="fr-label">Statut</label>
+                  <div class="radio-tiles cols-3" id="l_statut_tiles">
+                    <button type="button" class="radio-tile active" data-statut="po">
+                      <span class="tile-main">Propriétaire</span>
+                      <span class="tile-sub">occupant</span>
+                    </button>
+                    <button type="button" class="radio-tile" data-statut="pb">
+                      <span class="tile-main">Bailleur</span>
+                      <span class="tile-sub">propriétaire bailleur</span>
+                    </button>
+                    <button type="button" class="radio-tile" data-statut="loc">
+                      <span class="tile-main">Locataire</span>
+                      <span class="tile-sub">aides très limitées</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div>
+                  <label class="fr-label">Type</label>
+                  <div class="radio-tiles cols-2" id="l_type_tiles">
+                    <button type="button" class="radio-tile active" data-type="maison">
+                      <span class="tile-main">Maison individuelle</span>
+                    </button>
+                    <button type="button" class="radio-tile" data-type="appt">
+                      <span class="tile-main">Appartement</span>
+                    </button>
+                  </div>
+                </div>
+                <div>
+                  <label class="fr-label" for="l_surface">Surface (m²)</label>
+                  <div class="slider-wrap">
+                    <input id="l_surface" type="range" min="20" max="200" step="5" value="90" />
+                    <span class="slider-value" id="l_surface_v">90 m²</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div>
+                  <label class="fr-label">DPE actuel</label>
+                  <div class="dpe-tiles" id="l_dpe_tiles">
+                    <button type="button" class="dpe-tile" data-dpe="A">A</button>
+                    <button type="button" class="dpe-tile" data-dpe="B">B</button>
+                    <button type="button" class="dpe-tile" data-dpe="C">C</button>
+                    <button type="button" class="dpe-tile" data-dpe="D">D</button>
+                    <button type="button" class="dpe-tile active" data-dpe="E">E</button>
+                    <button type="button" class="dpe-tile" data-dpe="F">F</button>
+                    <button type="button" class="dpe-tile" data-dpe="G">G</button>
+                  </div>
+                  <p class="helper">Logements <strong>E, F, G</strong> = passoires énergétiques → aides bonifiées (rénovation d'ampleur).</p>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div>
+                  <label class="fr-label">Chauffage actuel</label>
+                  <div class="radio-tiles cols-4" id="l_chauff_tiles">
+                    <button type="button" class="radio-tile active" data-chauff="gaz">
+                      <span class="tile-main">Gaz</span>
+                      <span class="tile-sub">chaudière</span>
+                    </button>
+                    <button type="button" class="radio-tile" data-chauff="fioul">
+                      <span class="tile-main">Fioul</span>
+                      <span class="tile-sub">+ bonus dépose</span>
+                    </button>
+                    <button type="button" class="radio-tile" data-chauff="elec">
+                      <span class="tile-main">Élec.</span>
+                      <span class="tile-sub">convecteurs</span>
+                    </button>
+                    <button type="button" class="radio-tile" data-chauff="bois">
+                      <span class="tile-main">Bois</span>
+                      <span class="tile-sub">/ pellets</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div>
+                  <label class="fr-label">Eau chaude sanitaire</label>
+                  <div class="radio-tiles cols-3" id="l_ecs_tiles">
+                    <button type="button" class="radio-tile active" data-ecs="meme">
+                      <span class="tile-main">Même énergie</span>
+                      <span class="tile-sub">que le chauffage</span>
+                    </button>
+                    <button type="button" class="radio-tile" data-ecs="ballon_elec">
+                      <span class="tile-main">Ballon élec.</span>
+                      <span class="tile-sub">cumulus</span>
+                    </button>
+                    <button type="button" class="radio-tile" data-ecs="cet">
+                      <span class="tile-main">Déjà CET</span>
+                      <span class="tile-sub">thermodynamique</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div>
+                  <label class="fr-label">Projet de travaux envisagé</label>
+                  <div class="radio-tiles cols-2" id="l_projet_tiles" style="grid-template-columns: 1fr 1fr;">
+                    <button type="button" class="radio-tile active" data-projet="pac_aireau">
+                      <span class="tile-main">PAC air/eau</span>
+                      <span class="tile-sub">~14 000 € · MPR + CEE</span>
+                    </button>
+                    <button type="button" class="radio-tile" data-projet="pac_geo">
+                      <span class="tile-main">PAC géothermique</span>
+                      <span class="tile-sub">~22 000 € · MPR maxi</span>
+                    </button>
+                    <button type="button" class="radio-tile" data-projet="cet_only">
+                      <span class="tile-main">CET seul</span>
+                      <span class="tile-sub">~3 500 € · MPR + CEE</span>
+                    </button>
+                    <button type="button" class="radio-tile" data-projet="reno_ampleur">
+                      <span class="tile-main">Rénovation d'ampleur</span>
+                      <span class="tile-sub">Parcours accompagné</span>
+                    </button>
+                    <button type="button" class="radio-tile" data-projet="pv_autoconso">
+                      <span class="tile-main">Photovoltaïque</span>
+                      <span class="tile-sub">3 kWc · autoconso</span>
+                    </button>
+                    <button type="button" class="radio-tile" data-projet="aucun_log">
+                      <span class="tile-main">Aucun</span>
+                      <span class="tile-sub">pas de travaux</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- CARTE 3 : MOBILITÉ -->
+            <div class="form-card fr-mb-2w">
+              <h2>
+                <span class="fr-icon-car-line" aria-hidden="true"></span>
+                Votre mobilité
+                <span class="pae-pill">3/3</span>
+              </h2>
+
+              <div class="form-row">
+                <div>
+                  <label class="fr-label">Véhicule actuel</label>
+                  <div class="radio-tiles cols-4" id="m_actu_tiles">
+                    <button type="button" class="radio-tile active" data-actu="essence">
+                      <span class="tile-main">Essence</span>
+                    </button>
+                    <button type="button" class="radio-tile" data-actu="diesel">
+                      <span class="tile-main">Diesel</span>
+                      <span class="tile-sub">éligible conversion</span>
+                    </button>
+                    <button type="button" class="radio-tile" data-actu="hybride">
+                      <span class="tile-main">Hybride</span>
+                    </button>
+                    <button type="button" class="radio-tile" data-actu="aucun">
+                      <span class="tile-main">Aucun</span>
+                      <span class="tile-sub">/ vélo / TC</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div>
+                  <label class="fr-label" for="m_km">Kilométrage annuel</label>
+                  <div class="slider-wrap">
+                    <input id="m_km" type="range" min="0" max="30000" step="500" value="12000" />
+                    <span class="slider-value" id="m_km_v">12 000 km</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div>
+                  <label class="fr-label">Mode de déplacement principal</label>
+                  <div class="radio-tiles cols-3" id="m_mode_tiles">
+                    <button type="button" class="radio-tile active" data-mode="domicile">
+                      <span class="tile-main">Domicile-travail</span>
+                      <span class="tile-sub">recharge à la maison</span>
+                    </button>
+                    <button type="button" class="radio-tile" data-mode="mixte">
+                      <span class="tile-main">Mixte</span>
+                      <span class="tile-sub">+ trajets longs</span>
+                    </button>
+                    <button type="button" class="radio-tile" data-mode="urbain">
+                      <span class="tile-main">Urbain</span>
+                      <span class="tile-sub">ZFE-m éventuelle</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div>
+                  <label class="fr-label">Projet de véhicule</label>
+                  <div class="radio-tiles cols-2" id="m_projet_tiles" style="grid-template-columns: 1fr 1fr;">
+                    <button type="button" class="radio-tile active" data-projet="ve_neuf">
+                      <span class="tile-main">VE neuf</span>
+                      <span class="tile-sub">prime CEE VPE + surbonus EU</span>
+                    </button>
+                    <button type="button" class="radio-tile" data-projet="ve_occ">
+                      <span class="tile-main">VE occasion</span>
+                      <span class="tile-sub">aides locales uniquement</span>
+                    </button>
+                    <button type="button" class="radio-tile" data-projet="leasing_social">
+                      <span class="tile-main">Leasing social</span>
+                      <span class="tile-sub">100 €/mois si éligible</span>
+                    </button>
+                    <button type="button" class="radio-tile" data-projet="aucun_mob">
+                      <span class="tile-main">Aucun</span>
+                      <span class="tile-sub">pas de projet véhicule</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div>
+                  <label class="fr-label">Borne de recharge à domicile</label>
+                  <div class="radio-tiles cols-3" id="m_borne_tiles">
+                    <button type="button" class="radio-tile active" data-borne="oui">
+                      <span class="tile-main">Oui</span>
+                      <span class="tile-sub">wallbox ~1 200 €</span>
+                    </button>
+                    <button type="button" class="radio-tile" data-borne="copro">
+                      <span class="tile-main">Copropriété</span>
+                      <span class="tile-sub">prime ADVENIR</span>
+                    </button>
+                    <button type="button" class="radio-tile" data-borne="non">
+                      <span class="tile-main">Non</span>
+                      <span class="tile-sub">recharge publique</span>
+                    </button>
+                  </div>
+                  <p class="helper">Crédit d'impôt borne : 75% du coût plafonné à 500 €/équipement (loi de finances 2026).</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- COLONNE RÉSULTATS -->
+          <div class="fr-col-12 fr-col-lg-5">
+            <div class="results-col">
+
+              <!-- Situation actuelle (référence) -->
+              <div class="kpi-block actuel">
+                <div class="kpi-label">Votre situation actuelle (énergie/an)</div>
+                <div class="kpi-value" id="kpi_actuel" style="color: var(--pae-warn);">— €/an</div>
+                <div class="kpi-hint" id="kpi_actuel_hint">
+                  Chauffage + carburant aux prix énergie 2026.
+                </div>
+                <div class="actuel-split" id="actuel_split">
+                  <span class="split-pill"><strong id="actuel_chauf">—</strong> chauffage</span>
+                  <span class="split-pill"><strong id="actuel_carb">—</strong> carburant</span>
+                  <span class="split-pill warn"><strong id="actuel_pct">—</strong> du revenu</span>
+                </div>
+              </div>
+
+              <!-- Gain total avec slider horizon -->
+              <div class="kpi-block primary">
+                <div class="kpi-label">
+                  Gain total estimé sur <span id="horizon_label">20</span> ans
+                </div>
+                <div class="kpi-value" id="kpi_total">— €</div>
+                <div class="kpi-hint" id="kpi_total_hint">
+                  Aides publiques + économies cumulées.
+                </div>
+                <div class="horizon-slider">
+                  <label for="horizon">Horizon de cumul</label>
+                  <div class="slider-wrap">
+                    <input id="horizon" type="range" min="15" max="25" step="1" value="20" />
+                    <span class="slider-value" id="horizon_v" style="color: #fff;">20 ans</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="kpi-block state">
+                <div class="kpi-label">Dont aides publiques (État + CEE)</div>
+                <div class="kpi-value" id="kpi_aides" style="color: var(--text-action-high-blue-france);">— €</div>
+                <div class="kpi-hint" id="kpi_aides_hint">
+                  Versées par l'État, l'Anah ou les fournisseurs d'énergie (CEE).
+                </div>
+              </div>
+
+              <div class="kpi-block">
+                <div class="kpi-label">Économie annuelle récurrente</div>
+                <div class="kpi-value" id="kpi_eco" style="color: var(--pae-accent);">— €/an</div>
+                <div class="kpi-hint" id="kpi_eco_hint">
+                  Énergie économisée après bascule (vs situation actuelle).
+                </div>
+              </div>
+
+              <div class="breakdown">
+                <h3>Détail des dispositifs mobilisables</h3>
+
+                <div class="bd-section mobilite">
+                  <div class="bd-section-title">Mobilité</div>
+                  <div id="bd_mob"><div class="bd-empty">Renseignez votre projet véhicule…</div></div>
+                </div>
+
+                <div class="bd-section logement">
+                  <div class="bd-section-title">Logement</div>
+                  <div id="bd_log"><div class="bd-empty">Renseignez votre projet travaux…</div></div>
+                </div>
+
+                <div class="bd-section solaire" id="bd_pv_section" style="display:none;">
+                  <div class="bd-section-title">Solaire</div>
+                  <div id="bd_pv"></div>
+                </div>
+
+                <div class="bd-section eco">
+                  <div class="bd-section-title">Économies annuelles</div>
+                  <div id="bd_eco"><div class="bd-empty">—</div></div>
+                </div>
+              </div>
+
+              <!-- Courbe d'amortissement -->
+              <div class="chart-block">
+                <h3>Amortissement sur <span id="chart_horizon">20</span> ans</h3>
+                <p class="chart-hint" id="chart_subtitle">
+                  Cumul énergie payée. Le scénario projet inclut l'investissement initial net d'aides.
+                </p>
+                <div class="chart-legend">
+                  <span class="lg lg-actuel">— Situation actuelle</span>
+                  <span class="lg lg-projet">— Avec votre projet</span>
+                </div>
+                <svg id="chart_svg" class="amort-svg" viewBox="0 0 360 220" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Courbe d'amortissement"></svg>
+                <p class="chart-roi" id="chart_roi">—</p>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- HYPOTHÈSES (accordéons modifiables) -->
+        <section class="hypotheses-section" aria-labelledby="hypo-title">
+          <h2 id="hypo-title">
+            <span class="fr-icon-settings-5-line" aria-hidden="true"></span>
+            Hypothèses utilisées pour les calculs
+          </h2>
+          <p>Toutes les valeurs ci-dessous sont modifiables et le résultat se met à jour en temps réel. Sources réglementaires en pied de chaque section.</p>
+
+          <div class="fr-accordions-group">
+
+            <section class="fr-accordion">
+              <h3 class="fr-accordion__title">
+                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="acc-prix">
+                  Prix des énergies (€/kWh ou €/L)
+                </button>
+              </h3>
+              <div class="fr-collapse" id="acc-prix">
+                <div class="hypo-grid" id="hypo-prix"></div>
+                <p class="hypo-source">Sources&nbsp;: tarif réglementé EDF (CRE), prix repère gaz CRE, prix carburants moyens 2026 (DGEC).</p>
+              </div>
+            </section>
+
+            <section class="fr-accordion">
+              <h3 class="fr-accordion__title">
+                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="acc-cop">
+                  COP des PAC + consommation des véhicules
+                </button>
+              </h3>
+              <div class="fr-collapse" id="acc-cop">
+                <div class="hypo-grid" id="hypo-cop"></div>
+                <p class="hypo-source">COP = kWh restitués / kWh consommés. Hypothèses ADEME, Uniclima, baromètre PAC 2025. Conso véhicule&nbsp;: WLTP moyen segment C.</p>
+              </div>
+            </section>
+
+            <section class="fr-accordion">
+              <h3 class="fr-accordion__title">
+                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="acc-dpe">
+                  Consommation par classe DPE (lecture seule)
+                </button>
+              </h3>
+              <div class="fr-collapse" id="acc-dpe">
+                <table class="hypo-table" aria-label="Consommation indicative par classe DPE">
+                  <thead><tr><th>Classe DPE</th><th>kWh/m²/an (énergie finale, chauffage + ECS)</th></tr></thead>
+                  <tbody id="hypo-dpe-tbody"></tbody>
+                </table>
+                <p class="hypo-source">Seuils DPE 2025 (méthode 3CL), arrêté du 31 mars 2021 modifié. Valeurs médianes par classe.</p>
+              </div>
+            </section>
+
+            <section class="fr-accordion">
+              <h3 class="fr-accordion__title">
+                <button class="fr-accordion__btn" aria-expanded="false" aria-controls="acc-couts">
+                  Coûts d'installation moyens (€ TTC clé en main)
+                </button>
+              </h3>
+              <div class="fr-collapse" id="acc-couts">
+                <div class="hypo-grid" id="hypo-couts"></div>
+                <p class="hypo-source">Ordres de grandeur observés (devis 2025-2026, France métropolitaine). À ajuster sur devis réel.</p>
+              </div>
+            </section>
+
+          </div>
+
+          <div class="hypo-reset">
+            <button type="button" class="fr-btn fr-btn--secondary fr-btn--sm" id="btn-reset-hypo">
+              Restaurer les valeurs par défaut
+            </button>
+          </div>
+        </section>
+
+        <!-- DISCLAIMER -->
+        <div class="pae-disclaimer">
+          <strong>Estimation indicative.</strong> Les montants exacts dépendent de devis,
+          d'audits énergétiques (rénovation d'ampleur), du score environnemental ADEME
+          (véhicules) et des arrêtés en vigueur à la date de signature.
+          Cumul des aides plafonné à 90 % du reste à charge.
+          Sources réglementaires : <a href="https://www.anah.fr" target="_blank" rel="noopener">Anah</a>,
+          <a href="https://www.ecologie.gouv.fr/cee" target="_blank" rel="noopener">CEE (DGEC)</a>,
+          <a href="https://www.economie.gouv.fr/particuliers/bonus-ecologique" target="_blank" rel="noopener">bonus écologique</a>,
+          <a href="https://www.maprimerenov.gouv.fr" target="_blank" rel="noopener">MaPrimeRénov'</a>.
+        </div>
+
+      </section>
+
+    </main>
+
+  </div><!-- /#pae-expert -->
+
+  <footer class="fr-footer" role="contentinfo">
+    <div class="fr-container">
+      <div class="fr-footer__body">
+        <div class="fr-footer__brand fr-enlarge-link">
+          <p class="fr-logo">République<br>française</p>
+        </div>
+        <div class="fr-footer__content">
+          <p class="fr-footer__content-desc">
+            Simulateur publié par la Direction générale de l'énergie et du climat (DGEC).
+            Code source ouvert sur le portail <code>simulateurs-portail-elec</code>.
+          </p>
+          <ul class="fr-footer__content-list">
+            <li class="fr-footer__content-item">
+              <a class="fr-footer__content-link" href="https://www.anah.fr" target="_blank" rel="noopener">Anah</a>
+            </li>
+            <li class="fr-footer__content-item">
+              <a class="fr-footer__content-link" href="https://www.ecologie.gouv.fr" target="_blank" rel="noopener">Ministère de la transition écologique</a>
+            </li>
+            <li class="fr-footer__content-item">
+              <a class="fr-footer__content-link" href="https://www.economie.gouv.fr" target="_blank" rel="noopener">Économie et finances</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  /* ========================================================================
+   * BARÈMES 2026
+   * Sources : Anah, DGEC, loi de finances 2026, arrêtés CEE en vigueur.
+   * Pour chaque dispositif, on note le lien source dans `SOURCES` plus bas.
+   * ====================================================================== */
+
+  // Plafonds Revenu Fiscal de Référence Anah (€/an) selon nb personnes
+  // — détermine le profil bleu/jaune/violet/rose.
+  // Hors Île-de-France.
+  const RFR_ANAH_HORS_IDF = {
+    1: { bleu: 17009, jaune: 21805, violet: 30549 },
+    2: { bleu: 24875, jaune: 31889, violet: 44907 },
+    3: { bleu: 29917, jaune: 38349, violet: 54071 },
+    4: { bleu: 34948, jaune: 44802, violet: 63235 },
+    5: { bleu: 39987, jaune: 51281, violet: 72400 },
+    6: { bleu: 45026, jaune: 57760, violet: 81565 },
+  };
+  // Île-de-France (plafonds + élevés)
+  const RFR_ANAH_IDF = {
+    1: { bleu: 23541, jaune: 28657, violet: 40018 },
+    2: { bleu: 34551, jaune: 42058, violet: 58827 },
+    3: { bleu: 41493, jaune: 50513, violet: 70382 },
+    4: { bleu: 48447, jaune: 58981, violet: 82839 },
+    5: { bleu: 55427, jaune: 67473, violet: 94844 },
+    6: { bleu: 62407, jaune: 75965, violet: 106848 },
+  };
+
+  // MaPrimeRénov' parcours par geste 2026 (€)
+  const MPR = {
+    pac_aireau: { bleu: 5000, jaune: 4000, violet: 3000, rose: 0 },
+    pac_geo:    { bleu: 11000, jaune: 9000, violet: 6000, rose: 0 },
+    cet:        { bleu: 1200, jaune: 800, violet: 400, rose: 0 },
+    // CET = chauffe-eau thermodynamique
+  };
+  // Plafonds de travaux pris en compte par MPR (€)
+  const PLAFOND_MPR_TRAVAUX = {
+    pac_aireau: 12000,
+    pac_geo:    20000,
+    cet:        3500,
+  };
+
+  // CEE Coup de pouce Chauffage 2026 (bonifié si sortie fossile : gaz/fioul/propane)
+  const CEE_BONIFIE = { bleu: 5000, jaune: 5000, violet: 4000, rose: 2500 };
+  const CEE_STANDARD = { bleu: 1000, jaune: 1000, violet: 800, rose: 500 };
+  // CEE CET (chauffe-eau thermo) - montants forfaitaires plus modestes
+  const CEE_CET = { bleu: 500, jaune: 500, violet: 400, rose: 300 };
+  // Bonus dépose cuve fioul (€) — uniquement si chauffage actuel = fioul
+  const BONUS_FIOUL = { bleu: 1000, jaune: 1000, violet: 800, rose: 600 };
+
+  // MaPrimeRénov' Parcours accompagné (rénovation d'ampleur)
+  // Taux de prise en charge selon profil et gain de classes DPE
+  // Plafond de travaux selon nb de sauts.
+  const MPR_RENO_AMPLEUR = {
+    plafondsTravaux: { 2: 40000, 3: 55000, 4: 70000 },
+    taux: { // taux d'aide sur le coût HT, dans la limite du plafond
+      bleu:   { 2: 0.80, 3: 0.80, 4: 0.80 },
+      jaune:  { 2: 0.60, 3: 0.60, 4: 0.60 },
+      violet: { 2: 0.45, 3: 0.50, 4: 0.55 },
+      rose:   { 2: 0.30, 3: 0.35, 4: 0.40 },
+    },
+    bonusSortiePassoire: 10000, // si on quitte F/G
+  };
+
+  // Mobilité — Prime CEE "coup de pouce VPE" (depuis juillet 2025)
+  // Tranches selon RFR/part fiscale.
+  // (RFR/part ≈ RFR / nb_parts ; on approxime nb_parts depuis nb personnes)
+  const PRIME_VPE = [
+    { maxRfrPart: 7100,  montant: 4000 },
+    { maxRfrPart: 15400, montant: 3000 },
+    { maxRfrPart: 26200, montant: 2000 },
+    { maxRfrPart: Infinity, montant: 1000 },
+  ];
+  const SURBONUS_BATTERIE_EU = 1500; // moyen — varie 1200-2000 € selon modèle
+  const PRIME_CONVERSION_DIESEL = 1500; // si véhicule actuel diesel mis au rebut + revenus modestes
+  const PRIME_BORNE_DOMICILE_PCT = 0.75; // 75% crédit d'impôt
+  const PRIME_BORNE_PLAFOND = 500;       // € par équipement
+  const COUT_BORNE_DOMICILE = 1200;      // € installation moyenne
+  // Prime ADVENIR copropriété (par point de charge)
+  const PRIME_ADVENIR_COPRO = 1200;
+  // Leasing social VE 2026 : éligibilité revenus modestes/intermédiaires + actifs
+  const LEASING_SOCIAL_LOYER = 100; // €/mois — équivalent économie /vs marché ~250
+  const LEASING_SOCIAL_GAIN_AN = (300 - 100) * 12; // ~2400 €/an vs LLD marché
+
+  // Photovoltaïque autoconsommation (puissance ≤ 9 kWc)
+  // Prime à l'investissement 2026 (arrêté tarifaire CRE)
+  const PV_PRIME_INVEST_KWC = { '<=3': 230, '<=9': 170 }; // €/kWc
+  const PV_TARIF_OA_SURPLUS = 0.13; // €/kWh injecté
+  const PV_PROD_KWH_PAR_KWC = 1100; // hypothèse moyenne France métropolitaine
+  const PV_PUISSANCE_DEFAUT = 3;    // kWc
+
+  // Coûts indicatifs des projets (€ TTC clé en main, hors aides) — modifiables (accordéon)
+  let COUTS_PROJET = {
+    pac_aireau:   14000,
+    pac_geo:      22000,
+    cet_only:     3500,
+    reno_ampleur: 45000, // ordre de grandeur sur 2 sauts DPE
+    pv_autoconso: 9000,  // 3 kWc installation
+  };
+
+  // Prix de l'énergie 2026 (indicatifs €/kWh PCI ou €/L) — modifiables (accordéon)
+  let PRIX_ENERGIE = {
+    elec_hp:   0.2516, // tarif réglementé EDF base
+    elec_hc:   0.2068,
+    gaz:       0.1162, // €/kWh PCS - prix repère CRE
+    fioul:     0.135,  // €/kWh PCI (≈ 1,35 €/L sur 10 kWh/L)
+    bois:      0.075,
+    essence:   1.95,   // €/L
+    diesel:    1.80,   // €/L
+  };
+  // Consommations indicatives véhicule — modifiables (accordéon)
+  let CONSO_VEHICULE_THERMIQUE_L_100 = 6.5; // L/100km
+  let CONSO_VEHICULE_ELEC_KWH_100 = 17;     // kWh/100km
+  // Conso chauffage selon DPE (kWh/m²/an, énergie finale, sur chauffage+ECS) — lecture seule
+  const CONSO_KWH_M2_AN = {
+    A: 50, B: 90, C: 150, D: 230, E: 330, F: 450, G: 600,
+  };
+  // COP moyen PAC air/eau / géothermie / CET — modifiables (accordéon)
+  let COP_PAC_AIREAU = 3.5;
+  let COP_PAC_GEO = 4.5;
+  let COP_CET = 2.8;
+
+  // Snapshot pour le bouton « Restaurer les hypothèses par défaut »
+  const HYPOTHESES_INIT = JSON.parse(JSON.stringify({
+    PRIX_ENERGIE, COUTS_PROJET,
+    COP_PAC_AIREAU, COP_PAC_GEO, COP_CET,
+    CONSO_VEHICULE_THERMIQUE_L_100, CONSO_VEHICULE_ELEC_KWH_100,
+  }));
+
+  // Sources réglementaires (pour le détail UI)
+  const SOURCES = {
+    mpr_geste: 'Anah — MaPrimeRénov\' parcours par geste 2026',
+    mpr_ampleur: 'Anah — MaPrimeRénov\' Parcours accompagné 2026',
+    cee_chauf: 'DGEC — arrêté Coup de pouce Chauffage',
+    cee_cet: 'DGEC — fiche CEE BAR-TH-148 (CET)',
+    bonus_fioul: 'Coup de pouce — sortie fioul/gaz/propane',
+    vpe: 'CEE — Coup de pouce VPE (loi de finances 2026)',
+    surbonus_eu: 'Score environnemental ADEME — surbonus batterie EU',
+    conversion: 'Prime à la conversion (revenus modestes, diesel mis au rebut)',
+    borne: 'Crédit d\'impôt borne de recharge — 75 % plafonné à 500 €',
+    advenir: 'Programme ADVENIR — copropriétés (CEE)',
+    leasing: 'Leasing social VE 2026 — 100 €/mois selon éligibilité',
+    pv_invest: 'CRE — arrêté tarifaire autoconsommation PV',
+    pv_oa: 'CRE — tarif d\'achat OA surplus PV',
+  };
+
+  /* ========================================================================
+   * ÉTAT
+   * ====================================================================== */
+  const state = {
+    foyer: {
+      personnes: 3,
+      rfr: 32000,
+      zone: 'hors_idf',
+    },
+    logement: {
+      statut: 'po',
+      type: 'maison',
+      surface: 90,
+      dpe: 'E',
+      chauffage: 'gaz',
+      ecs: 'meme',
+      projet: 'pac_aireau',
+    },
+    mobilite: {
+      actuel: 'essence',
+      km: 12000,
+      mode: 'domicile',
+      projet: 've_neuf',
+      borne: 'oui',
+    },
+    horizon: 20, // années de cumul pour le gain total + courbe d'amortissement (15..25)
+
+    // Mode courant (cf. ADR-015) : 'landing' au chargement → 'guided' ou 'expert'.
+    mode: 'landing',
+    // Étape du wizard guidé (1=Foyer, 2=Logement, 3=Mobilité, 4=Recap, 5=Solutions, 6=Bilan étalé).
+    wizardStep: 1,
+    wizardMaxStep: 1, // plus haute étape visitée (pour autoriser le clic direct dans le stepper)
+    wizardTotalSteps: 6,
+    // Solutions cochées en mode guidé + leur année de démarrage (1..horizon).
+    // Par défaut tout démarre an 1 : message « agissez maintenant » + alignement
+    // des chiffres entre étape 6, étape 5 et mode expert.
+    solutions: { pac: false, ve: false, reno: false, pv: false },
+    solutionsYear: { reno: 1, pac: 1, ve: 1, pv: 1 },
+  };
+
+  /* ========================================================================
+   * HELPERS
+   * ====================================================================== */
+  const fmt = (n) => {
+    if (n === 0) return '0 €';
+    if (n < 0) return '−' + fmt(-n);
+    return Math.round(n).toLocaleString('fr-FR') + ' €';
+  };
+  const fmtAn = (n) => fmt(n) + '/an';
+
+  // Approximation parts fiscales : 1 part par adulte (max 2), 0.5 par enfant.
+  function nbParts(personnes) {
+    if (personnes <= 1) return 1;
+    if (personnes === 2) return 2;
+    // 2 adultes + (personnes-2) enfants à 0,5 part
+    return 2 + (personnes - 2) * 0.5;
+  }
+
+  // Détermine le profil Anah (bleu/jaune/violet/rose) selon RFR + nb personnes + zone.
+  function profilAnah(rfr, personnes, zone) {
+    const table = zone === 'idf' ? RFR_ANAH_IDF : RFR_ANAH_HORS_IDF;
+    const key = Math.min(personnes, 6);
+    const seuils = table[key];
+    if (rfr <= seuils.bleu) return 'bleu';
+    if (rfr <= seuils.jaune) return 'jaune';
+    if (rfr <= seuils.violet) return 'violet';
+    return 'rose';
+  }
+  const PROFIL_LABEL = {
+    bleu:   'Très modestes (bleu)',
+    jaune:  'Modestes (jaune)',
+    violet: 'Intermédiaires (violet)',
+    rose:   'Supérieurs (rose)',
+  };
+
+  // Tranche prime CEE VPE selon RFR/part
+  function primeVpe(rfr, personnes) {
+    const rfrPart = rfr / nbParts(personnes);
+    for (const tranche of PRIME_VPE) {
+      if (rfrPart <= tranche.maxRfrPart) return tranche.montant;
+    }
+    return 0;
+  }
+
+  /* ========================================================================
+   * MOTEURS DE CALCUL
+   * ====================================================================== */
+
+  // --- Coût annuel actuel (situation de référence) ---------------------
+  function calcCoutActuel() {
+    const l = state.logement;
+    const m = state.mobilite;
+
+    // Chauffage + ECS : conso DPE × prix énergie actuelle
+    const consoKwhAn = (CONSO_KWH_M2_AN[l.dpe] || 230) * l.surface;
+    const prixChauffage = prixEnergieChauffage(l.chauffage);
+    const coutChauffage = consoKwhAn * prixChauffage;
+
+    // Carburant : km × conso × prix
+    let coutCarburant = 0;
+    if (m.actuel !== 'aucun') {
+      const conso = (m.km / 100) * CONSO_VEHICULE_THERMIQUE_L_100;
+      const prix = m.actuel === 'diesel' ? PRIX_ENERGIE.diesel : PRIX_ENERGIE.essence;
+      coutCarburant = conso * prix;
+    }
+
+    const total = coutChauffage + coutCarburant;
+    const pctRevenu = state.foyer.rfr > 0 ? (total / state.foyer.rfr) * 100 : 0;
+    return { coutChauffage, coutCarburant, total, pctRevenu };
+  }
+
+  // --- Courbe d'amortissement -----------------------------------------
+  // Retourne [{ an, actuel, projet }] sur 0..horizon
+  // actuel = cumul annuel énergie actuelle
+  // projet = invest net (an 0) + cumul annuel énergie après bascule
+  function calcCourbeAmortissement(horizon, coutActuelAn, ecoAnTotal, investNet) {
+    const points = [];
+    const coutProjetAn = coutActuelAn - ecoAnTotal; // énergie après bascule
+    for (let an = 0; an <= horizon; an++) {
+      points.push({
+        an,
+        actuel: coutActuelAn * an,
+        projet: (an === 0 ? investNet : investNet + coutProjetAn * an),
+      });
+    }
+    return points;
+  }
+
+  // --- Mobilité --------------------------------------------------------
+  function calcMobilite(profil) {
+    const m = state.mobilite;
+    const lignes = [];
+    let total = 0;
+    let economieAn = 0;
+
+    if (m.projet === 've_neuf') {
+      const vpe = primeVpe(state.foyer.rfr, state.foyer.personnes);
+      if (vpe > 0) {
+        lignes.push({
+          name: 'Prime CEE « Coup de pouce VPE »',
+          desc: `Tranche RFR/part ≈ ${Math.round(state.foyer.rfr / nbParts(state.foyer.personnes)).toLocaleString('fr-FR')} €/part`,
+          source: SOURCES.vpe,
+          amount: vpe,
+        });
+        total += vpe;
+      }
+      lignes.push({
+        name: 'Surbonus batterie fabriquée en UE',
+        desc: 'Score environnemental ADEME ≥ seuil (vérifier modèle)',
+        source: SOURCES.surbonus_eu,
+        amount: SURBONUS_BATTERIE_EU,
+        cond: true,
+      });
+      total += SURBONUS_BATTERIE_EU;
+
+      if (m.actuel === 'diesel' && (profil === 'bleu' || profil === 'jaune')) {
+        lignes.push({
+          name: 'Prime à la conversion',
+          desc: 'Diesel ancien mis au rebut + revenus modestes',
+          source: SOURCES.conversion,
+          amount: PRIME_CONVERSION_DIESEL,
+        });
+        total += PRIME_CONVERSION_DIESEL;
+      }
+    }
+
+    if (m.projet === 'leasing_social') {
+      // Pas une aide directe versée mais un manque à gagner évité.
+      if (profil === 'bleu' || profil === 'jaune') {
+        lignes.push({
+          name: 'Leasing social VE (100 €/mois)',
+          desc: 'Gain ≈ 200 €/mois vs LLD marché × 12',
+          source: SOURCES.leasing,
+          amount: LEASING_SOCIAL_GAIN_AN,
+          isAnnuel: true,
+        });
+        economieAn += LEASING_SOCIAL_GAIN_AN;
+      } else {
+        lignes.push({
+          name: 'Leasing social VE',
+          desc: 'Profil revenus non éligible (réservé bleu/jaune)',
+          source: SOURCES.leasing,
+          amount: 0,
+          warn: true,
+        });
+      }
+    }
+
+    if (m.projet === 've_occ') {
+      lignes.push({
+        name: 'Aides nationales VE occasion',
+        desc: 'Pas de prime CEE VPE en occasion. Vérifier aides locales (région, métropole).',
+        source: '—',
+        amount: 0,
+        warn: true,
+      });
+    }
+
+    // Borne domicile
+    if (m.borne === 'oui' && m.projet !== 'aucun_mob') {
+      const aideBorne = Math.min(COUT_BORNE_DOMICILE * PRIME_BORNE_DOMICILE_PCT, PRIME_BORNE_PLAFOND);
+      lignes.push({
+        name: 'Crédit d\'impôt borne de recharge',
+        desc: '75 % du coût d\'installation, plafonné à 500 €/équipement',
+        source: SOURCES.borne,
+        amount: aideBorne,
+      });
+      total += aideBorne;
+    }
+    if (m.borne === 'copro' && m.projet !== 'aucun_mob') {
+      lignes.push({
+        name: 'Prime ADVENIR (copropriété)',
+        desc: 'Aide installation point de charge en parking collectif',
+        source: SOURCES.advenir,
+        amount: PRIME_ADVENIR_COPRO,
+      });
+      total += PRIME_ADVENIR_COPRO;
+    }
+
+    // Économies carburant si projet VE (neuf, occasion ou leasing)
+    if (['ve_neuf','ve_occ','leasing_social'].includes(m.projet) && m.actuel !== 'aucun') {
+      const conso_therm = (m.km / 100) * CONSO_VEHICULE_THERMIQUE_L_100;
+      const prixTherm = m.actuel === 'diesel' ? PRIX_ENERGIE.diesel : PRIX_ENERGIE.essence;
+      const coutThermAn = conso_therm * prixTherm;
+      const conso_elec = (m.km / 100) * CONSO_VEHICULE_ELEC_KWH_100;
+      // Tarif moyen recharge : 70% HC domicile, 30% public si mode mixte/urbain
+      const prixElec = m.mode === 'domicile'
+        ? PRIX_ENERGIE.elec_hc
+        : (m.mode === 'urbain' ? 0.25 : 0.30);
+      const coutElecAn = conso_elec * prixElec;
+      const ecoCarburantAn = coutThermAn - coutElecAn;
+      economieAn += ecoCarburantAn;
+    }
+
+    return { lignes, total, economieAn };
+  }
+
+  // --- Logement (chauffage / ECS / rénovation) ------------------------
+  function calcLogement(profil) {
+    const l = state.logement;
+    const lignes = [];
+    let total = 0;
+    let economieAn = 0;
+
+    // Restriction commune : pas d'aides MaPrimeRénov' pour locataires (sauf bailleurs)
+    if (l.statut === 'loc') {
+      lignes.push({
+        name: 'Statut locataire',
+        desc: 'Les aides chauffage/rénovation sont réservées propriétaires. Demander au bailleur.',
+        source: '—',
+        amount: 0,
+        warn: true,
+      });
+      return { lignes, total, economieAn };
+    }
+
+    if (l.projet === 'aucun_log') {
+      return { lignes, total, economieAn };
+    }
+
+    // --- PAC air/eau ou géothermique ---
+    if (l.projet === 'pac_aireau' || l.projet === 'pac_geo') {
+      const typePac = l.projet === 'pac_aireau' ? 'pac_aireau' : 'pac_geo';
+      const mpr = MPR[typePac][profil] || 0;
+      if (mpr > 0) {
+        lignes.push({
+          name: `MaPrimeRénov' — PAC ${l.projet === 'pac_aireau' ? 'air/eau' : 'géothermie'}`,
+          desc: `Profil ${PROFIL_LABEL[profil]}`,
+          source: SOURCES.mpr_geste,
+          amount: mpr,
+        });
+        total += mpr;
+      } else {
+        lignes.push({
+          name: 'MaPrimeRénov\' — non éligible',
+          desc: `Profil ${PROFIL_LABEL[profil]} ne déclenche pas d'aide pour ce geste.`,
+          source: SOURCES.mpr_geste,
+          amount: 0,
+          warn: true,
+        });
+      }
+      const eligBonif = ['gaz','fioul'].includes(l.chauffage);
+      const cee = eligBonif ? CEE_BONIFIE[profil] : CEE_STANDARD[profil];
+      lignes.push({
+        name: eligBonif ? 'CEE — Coup de pouce bonifié' : 'CEE — Prime standard',
+        desc: eligBonif
+          ? 'Sortie d\'un chauffage gaz/fioul vers PAC'
+          : 'Prime CEE classique',
+        source: SOURCES.cee_chauf,
+        amount: cee,
+      });
+      total += cee;
+
+      if (l.chauffage === 'fioul') {
+        const bf = BONUS_FIOUL[profil];
+        lignes.push({
+          name: 'Bonus dépose cuve fioul',
+          desc: 'Remplacement chaudière fioul → PAC',
+          source: SOURCES.bonus_fioul,
+          amount: bf,
+        });
+        total += bf;
+      }
+
+      // Économie chauffage : on remplace par PAC
+      economieAn += economieChauffage(typePac);
+    }
+
+    // --- CET seul ---
+    if (l.projet === 'cet_only') {
+      const mpr = MPR.cet[profil] || 0;
+      if (mpr > 0) {
+        lignes.push({
+          name: 'MaPrimeRénov\' — chauffe-eau thermodynamique',
+          desc: `Profil ${PROFIL_LABEL[profil]}`,
+          source: SOURCES.mpr_geste,
+          amount: mpr,
+        });
+        total += mpr;
+      }
+      const cee = CEE_CET[profil];
+      lignes.push({
+        name: 'CEE — fiche BAR-TH-148 (CET)',
+        desc: 'Prime standard chauffe-eau thermodynamique',
+        source: SOURCES.cee_cet,
+        amount: cee,
+      });
+      total += cee;
+      economieAn += economieEcsCET();
+    }
+
+    // --- Rénovation d'ampleur (Parcours accompagné) ---
+    if (l.projet === 'reno_ampleur') {
+      // Hypothèse : on cible un gain de 2 classes (cas le plus fréquent).
+      // Bonus si on quitte F ou G.
+      const sauts = 2;
+      const tauxBase = MPR_RENO_AMPLEUR.taux[profil][sauts];
+      const plafond = MPR_RENO_AMPLEUR.plafondsTravaux[sauts];
+      const coutEstime = Math.min(COUTS_PROJET.reno_ampleur, plafond);
+      const aideBase = coutEstime * tauxBase;
+      lignes.push({
+        name: 'MaPrimeRénov\' Parcours accompagné',
+        desc: `Gain ${sauts} classes DPE · ${Math.round(tauxBase * 100)} % de ${fmt(coutEstime)} (plafond ${fmt(plafond)})`,
+        source: SOURCES.mpr_ampleur,
+        amount: aideBase,
+      });
+      total += aideBase;
+
+      if (['F','G'].includes(l.dpe)) {
+        lignes.push({
+          name: 'Bonus sortie passoire thermique',
+          desc: `DPE actuel ${l.dpe} → projection ≥ E`,
+          source: SOURCES.mpr_ampleur,
+          amount: MPR_RENO_AMPLEUR.bonusSortiePassoire,
+        });
+        total += MPR_RENO_AMPLEUR.bonusSortiePassoire;
+      }
+
+      // Économie : on suppose un saut DPE → conso /2 environ
+      const consoActu = (CONSO_KWH_M2_AN[l.dpe] || 230) * state.logement.surface;
+      const prixActu = prixEnergieChauffage(l.chauffage);
+      const coutActu = consoActu * prixActu;
+      const coutApres = coutActu * 0.55; // -45% conso après rénovation
+      economieAn += (coutActu - coutApres);
+    }
+
+    // --- PV autoconsommation ---
+    // Traité dans calcSolaire() — pas ici.
+
+    return { lignes, total, economieAn };
+  }
+
+  // --- Solaire / PV autoconsommation ---------------------------------
+  function calcSolaire() {
+    const l = state.logement;
+    if (l.projet !== 'pv_autoconso') return null;
+
+    const puissance = PV_PUISSANCE_DEFAUT;
+    const primeKwc = puissance <= 3 ? PV_PRIME_INVEST_KWC['<=3'] : PV_PRIME_INVEST_KWC['<=9'];
+    const primeInvest = puissance * primeKwc;
+    const lignes = [];
+    let total = 0;
+
+    lignes.push({
+      name: 'Prime à l\'investissement autoconsommation',
+      desc: `${puissance} kWc × ${primeKwc} €/kWc (arrêté tarifaire CRE)`,
+      source: SOURCES.pv_invest,
+      amount: primeInvest,
+    });
+    total += primeInvest;
+
+    // Production estimée + tarif OA surplus (hypothèse : 30% injecté)
+    const prodAn = puissance * PV_PROD_KWH_PAR_KWC;
+    const autoConsoPart = 0.7;
+    const surplus = prodAn * (1 - autoConsoPart);
+    const revenuOaAn = surplus * PV_TARIF_OA_SURPLUS;
+    const economieAutoConsoAn = prodAn * autoConsoPart * PRIX_ENERGIE.elec_hp;
+
+    lignes.push({
+      name: 'Tarif d\'achat OA (surplus injecté)',
+      desc: `${Math.round(surplus)} kWh/an × ${PV_TARIF_OA_SURPLUS.toFixed(3)} €/kWh`,
+      source: SOURCES.pv_oa,
+      amount: revenuOaAn,
+      isAnnuel: true,
+    });
+
+    return {
+      lignes,
+      total,
+      economieAn: economieAutoConsoAn + revenuOaAn,
+    };
+  }
+
+  // --- Économies récurrentes ----------------------------------------
+  function economieChauffage(typePac) {
+    const l = state.logement;
+    const consoKwhAn = (CONSO_KWH_M2_AN[l.dpe] || 230) * l.surface;
+    const prixActu = prixEnergieChauffage(l.chauffage);
+    const coutActu = consoKwhAn * prixActu;
+    // Conso électrique PAC ≈ conso / COP
+    const cop = typePac === 'pac_geo' ? COP_PAC_GEO : COP_PAC_AIREAU;
+    const coutPac = (consoKwhAn / cop) * PRIX_ENERGIE.elec_hp;
+    return Math.max(0, coutActu - coutPac);
+  }
+  function economieEcsCET() {
+    // Conso ECS forfaitaire foyer (kWh/an, hypothèse 1500 par adulte)
+    const consoEcs = state.foyer.personnes * 1200;
+    // Si ECS actuelle = ballon élec, on remplace conso élec directe par /COP
+    const coutActu = consoEcs * PRIX_ENERGIE.elec_hp;
+    const coutCet = (consoEcs / COP_CET) * PRIX_ENERGIE.elec_hp;
+    return Math.max(0, coutActu - coutCet);
+  }
+  function prixEnergieChauffage(chauffage) {
+    if (chauffage === 'gaz') return PRIX_ENERGIE.gaz;
+    if (chauffage === 'fioul') return PRIX_ENERGIE.fioul;
+    if (chauffage === 'bois') return PRIX_ENERGIE.bois;
+    return PRIX_ENERGIE.elec_hp;
+  }
+
+  /* ========================================================================
+   * PLAFONDS DE CUMUL
+   * ====================================================================== */
+  function plafonnerCumul(lignes, total, coutProjet) {
+    // Cumul plafonné à 90 % du coût TTC du projet.
+    if (!coutProjet || coutProjet <= 0) return { lignes, total };
+    const plafond = coutProjet * 0.9;
+    if (total <= plafond) return { lignes, total };
+    const ratio = plafond / total;
+    const lignesP = lignes.map((l) => ({
+      ...l,
+      amount: l.isAnnuel ? l.amount : l.amount * ratio,
+      _plafonne: !l.isAnnuel,
+    }));
+    return { lignes: lignesP, total: plafond, plafonne: true };
+  }
+
+  /* ========================================================================
+   * RENDU
+   * ====================================================================== */
+  function renderLignes(container, lignes) {
+    if (!lignes || lignes.length === 0) {
+      container.innerHTML = '<div class="bd-empty">Aucun dispositif applicable au profil sélectionné.</div>';
+      return;
+    }
+    container.innerHTML = lignes.map((l) => {
+      const cls = l.warn ? 'warn' : '';
+      const suffix = l.isAnnuel ? '/an' : '';
+      const badge = l._plafonne ? '<span class="badge-cond">plafonné cumul</span>' : '';
+      return `
+        <div class="bd-line">
+          <div class="bd-name">
+            <strong>${l.name}</strong>${badge}
+            <span class="bd-source">${l.desc} · <em>${l.source}</em></span>
+          </div>
+          <div class="bd-amount ${cls}">${l.amount > 0 ? fmt(l.amount) + suffix : '—'}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function render() {
+    // Profil Anah
+    const profil = profilAnah(state.foyer.rfr, state.foyer.personnes, state.foyer.zone);
+    document.getElementById('f_profil_label').textContent = PROFIL_LABEL[profil];
+
+    // --- Situation actuelle ---
+    const actuel = calcCoutActuel();
+    document.getElementById('kpi_actuel').textContent = fmt(actuel.total) + '/an';
+    document.getElementById('actuel_chauf').textContent = fmt(actuel.coutChauffage);
+    document.getElementById('actuel_carb').textContent =
+      actuel.coutCarburant > 0 ? fmt(actuel.coutCarburant) : '—';
+    document.getElementById('actuel_pct').textContent =
+      actuel.pctRevenu.toFixed(1).replace('.', ',') + ' %';
+    document.getElementById('kpi_actuel_hint').textContent =
+      `DPE ${state.logement.dpe}, ${state.logement.surface} m², chauffage ${state.logement.chauffage}`
+      + (state.mobilite.actuel !== 'aucun' ? ` · ${state.mobilite.km.toLocaleString('fr-FR')} km en ${state.mobilite.actuel}` : '');
+
+    // --- Calculs aides + économies ---
+    const mob = calcMobilite(profil);
+    const log = calcLogement(profil);
+    const pv  = calcSolaire();
+
+    // Plafonnement cumul logement (90 % du coût projet)
+    const coutProjetLog = COUTS_PROJET[state.logement.projet] || 0;
+    const logP = plafonnerCumul(log.lignes, log.total, coutProjetLog);
+
+    // Totaux
+    const aidesTotales = mob.total + logP.total + (pv ? pv.total : 0);
+    const economieAn = mob.economieAn + log.economieAn + (pv ? pv.economieAn : 0);
+    const horizon = state.horizon;
+
+    // Coût « projet » pris en compte dans le gain net : travaux logement + borne + surcoût VE
+    // (on suppose le ménage achète un véhicule de toute façon — surcoût vs thermique seulement).
+    const coutProjetMob =
+      (state.mobilite.borne === 'oui' && state.mobilite.projet !== 'aucun_mob' ? COUT_BORNE_DOMICILE : 0)
+      + (state.mobilite.projet === 've_neuf' ? SURCOUT_VE_VS_TH : 0);
+    const coutProjetTotal = coutProjetLog + coutProjetMob;
+
+    // Gain net = aides reçues + économies cumulées − coût des projets engagés
+    // (formule alignée avec l'étape 5 et l'étape 6 du wizard guidé).
+    const gainTotal = aidesTotales + economieAn * horizon - coutProjetTotal;
+
+    // KPIs
+    document.getElementById('horizon_label').textContent = horizon;
+    document.getElementById('kpi_total').textContent = fmt(gainTotal);
+    document.getElementById('kpi_aides').textContent = fmt(aidesTotales);
+    document.getElementById('kpi_eco').textContent = fmt(economieAn) + '/an';
+    document.getElementById('kpi_total_hint').textContent = coutProjetTotal > 0
+      ? `${fmt(aidesTotales)} d'aides + ${horizon} × ${fmt(economieAn)}/an − ${fmt(coutProjetTotal)} de coût projet.`
+      : `${fmt(aidesTotales)} d'aides + ${horizon} × économie annuelle (${fmt(economieAn)}/an).`;
+
+    // Détails
+    renderLignes(document.getElementById('bd_mob'), mob.lignes);
+    renderLignes(document.getElementById('bd_log'), logP.lignes);
+    const pvSection = document.getElementById('bd_pv_section');
+    if (pv) {
+      pvSection.style.display = '';
+      renderLignes(document.getElementById('bd_pv'), pv.lignes);
+    } else {
+      pvSection.style.display = 'none';
+    }
+
+    // Bloc économies annuelles
+    const ecoLignes = [];
+    if (mob.economieAn !== 0) {
+      ecoLignes.push({
+        name: 'Économie carburant',
+        desc: `${state.mobilite.km.toLocaleString('fr-FR')} km/an, bascule ${state.mobilite.actuel} → électrique`,
+        source: 'Tarif réglementé EDF / prix carburants 2026',
+        amount: mob.economieAn, isAnnuel: true,
+      });
+    }
+    if (log.economieAn !== 0) {
+      ecoLignes.push({
+        name: 'Économie énergie logement',
+        desc: `Bascule ${state.logement.chauffage} → solution électrique`,
+        source: 'Conso DPE × prix énergie',
+        amount: log.economieAn, isAnnuel: true,
+      });
+    }
+    if (pv && pv.economieAn) {
+      ecoLignes.push({
+        name: 'Autoconsommation PV + vente surplus',
+        desc: 'Énergie évitée + revenu OA',
+        source: SOURCES.pv_oa,
+        amount: pv.economieAn, isAnnuel: true,
+      });
+    }
+    renderLignes(document.getElementById('bd_eco'), ecoLignes);
+
+    // --- Courbe d'amortissement ---
+    // Même périmètre de coût que le KPI Gain total (travaux + borne + surcoût VE).
+    const investNet = Math.max(0, coutProjetTotal - aidesTotales);
+    const points = calcCourbeAmortissement(horizon, actuel.total, economieAn, investNet);
+    drawAmortChart(points, horizon, investNet);
+    document.getElementById('chart_horizon').textContent = horizon;
+  }
+
+  /* ========================================================================
+   * BINDINGS
+   * ====================================================================== */
+  function bindTile(containerId, key, target) {
+    const root = document.getElementById(containerId);
+    if (!root) return;
+    root.querySelectorAll('.radio-tile, .dpe-tile').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('.radio-tile, .dpe-tile').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        const val = btn.dataset[key];
+        // Path : "foyer.zone", "logement.dpe" …
+        const [section, field] = target.split('.');
+        state[section][field] = val;
+        render();
+      });
+    });
+  }
+
+  function bindSlider(id, displayId, target, formatter) {
+    const el = document.getElementById(id);
+    const out = document.getElementById(displayId);
+    el.addEventListener('input', () => {
+      const v = parseInt(el.value, 10);
+      out.textContent = formatter ? formatter(v) : v;
+      const [section, field] = target.split('.');
+      state[section][field] = v;
+      render();
+    });
+  }
+
+  function bindInput(id, target) {
+    const el = document.getElementById(id);
+    el.addEventListener('input', () => {
+      const v = parseFloat(el.value) || 0;
+      const [section, field] = target.split('.');
+      state[section][field] = v;
+      render();
+    });
+  }
+
+  // Foyer
+  bindSlider('f_personnes', 'f_personnes_v', 'foyer.personnes');
+  bindInput('f_rfr', 'foyer.rfr');
+  bindTile('f_zone_tiles', 'zone', 'foyer.zone');
+
+  // Logement
+  bindTile('l_statut_tiles', 'statut', 'logement.statut');
+  bindTile('l_type_tiles', 'type', 'logement.type');
+  bindSlider('l_surface', 'l_surface_v', 'logement.surface', (v) => v + ' m²');
+  bindTile('l_dpe_tiles', 'dpe', 'logement.dpe');
+  bindTile('l_chauff_tiles', 'chauff', 'logement.chauffage');
+  bindTile('l_ecs_tiles', 'ecs', 'logement.ecs');
+  bindTile('l_projet_tiles', 'projet', 'logement.projet');
+
+  // Mobilité
+  bindTile('m_actu_tiles', 'actu', 'mobilite.actuel');
+  bindSlider('m_km', 'm_km_v', 'mobilite.km', (v) => v.toLocaleString('fr-FR') + ' km');
+  bindTile('m_mode_tiles', 'mode', 'mobilite.mode');
+  bindTile('m_projet_tiles', 'projet', 'mobilite.projet');
+  bindTile('m_borne_tiles', 'borne', 'mobilite.borne');
+
+  // Horizon (slider en haut du KPI Gain total)
+  const horizonEl = document.getElementById('horizon');
+  const horizonValEl = document.getElementById('horizon_v');
+  horizonEl.addEventListener('input', () => {
+    state.horizon = parseInt(horizonEl.value, 10);
+    horizonValEl.textContent = state.horizon + ' ans';
+    render();
+  });
+
+  /* ========================================================================
+   * COURBE D'AMORTISSEMENT (SVG natif)
+   * ====================================================================== */
+  function shortMoney(v) {
+    if (v >= 1000) return Math.round(v / 1000) + ' k€';
+    return Math.round(v) + ' €';
+  }
+  function niceCeil(v) {
+    if (v <= 0) return 1;
+    const exp = Math.floor(Math.log10(v));
+    const mag = Math.pow(10, exp);
+    const m = v / mag;
+    let nice;
+    if (m <= 1) nice = 1;
+    else if (m <= 2) nice = 2;
+    else if (m <= 5) nice = 5;
+    else nice = 10;
+    return nice * mag;
+  }
+
+  function drawAmortChart(points, horizon, investNet) {
+    const svg = document.getElementById('chart_svg');
+    if (!svg) return;
+    const W = 360, H = 220;
+    const ML = 48, MR = 12, MT = 12, MB = 28;
+    const innerW = W - ML - MR;
+    const innerH = H - MT - MB;
+
+    const allValues = points.flatMap((p) => [p.actuel, p.projet]).filter((v) => isFinite(v));
+    const yMaxRaw = Math.max(...allValues, 1);
+    const niceMax = niceCeil(yMaxRaw);
+    const xScale = (an) => ML + (an / Math.max(horizon, 1)) * innerW;
+    const yScale = (val) => MT + innerH - (val / niceMax) * innerH;
+
+    const pathStr = (key) => points.map((p, i) =>
+      (i === 0 ? 'M' : 'L') + xScale(p.an).toFixed(1) + ',' + yScale(p[key]).toFixed(1)
+    ).join(' ');
+
+    // Recherche du croisement (point où le cumul projet repasse sous le cumul actuel)
+    let roi = null;
+    for (let i = 1; i < points.length; i++) {
+      const prev = points[i - 1], curr = points[i];
+      const wasBelow = prev.projet > prev.actuel;
+      const nowBelow = curr.projet <= curr.actuel;
+      if (wasBelow && nowBelow) {
+        const dProj = curr.projet - prev.projet;
+        const dAct = curr.actuel - prev.actuel;
+        const t = (prev.projet - prev.actuel) / ((dAct - dProj) || 1);
+        roi = (i - 1) + t;
+        break;
+      }
+    }
+
+    // Axes + ticks
+    const ticksY = 4;
+    let gridY = '';
+    for (let i = 0; i <= ticksY; i++) {
+      const v = (niceMax * i) / ticksY;
+      const y = yScale(v);
+      gridY += `<line x1="${ML}" y1="${y}" x2="${W - MR}" y2="${y}" stroke="#e8e8ed" stroke-dasharray="2 2" />`;
+      gridY += `<text x="${ML - 6}" y="${y + 3}" text-anchor="end" font-size="9" fill="#666">${shortMoney(v)}</text>`;
+    }
+    const xStep = horizon <= 10 ? 1 : (horizon <= 20 ? 2 : 5);
+    let ticksX = '';
+    for (let an = 0; an <= horizon; an += xStep) {
+      ticksX += `<text x="${xScale(an)}" y="${H - MB + 14}" text-anchor="middle" font-size="9" fill="#666">${an}</text>`;
+    }
+
+    // Marqueur ROI
+    let roiOverlay = '';
+    if (roi !== null) {
+      const xR = xScale(roi);
+      const yR = yScale(points[Math.floor(roi)].actuel + (points[Math.ceil(roi)].actuel - points[Math.floor(roi)].actuel) * (roi - Math.floor(roi)));
+      roiOverlay = `
+        <line x1="${xR}" y1="${MT}" x2="${xR}" y2="${H - MB}" stroke="#000091" stroke-dasharray="4 3" stroke-width="1" />
+        <circle cx="${xR.toFixed(1)}" cy="${yR.toFixed(1)}" r="4" fill="#000091" stroke="#fff" stroke-width="1.5" />
+      `;
+    }
+
+    // Point initial projet (investissement)
+    const investPoint = `<circle cx="${xScale(0)}" cy="${yScale(investNet)}" r="3" fill="#169B62" />`;
+
+    svg.innerHTML = `
+      ${gridY}
+      ${ticksX}
+      <line x1="${ML}" y1="${H - MB}" x2="${W - MR}" y2="${H - MB}" stroke="#666" stroke-width="1" />
+      <line x1="${ML}" y1="${MT}" x2="${ML}" y2="${H - MB}" stroke="#666" stroke-width="1" />
+      <text x="${ML + innerW / 2}" y="${H - 3}" text-anchor="middle" font-size="9" fill="#666">années</text>
+      <path d="${pathStr('actuel')}" fill="none" stroke="#B34000" stroke-width="2" />
+      <path d="${pathStr('projet')}" fill="none" stroke="#169B62" stroke-width="2" />
+      ${investPoint}
+      ${roiOverlay}
+    `;
+
+    const roiEl = document.getElementById('chart_roi');
+    if (roi !== null) {
+      const anEntier = Math.floor(roi);
+      const mois = Math.round((roi - anEntier) * 12);
+      roiEl.classList.remove('no-cross');
+      roiEl.textContent = `Retour sur investissement à ${anEntier} an${anEntier > 1 ? 's' : ''}${mois > 0 ? ' ' + mois + ' mois' : ''}.`;
+    } else if (investNet === 0) {
+      roiEl.classList.add('no-cross');
+      roiEl.textContent = 'Pas d\'investissement initial : économies dès la première année.';
+    } else {
+      roiEl.classList.add('no-cross');
+      roiEl.textContent = `Pas d'amortissement sur ${horizon} ans avec ces hypothèses.`;
+    }
+  }
+
+  /* ========================================================================
+   * ACCORDÉONS HYPOTHÈSES
+   * ====================================================================== */
+  function renderHypothesesUI() {
+    // Prix énergies
+    const labelsPrix = {
+      elec_hp: 'Élec heures pleines (€/kWh)',
+      elec_hc: 'Élec heures creuses (€/kWh)',
+      gaz:     'Gaz (€/kWh PCS)',
+      fioul:   'Fioul (€/kWh PCI)',
+      bois:    'Bois (€/kWh)',
+      essence: 'Essence (€/L)',
+      diesel:  'Diesel (€/L)',
+    };
+    document.getElementById('hypo-prix').innerHTML = Object.entries(labelsPrix).map(([k, lbl]) =>
+      `<div class="hypo-field">
+        <label for="h-prix-${k}">${lbl}</label>
+        <input class="fr-input fr-input--sm" type="number" step="0.001" min="0"
+               id="h-prix-${k}" data-hypo="prix" data-key="${k}" value="${PRIX_ENERGIE[k]}" />
+      </div>`
+    ).join('');
+
+    // COP + véhicule
+    document.getElementById('hypo-cop').innerHTML = `
+      <div class="hypo-field">
+        <label for="h-cop-aireau">COP PAC air/eau</label>
+        <input class="fr-input fr-input--sm" type="number" step="0.1" min="1" id="h-cop-aireau"
+               data-hypo="scalar" data-key="COP_PAC_AIREAU" value="${COP_PAC_AIREAU}" />
+      </div>
+      <div class="hypo-field">
+        <label for="h-cop-geo">COP PAC géothermique</label>
+        <input class="fr-input fr-input--sm" type="number" step="0.1" min="1" id="h-cop-geo"
+               data-hypo="scalar" data-key="COP_PAC_GEO" value="${COP_PAC_GEO}" />
+      </div>
+      <div class="hypo-field">
+        <label for="h-cop-cet">COP chauffe-eau thermo (CET)</label>
+        <input class="fr-input fr-input--sm" type="number" step="0.1" min="1" id="h-cop-cet"
+               data-hypo="scalar" data-key="COP_CET" value="${COP_CET}" />
+      </div>
+      <div class="hypo-field">
+        <label for="h-conso-therm">Conso véhicule thermique (L/100&nbsp;km)</label>
+        <input class="fr-input fr-input--sm" type="number" step="0.1" min="0" id="h-conso-therm"
+               data-hypo="scalar" data-key="CONSO_VEHICULE_THERMIQUE_L_100" value="${CONSO_VEHICULE_THERMIQUE_L_100}" />
+      </div>
+      <div class="hypo-field">
+        <label for="h-conso-elec">Conso véhicule élec. (kWh/100&nbsp;km)</label>
+        <input class="fr-input fr-input--sm" type="number" step="0.1" min="0" id="h-conso-elec"
+               data-hypo="scalar" data-key="CONSO_VEHICULE_ELEC_KWH_100" value="${CONSO_VEHICULE_ELEC_KWH_100}" />
+      </div>
+    `;
+
+    // Conso DPE (lecture seule)
+    document.getElementById('hypo-dpe-tbody').innerHTML = Object.entries(CONSO_KWH_M2_AN).map(([k, v]) =>
+      `<tr><td><strong>${k}</strong></td><td>${v} kWh/m²/an</td></tr>`
+    ).join('');
+
+    // Coûts installation
+    const labelsCouts = {
+      pac_aireau:   'PAC air/eau (€)',
+      pac_geo:      'PAC géothermique (€)',
+      cet_only:     'Chauffe-eau thermo (€)',
+      reno_ampleur: 'Rénovation d\'ampleur (€)',
+      pv_autoconso: 'Photovoltaïque 3 kWc (€)',
+    };
+    document.getElementById('hypo-couts').innerHTML = Object.entries(labelsCouts).map(([k, lbl]) =>
+      `<div class="hypo-field">
+        <label for="h-cout-${k}">${lbl}</label>
+        <input class="fr-input fr-input--sm" type="number" step="100" min="0"
+               id="h-cout-${k}" data-hypo="cout" data-key="${k}" value="${COUTS_PROJET[k]}" />
+      </div>`
+    ).join('');
+
+    // Bindings sur les inputs
+    document.querySelectorAll('input[data-hypo]').forEach((el) => {
+      el.addEventListener('input', () => {
+        const v = parseFloat(el.value);
+        if (isNaN(v) || v < 0) return;
+        const key = el.dataset.key;
+        switch (el.dataset.hypo) {
+          case 'prix': PRIX_ENERGIE[key] = v; break;
+          case 'cout': COUTS_PROJET[key] = v; break;
+          case 'scalar':
+            if (key === 'COP_PAC_AIREAU') COP_PAC_AIREAU = v;
+            else if (key === 'COP_PAC_GEO') COP_PAC_GEO = v;
+            else if (key === 'COP_CET') COP_CET = v;
+            else if (key === 'CONSO_VEHICULE_THERMIQUE_L_100') CONSO_VEHICULE_THERMIQUE_L_100 = v;
+            else if (key === 'CONSO_VEHICULE_ELEC_KWH_100') CONSO_VEHICULE_ELEC_KWH_100 = v;
+            break;
+        }
+        render();
+      });
+    });
+
+    // Bouton reset
+    document.getElementById('btn-reset-hypo').addEventListener('click', () => {
+      Object.assign(PRIX_ENERGIE, HYPOTHESES_INIT.PRIX_ENERGIE);
+      Object.assign(COUTS_PROJET, HYPOTHESES_INIT.COUTS_PROJET);
+      COP_PAC_AIREAU = HYPOTHESES_INIT.COP_PAC_AIREAU;
+      COP_PAC_GEO = HYPOTHESES_INIT.COP_PAC_GEO;
+      COP_CET = HYPOTHESES_INIT.COP_CET;
+      CONSO_VEHICULE_THERMIQUE_L_100 = HYPOTHESES_INIT.CONSO_VEHICULE_THERMIQUE_L_100;
+      CONSO_VEHICULE_ELEC_KWH_100 = HYPOTHESES_INIT.CONSO_VEHICULE_ELEC_KWH_100;
+      document.querySelectorAll('input[data-hypo]').forEach((el) => {
+        const key = el.dataset.key;
+        let v;
+        switch (el.dataset.hypo) {
+          case 'prix': v = HYPOTHESES_INIT.PRIX_ENERGIE[key]; break;
+          case 'cout': v = HYPOTHESES_INIT.COUTS_PROJET[key]; break;
+          case 'scalar': v = HYPOTHESES_INIT[key]; break;
+        }
+        if (v !== undefined) el.value = v;
+      });
+      render();
+    });
+  }
+
+  // Toggle accordéons : toggle de la classe DSFR officielle `fr-collapse--expanded`
+  // directement sur le panneau (DSFR utilise visibility/max-height pour cacher).
+  document.querySelectorAll('.fr-accordion__btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.getAttribute('aria-controls');
+      const target = targetId ? document.getElementById(targetId) : null;
+      if (!target) return;
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!expanded));
+      target.classList.toggle('fr-collapse--expanded', !expanded);
+    });
+  });
+
+  renderHypothesesUI();
+
+  /* ========================================================================
+   * WIZARD — mode guidé en 5 étapes
+   * ====================================================================== */
+
+  // Prix moyen d'un VE neuf et d'un thermique équivalent (cf. défauts simulateur `voiture/`).
+  // On compte comme « coût » d'une bascule VE le SURCOÛT vs thermique : on part du
+  // principe que le ménage devra de toute façon racheter un véhicule. Compter le prix
+  // complet du VE surestime massivement l'investissement et écrase le gain net.
+  const PRIX_VE_NEUF_MOYEN = 32000;
+  const PRIX_TH_NEUF_MOYEN = 23000;
+  const SURCOUT_VE_VS_TH   = PRIX_VE_NEUF_MOYEN - PRIX_TH_NEUF_MOYEN; // 9 000 €
+
+  // Libellés courts pour le stepper (cohérents avec les eyebrows des étapes)
+  const WIZARD_STEPS_LABELS = ['Foyer', 'Logement', 'Mobilité', 'Situation', 'Solutions', 'Bilan'];
+
+  function renderWizard() {
+    const step = state.wizardStep;
+    const total = state.wizardTotalSteps;
+    // Tracker la plus haute étape atteinte (pour autoriser le clic direct dans le stepper)
+    if (step > state.wizardMaxStep) state.wizardMaxStep = step;
+    renderStepper();
+    const card = document.getElementById('wizard-card');
+    const isFirst = step === 1;
+    const isLast = step === total;
+    const nextLabel = (step === 3) ? 'Voir ma situation actuelle →'
+                    : (step === 4) ? 'Voir les solutions →'
+                    : (step === 5) ? 'Voir le bilan étalé →'
+                    : isLast ? 'Voir le détail en mode expert →'
+                    : 'Suivant →';
+
+    let html = '';
+    if (step === 1) html = wizardStep1Foyer();
+    else if (step === 2) html = wizardStep2Logement();
+    else if (step === 3) html = wizardStep3Mobilite();
+    else if (step === 4) html = wizardStep4Recap();
+    else if (step === 5) html = wizardStep5Solutions();
+    else if (step === 6) html = wizardStep6Bilan();
+
+    card.innerHTML = `
+      ${html}
+      <div class="pae-wizard__nav">
+        <button type="button" class="fr-btn fr-btn--secondary" id="wizard-prev" ${isFirst ? 'disabled' : ''}>
+          ← Précédent
+        </button>
+        <span class="grow"></span>
+        <button type="button" class="fr-btn" id="wizard-next">${nextLabel}</button>
+      </div>
+    `;
+    bindWizardCommon();
+    if (step === 1) bindWizardStep1();
+    else if (step === 2) bindWizardStep2();
+    else if (step === 3) bindWizardStep3();
+    else if (step === 5) bindWizardStep5();
+    else if (step === 6) bindWizardStep6();
+
+    // Câblage générique des raccourcis « Modifier une saisie » sur l'étape recap (étape 4).
+    card.querySelectorAll('[data-goto-step]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const target = parseInt(btn.dataset.gotoStep, 10);
+        goToWizardStep(target);
+      });
+    });
+  }
+
+  function wizardNext() {
+    if (state.wizardStep === state.wizardTotalSteps) {
+      // Étape finale : on bascule en mode expert. showMode('expert') traduit en plus
+      // les solutions cochées (state.solutions) vers les champs « projet » de l'expert
+      // via applyWizardSolutionsToProjets() — pour ne pas perdre les choix utilisateur.
+      showMode('expert');
+      return;
+    }
+    state.wizardStep += 1;
+    renderWizard();
+  }
+  function wizardPrev() {
+    if (state.wizardStep > 1) {
+      state.wizardStep -= 1;
+      renderWizard();
+    }
+  }
+  // Saut direct à une étape déjà visitée (clic sur le stepper).
+  // On refuse les étapes futures pour ne pas court-circuiter la saisie.
+  function goToWizardStep(target) {
+    if (target < 1 || target > state.wizardTotalSteps) return;
+    if (target > state.wizardMaxStep) return; // étape non encore visitée → refusé
+    state.wizardStep = target;
+    renderWizard();
+  }
+
+  // Construit le stepper cliquable dans la topbar
+  function renderStepper() {
+    const root = document.getElementById('wizard-stepper');
+    if (!root) return;
+    const cur = state.wizardStep;
+    const max = state.wizardMaxStep;
+    root.innerHTML = WIZARD_STEPS_LABELS.map((lbl, i) => {
+      const n = i + 1;
+      const isCurrent = n === cur;
+      const isVisited = n < cur || (n <= max && n !== cur);
+      const isFuture = n > max;
+      const cls = isCurrent ? 'pae-step--current'
+                : isFuture  ? 'pae-step--future'
+                : 'pae-step--visited';
+      return `
+        <button type="button" class="pae-step ${cls}"
+                role="tab" aria-selected="${isCurrent}"
+                aria-disabled="${isFuture}"
+                ${isFuture ? 'tabindex="-1"' : ''}
+                data-step="${n}"
+                title="Étape ${n} : ${lbl}${isFuture ? ' (non encore atteinte)' : ''}">
+          <span class="pae-step__dot" aria-hidden="true">${isVisited && !isCurrent ? '✓' : n}</span>
+          <span class="pae-step__lbl">${lbl}</span>
+        </button>`;
+    }).join('');
+    // Câblage des clics
+    root.querySelectorAll('.pae-step').forEach((btn) => {
+      btn.addEventListener('click', () => goToWizardStep(parseInt(btn.dataset.step, 10)));
+    });
+  }
+
+  function bindWizardCommon() {
+    document.getElementById('wizard-next').addEventListener('click', wizardNext);
+    const prev = document.getElementById('wizard-prev');
+    if (prev && !prev.disabled) prev.addEventListener('click', wizardPrev);
+  }
+
+  // --- Étape 1 : Foyer ------------------------------------------------
+  function wizardStep1Foyer() {
+    const profil = profilAnah(state.foyer.rfr, state.foyer.personnes, state.foyer.zone);
+    return `
+      <p class="pae-wizard__eyebrow">Étape 1 sur 6 — votre foyer</p>
+      <h2 id="wizard-title">Qui compose votre foyer ?</h2>
+      <p class="pae-wizard__lede">
+        Ces informations déterminent votre <strong>profil de revenus Anah</strong>
+        (bleu / jaune / violet / rose), qui module la plupart des aides.
+      </p>
+
+      <div class="form-row">
+        <div>
+          <label class="fr-label" for="wf_personnes">Nombre de personnes au foyer</label>
+          <div class="slider-wrap">
+            <input id="wf_personnes" type="range" min="1" max="6" step="1" value="${state.foyer.personnes}" />
+            <span class="slider-value" id="wf_personnes_v">${state.foyer.personnes}</span>
+          </div>
+          <p class="helper">Adultes + enfants à charge.</p>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div>
+          <label class="fr-label" for="wf_rfr">Revenu fiscal de référence (€/an)</label>
+          <input class="fr-input" type="number" id="wf_rfr" value="${state.foyer.rfr}" step="500" min="0" />
+          <p class="helper">Page&nbsp;1 de votre avis d'imposition.</p>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div>
+          <label class="fr-label">Zone géographique</label>
+          <div class="radio-tiles cols-2" id="wf_zone_tiles">
+            <button type="button" class="radio-tile ${state.foyer.zone === 'hors_idf' ? 'active' : ''}" data-zone="hors_idf">
+              <span class="tile-main">Hors Île-de-France</span>
+            </button>
+            <button type="button" class="radio-tile ${state.foyer.zone === 'idf' ? 'active' : ''}" data-zone="idf">
+              <span class="tile-main">Île-de-France</span>
+              <span class="tile-sub">plafonds + élevés</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div style="padding: 0.6rem 0.75rem; background: var(--background-alt-blue-france); border-left: 3px solid var(--background-active-blue-france);">
+          <strong style="display: block; font-size: 0.95rem;" id="wf_profil_label">${PROFIL_LABEL[profil]}</strong>
+          <span class="helper" id="wf_profil_hint">Conditionne les barèmes MaPrimeRénov' et CEE.</span>
+        </div>
+      </div>
+    `;
+  }
+  function bindWizardStep1() {
+    document.getElementById('wf_personnes').addEventListener('input', (e) => {
+      state.foyer.personnes = parseInt(e.target.value, 10);
+      document.getElementById('wf_personnes_v').textContent = state.foyer.personnes;
+      updateWizardProfilLabel();
+    });
+    document.getElementById('wf_rfr').addEventListener('input', (e) => {
+      state.foyer.rfr = parseFloat(e.target.value) || 0;
+      updateWizardProfilLabel();
+    });
+    bindWizardTile('wf_zone_tiles', 'zone', 'foyer.zone', updateWizardProfilLabel);
+  }
+  function updateWizardProfilLabel() {
+    const profil = profilAnah(state.foyer.rfr, state.foyer.personnes, state.foyer.zone);
+    const el = document.getElementById('wf_profil_label');
+    if (el) el.textContent = PROFIL_LABEL[profil];
+  }
+
+  // --- Étape 2 : Logement --------------------------------------------
+  function wizardStep2Logement() {
+    return `
+      <p class="pae-wizard__eyebrow">Étape 2 sur 6 — votre logement</p>
+      <h2 id="wizard-title">Où vivez-vous ?</h2>
+      <p class="pae-wizard__lede">
+        Le DPE et le mode de chauffage actuels déterminent le potentiel d'économies
+        et l'éligibilité aux aides (sortie fossile bonifiée, rénovation d'ampleur).
+      </p>
+
+      <div class="form-row">
+        <div>
+          <label class="fr-label">Statut</label>
+          <div class="radio-tiles cols-3" id="wl_statut_tiles">
+            <button type="button" class="radio-tile ${state.logement.statut === 'po' ? 'active' : ''}" data-statut="po">
+              <span class="tile-main">Propriétaire</span><span class="tile-sub">occupant</span>
+            </button>
+            <button type="button" class="radio-tile ${state.logement.statut === 'pb' ? 'active' : ''}" data-statut="pb">
+              <span class="tile-main">Bailleur</span>
+            </button>
+            <button type="button" class="radio-tile ${state.logement.statut === 'loc' ? 'active' : ''}" data-statut="loc">
+              <span class="tile-main">Locataire</span><span class="tile-sub">aides limitées</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div>
+          <label class="fr-label">Type</label>
+          <div class="radio-tiles cols-2" id="wl_type_tiles">
+            <button type="button" class="radio-tile ${state.logement.type === 'maison' ? 'active' : ''}" data-type="maison">
+              <span class="tile-main">Maison</span>
+            </button>
+            <button type="button" class="radio-tile ${state.logement.type === 'appt' ? 'active' : ''}" data-type="appt">
+              <span class="tile-main">Appartement</span>
+            </button>
+          </div>
+        </div>
+        <div>
+          <label class="fr-label" for="wl_surface">Surface (m²)</label>
+          <div class="slider-wrap">
+            <input id="wl_surface" type="range" min="20" max="200" step="5" value="${state.logement.surface}" />
+            <span class="slider-value" id="wl_surface_v">${state.logement.surface} m²</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div>
+          <label class="fr-label">DPE actuel</label>
+          <div class="dpe-tiles" id="wl_dpe_tiles">
+            ${['A','B','C','D','E','F','G'].map((d) =>
+              `<button type="button" class="dpe-tile ${state.logement.dpe === d ? 'active' : ''}" data-dpe="${d}">${d}</button>`
+            ).join('')}
+          </div>
+          <p class="helper">E, F, G = passoires énergétiques → aides bonifiées.</p>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div>
+          <label class="fr-label">Chauffage actuel</label>
+          <div class="radio-tiles cols-4" id="wl_chauff_tiles">
+            ${[
+              ['gaz', 'Gaz', 'chaudière'],
+              ['fioul', 'Fioul', '+ bonus dépose'],
+              ['elec', 'Élec.', 'convecteurs'],
+              ['bois', 'Bois', '/ pellets'],
+            ].map(([k, m, s]) =>
+              `<button type="button" class="radio-tile ${state.logement.chauffage === k ? 'active' : ''}" data-chauff="${k}">
+                <span class="tile-main">${m}</span><span class="tile-sub">${s}</span>
+              </button>`
+            ).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  function bindWizardStep2() {
+    bindWizardTile('wl_statut_tiles', 'statut', 'logement.statut');
+    bindWizardTile('wl_type_tiles', 'type', 'logement.type');
+    bindWizardTile('wl_dpe_tiles', 'dpe', 'logement.dpe');
+    bindWizardTile('wl_chauff_tiles', 'chauff', 'logement.chauffage');
+    document.getElementById('wl_surface').addEventListener('input', (e) => {
+      state.logement.surface = parseInt(e.target.value, 10);
+      document.getElementById('wl_surface_v').textContent = state.logement.surface + ' m²';
+    });
+  }
+
+  // --- Étape 3 : Mobilité ---------------------------------------------
+  function wizardStep3Mobilite() {
+    return `
+      <p class="pae-wizard__eyebrow">Étape 3 sur 6 — votre mobilité</p>
+      <h2 id="wizard-title">Comment vous déplacez-vous ?</h2>
+      <p class="pae-wizard__lede">
+        Si vous avez un véhicule thermique aujourd'hui, le passage à l'électrique
+        peut être l'un des principaux postes d'économies (carburant ÷ 3 à 4).
+      </p>
+
+      <div class="form-row">
+        <div>
+          <label class="fr-label">Véhicule actuel</label>
+          <div class="radio-tiles cols-4" id="wm_actu_tiles">
+            ${[
+              ['essence', 'Essence', ''],
+              ['diesel', 'Diesel', 'éligible conversion'],
+              ['hybride', 'Hybride', ''],
+              ['aucun', 'Aucun', '/ vélo / TC'],
+            ].map(([k, m, s]) =>
+              `<button type="button" class="radio-tile ${state.mobilite.actuel === k ? 'active' : ''}" data-actu="${k}">
+                <span class="tile-main">${m}</span>${s ? `<span class="tile-sub">${s}</span>` : ''}
+              </button>`
+            ).join('')}
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div>
+          <label class="fr-label" for="wm_km">Kilométrage annuel</label>
+          <div class="slider-wrap">
+            <input id="wm_km" type="range" min="0" max="30000" step="500" value="${state.mobilite.km}" />
+            <span class="slider-value" id="wm_km_v">${state.mobilite.km.toLocaleString('fr-FR')} km</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div>
+          <label class="fr-label">Mode de déplacement principal</label>
+          <div class="radio-tiles cols-3" id="wm_mode_tiles">
+            ${[
+              ['domicile', 'Domicile-travail', 'recharge à la maison'],
+              ['mixte', 'Mixte', '+ trajets longs'],
+              ['urbain', 'Urbain', 'ZFE-m éventuelle'],
+            ].map(([k, m, s]) =>
+              `<button type="button" class="radio-tile ${state.mobilite.mode === k ? 'active' : ''}" data-mode="${k}">
+                <span class="tile-main">${m}</span><span class="tile-sub">${s}</span>
+              </button>`
+            ).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  function bindWizardStep3() {
+    bindWizardTile('wm_actu_tiles', 'actu', 'mobilite.actuel');
+    bindWizardTile('wm_mode_tiles', 'mode', 'mobilite.mode');
+    document.getElementById('wm_km').addEventListener('input', (e) => {
+      state.mobilite.km = parseInt(e.target.value, 10);
+      document.getElementById('wm_km_v').textContent = state.mobilite.km.toLocaleString('fr-FR') + ' km';
+    });
+  }
+
+  // --- Étape 4 : Recap situation actuelle ----------------------------
+  function wizardStep4Recap() {
+    const a = calcCoutActuel();
+    const maxBar = Math.max(a.coutChauffage, a.coutCarburant, 1);
+    const wChauf = (a.coutChauffage / maxBar * 100).toFixed(0);
+    const wCarb = (a.coutCarburant / maxBar * 100).toFixed(0);
+    const pctClass = a.pctRevenu > 15 ? 'élevée' : (a.pctRevenu > 8 ? 'significative' : 'modérée');
+    return `
+      <p class="pae-wizard__eyebrow">Étape 4 sur 6 — votre situation actuelle</p>
+      <h2 id="wizard-title">Voici ce que vous payez aujourd'hui</h2>
+      <p class="pae-wizard__lede">
+        Avant d'examiner les solutions, voyons combien votre énergie vous coûte
+        chaque année et la part que cela représente sur votre revenu fiscal.
+      </p>
+
+      <div class="wizard-actuel-hero">
+        <div class="big">${fmt(a.total)}/an</div>
+        <div class="lbl">Total énergie : chauffage + carburant aux prix 2026.</div>
+      </div>
+
+      <div class="wizard-actuel-bars">
+        <div class="wizard-actuel-bar">
+          <span>Chauffage</span>
+          <div class="bar-rail"><div class="bar-fill" style="width: ${wChauf}%"></div></div>
+          <span class="bar-val">${fmt(a.coutChauffage)}</span>
+        </div>
+        ${a.coutCarburant > 0 ? `
+          <div class="wizard-actuel-bar carb">
+            <span>Carburant</span>
+            <div class="bar-rail"><div class="bar-fill" style="width: ${wCarb}%"></div></div>
+            <span class="bar-val">${fmt(a.coutCarburant)}</span>
+          </div>` : ''}
+      </div>
+
+      <div class="wizard-pct">
+        Soit <strong>${a.pctRevenu.toFixed(1).replace('.', ',')} %</strong> de votre revenu fiscal —
+        c'est une part ${pctClass}. La moyenne nationale tourne autour de 8&nbsp;% pour un foyer
+        DPE D à essence.
+      </div>
+
+      <p class="helper" style="margin-top: 1.25rem;">
+        DPE ${state.logement.dpe}, ${state.logement.surface} m², chauffage ${state.logement.chauffage}
+        ${state.mobilite.actuel !== 'aucun' ? ` · ${state.mobilite.km.toLocaleString('fr-FR')} km en ${state.mobilite.actuel}` : ''}.
+      </p>
+
+      <!-- Raccourcis pour corriger une réponse précédente sans passer par le bouton Précédent N fois -->
+      <div class="recap-edits" style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px dashed var(--border-default-grey);">
+        <p class="helper" style="margin-bottom: 0.5rem;">Modifier une saisie précédente :</p>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <button type="button" class="fr-btn fr-btn--sm fr-btn--secondary" data-goto-step="1">← Foyer</button>
+          <button type="button" class="fr-btn fr-btn--sm fr-btn--secondary" data-goto-step="2">← Logement</button>
+          <button type="button" class="fr-btn fr-btn--sm fr-btn--secondary" data-goto-step="3">← Mobilité</button>
+        </div>
+      </div>
+    `;
+  }
+
+  // --- Étape 5 : Solutions empilables --------------------------------
+  function calcSolutionImpact(type) {
+    const profil = profilAnah(state.foyer.rfr, state.foyer.personnes, state.foyer.zone);
+    const savedLog = state.logement.projet;
+    const savedMob = state.mobilite.projet;
+    let result = { aides: 0, ecoAn: 0, cout: 0, eligible: true, reason: '' };
+
+    try {
+      if (type === 'pac') {
+        if (state.logement.statut === 'loc') return { ...result, eligible: false, reason: 'Vous êtes locataire' };
+        state.logement.projet = 'pac_aireau';
+        const log = calcLogement(profil);
+        const cout = COUTS_PROJET.pac_aireau;
+        const plaf = plafonnerCumul(log.lignes, log.total, cout);
+        result = { aides: plaf.total, ecoAn: log.economieAn, cout, eligible: true };
+      } else if (type === 've') {
+        if (state.mobilite.actuel === 'aucun') return { ...result, eligible: false, reason: 'Pas de véhicule actuel' };
+        state.mobilite.projet = 've_neuf';
+        const mob = calcMobilite(profil);
+        // Coût VE = surcoût vs thermique + coût borne si installée (sinon asymétrie
+        // avec le crédit d'impôt borne déjà compté dans `mob.total`).
+        const coutBorne = state.mobilite.borne === 'oui' ? COUT_BORNE_DOMICILE : 0;
+        result = { aides: mob.total, ecoAn: mob.economieAn, cout: SURCOUT_VE_VS_TH + coutBorne, eligible: true };
+      } else if (type === 'reno') {
+        if (state.logement.statut === 'loc') return { ...result, eligible: false, reason: 'Vous êtes locataire' };
+        if (['A','B','C'].includes(state.logement.dpe)) return { ...result, eligible: false, reason: 'DPE déjà performant' };
+        state.logement.projet = 'reno_ampleur';
+        const log = calcLogement(profil);
+        const cout = COUTS_PROJET.reno_ampleur;
+        const plaf = plafonnerCumul(log.lignes, log.total, cout);
+        result = { aides: plaf.total, ecoAn: log.economieAn, cout, eligible: true };
+      } else if (type === 'pv') {
+        if (state.logement.type === 'appt') return { ...result, eligible: false, reason: 'Appartement (toiture commune)' };
+        state.logement.projet = 'pv_autoconso';
+        const pv = calcSolaire();
+        result = { aides: pv ? pv.total : 0, ecoAn: pv ? pv.economieAn : 0, cout: COUTS_PROJET.pv_autoconso, eligible: true };
+      }
+    } finally {
+      state.logement.projet = savedLog;
+      state.mobilite.projet = savedMob;
+    }
+    return result;
+  }
+
+  const SOLUTION_META = {
+    pac:  { title: 'Pompe à chaleur (PAC air/eau)', sub: 'Remplace votre chauffage actuel par une PAC électrique très efficace.' },
+    ve:   { title: 'Véhicule électrique neuf', sub: 'Bascule du thermique vers l\'électrique, prime CEE VPE selon vos revenus.' },
+    reno: { title: 'Rénovation d\'ampleur', sub: 'Bouquet de travaux (isolation + chauffage) pour gagner ≥ 2 classes DPE.' },
+    pv:   { title: 'Photovoltaïque autoconsommation 3 kWc', sub: 'Produire votre propre électricité, vendre le surplus.' },
+  };
+
+  function wizardStep5Solutions() {
+    const impacts = {
+      pac: calcSolutionImpact('pac'),
+      ve: calcSolutionImpact('ve'),
+      reno: calcSolutionImpact('reno'),
+      pv: calcSolutionImpact('pv'),
+    };
+
+    const card = (key) => {
+      const meta = SOLUTION_META[key];
+      const imp = impacts[key];
+      const included = state.solutions[key] && imp.eligible;
+      if (!imp.eligible) {
+        return `
+          <article class="solution-card disabled">
+            <div class="solution-card__head">
+              <div>
+                <h3 class="solution-card__title">${meta.title}</h3>
+                <p class="solution-card__sub">Non applicable : ${imp.reason}.</p>
+              </div>
+            </div>
+          </article>`;
+      }
+      const coutNet = Math.max(0, imp.cout - imp.aides);
+      return `
+        <article class="solution-card ${included ? 'included' : ''}" data-sol="${key}">
+          <div class="solution-card__head">
+            <div>
+              <h3 class="solution-card__title">${meta.title}</h3>
+              <p class="solution-card__sub">${meta.sub}</p>
+            </div>
+            <button type="button" class="solution-card__toggle" data-sol-toggle="${key}">
+              ${included ? '✓ Inclus' : 'J\'inclus'}
+            </button>
+          </div>
+          <div class="solution-card__metrics">
+            <div class="solution-card__metric">
+              <div class="solution-card__metric-label">Aides publiques</div>
+              <div class="solution-card__metric-val">${fmt(imp.aides)}</div>
+            </div>
+            <div class="solution-card__metric">
+              <div class="solution-card__metric-label">Économie/an</div>
+              <div class="solution-card__metric-val">${fmt(imp.ecoAn)}</div>
+            </div>
+            <div class="solution-card__metric">
+              <div class="solution-card__metric-label">Reste à charge</div>
+              <div class="solution-card__metric-val">${fmt(coutNet)}</div>
+            </div>
+          </div>
+        </article>`;
+    };
+
+    // Cumul des solutions incluses (uniquement si éligibles)
+    let totalAides = 0, totalEco = 0, totalCout = 0;
+    Object.keys(impacts).forEach((k) => {
+      if (state.solutions[k] && impacts[k].eligible) {
+        totalAides += impacts[k].aides;
+        totalEco += impacts[k].ecoAn;
+        totalCout += impacts[k].cout;
+      }
+    });
+    const totalNet = Math.max(0, totalCout - totalAides);
+    const gainNetCumule = totalAides + totalEco * state.horizon - totalCout;
+    const tallyClass = gainNetCumule < 0 ? 'wizard-tally loss' : 'wizard-tally';
+    const gainLabel = gainNetCumule < 0
+      ? `Perte nette cumulée sur ${state.horizon} ans`
+      : `Gain net cumulé sur ${state.horizon} ans`;
+
+    return `
+      <p class="pae-wizard__eyebrow">Étape 5 sur 6 — vos solutions</p>
+      <h2 id="wizard-title">Voici ce que vous pouvez faire</h2>
+      <p class="pae-wizard__lede">
+        Chaque solution est indépendante : cliquez sur « J'inclus » pour celles qui vous intéressent.
+        Le récapitulatif en bas additionne les solutions cochées.
+      </p>
+
+      <div class="solution-list">
+        ${card('pac')}
+        ${card('reno')}
+        ${card('ve')}
+        ${card('pv')}
+      </div>
+
+      <div class="${tallyClass}">
+        <div class="tally-row"><span>Aides publiques totales</span><span>${fmt(totalAides)}</span></div>
+        <div class="tally-row"><span>Économies annuelles</span><span>${fmt(totalEco)}/an</span></div>
+        <div class="tally-row"><span>Coût total des projets</span><span>${fmt(totalCout)}</span></div>
+        <div class="tally-row"><span>Reste à charge global</span><span>${fmt(totalNet)}</span></div>
+        <div class="tally-row total"><span>${gainLabel}</span><span>${fmt(Math.abs(gainNetCumule))}</span></div>
+      </div>
+    `;
+  }
+  function bindWizardStep5() {
+    document.querySelectorAll('[data-sol-toggle]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const key = btn.dataset.solToggle;
+        state.solutions[key] = !state.solutions[key];
+        renderWizard(); // refresh card + tally
+      });
+    });
+  }
+
+  // --- Étape 6 : Bilan étalé sur N ans -------------------------------
+
+  // Simule année par année les flux financiers (coûts fixes + variables)
+  // selon les solutions incluses et leur année de démarrage.
+  function calcEtalement(horizon) {
+    const actuel = calcCoutActuel();
+    const coutActuelAn = actuel.total;
+
+    // Calcul des impacts unitaires des solutions incluses ET éligibles
+    const impacts = {};
+    Object.keys(state.solutions).forEach((s) => {
+      if (!state.solutions[s]) return;
+      const imp = calcSolutionImpact(s);
+      if (imp.eligible) impacts[s] = imp;
+    });
+
+    let cumulActuel = 0;
+    let cumulProjet = 0;
+    const points = [{ an: 0, cumulActuel: 0, cumulProjet: 0, events: [] }];
+
+    for (let an = 1; an <= horizon; an++) {
+      const events = [];
+
+      // 1. Investissements de l'année (chantiers dont year == an)
+      Object.keys(impacts).forEach((s) => {
+        if (state.solutionsYear[s] === an) {
+          const investNet = Math.max(0, impacts[s].cout - impacts[s].aides);
+          cumulProjet += investNet;
+          events.push({ year: an, solution: s, invest: investNet });
+        }
+      });
+
+      // 2. Coût énergie variable de l'année
+      //    = coût actuel - sum des éco/an des solutions déjà en service (year <= an)
+      let ecoCumuleeAn = 0;
+      Object.keys(impacts).forEach((s) => {
+        if (state.solutionsYear[s] <= an) ecoCumuleeAn += impacts[s].ecoAn;
+      });
+      const coutAnneeProjet = Math.max(0, coutActuelAn - ecoCumuleeAn);
+      cumulProjet += coutAnneeProjet;
+
+      // 3. Scénario « ne rien faire »
+      cumulActuel += coutActuelAn;
+
+      points.push({ an, cumulActuel, cumulProjet, events });
+    }
+    return { points, impacts, coutActuelAn };
+  }
+
+  function drawEtalementChart(svg, points, horizon) {
+    if (!svg) return;
+    const W = 680, H = 320;
+    const ML = 60, MR = 20, MT = 20, MB = 40;
+    const innerW = W - ML - MR;
+    const innerH = H - MT - MB;
+
+    const allValues = points.flatMap((p) => [p.cumulActuel, p.cumulProjet]).filter(isFinite);
+    const yMaxRaw = Math.max(...allValues, 1);
+    const niceMax = niceCeil(yMaxRaw);
+    const xScale = (an) => ML + (an / Math.max(horizon, 1)) * innerW;
+    const yScale = (val) => MT + innerH - (val / niceMax) * innerH;
+
+    const pathStr = (key) => points.map((p, i) =>
+      (i === 0 ? 'M' : 'L') + xScale(p.an).toFixed(1) + ',' + yScale(p[key]).toFixed(1)
+    ).join(' ');
+
+    // Recherche du croisement (cumul projet repasse sous cumul actuel)
+    let roi = null;
+    for (let i = 1; i < points.length; i++) {
+      const prev = points[i - 1], curr = points[i];
+      if (prev.cumulProjet > prev.cumulActuel && curr.cumulProjet <= curr.cumulActuel) {
+        const dProj = curr.cumulProjet - prev.cumulProjet;
+        const dAct = curr.cumulActuel - prev.cumulActuel;
+        const t = (prev.cumulProjet - prev.cumulActuel) / ((dAct - dProj) || 1);
+        roi = (i - 1) + t;
+        break;
+      }
+    }
+
+    // Grille horizontale + ticks Y
+    const ticksY = 5;
+    let gridY = '';
+    for (let i = 0; i <= ticksY; i++) {
+      const v = (niceMax * i) / ticksY;
+      const y = yScale(v);
+      gridY += `<line x1="${ML}" y1="${y}" x2="${W - MR}" y2="${y}" stroke="#e8e8ed" stroke-dasharray="2 2" />`;
+      gridY += `<text x="${ML - 8}" y="${y + 3}" text-anchor="end" font-size="10" fill="#666">${shortMoney(v)}</text>`;
+    }
+    // Ticks X
+    const xStep = horizon <= 10 ? 1 : (horizon <= 20 ? 2 : 5);
+    let ticksX = '';
+    for (let an = 0; an <= horizon; an += xStep) {
+      ticksX += `<text x="${xScale(an)}" y="${H - MB + 16}" text-anchor="middle" font-size="10" fill="#666">${an}</text>`;
+    }
+
+    // Événements (investissements) annotés
+    let eventsOverlay = '';
+    const SOL_SHORT = { pac: 'PAC', ve: 'VE', reno: 'Réno', pv: 'PV' };
+    points.forEach((p) => {
+      p.events.forEach((ev) => {
+        const x = xScale(p.an);
+        const yProj = yScale(p.cumulProjet);
+        eventsOverlay += `
+          <line x1="${x}" y1="${MT}" x2="${x}" y2="${H - MB}" stroke="#169B62" stroke-dasharray="3 3" stroke-width="1" opacity="0.55" />
+          <circle cx="${x.toFixed(1)}" cy="${yProj.toFixed(1)}" r="4.5" fill="#169B62" stroke="#fff" stroke-width="1.5" />
+          <text x="${x}" y="${MT + 12}" text-anchor="middle" font-size="10" font-weight="700" fill="#0a7a4a">${SOL_SHORT[ev.solution] || ev.solution}</text>
+        `;
+      });
+    });
+
+    // Marqueur ROI
+    let roiOverlay = '';
+    if (roi !== null) {
+      const xR = xScale(roi);
+      const floor = Math.floor(roi);
+      const frac = roi - floor;
+      const yA0 = points[floor].cumulActuel;
+      const yA1 = points[Math.min(floor + 1, points.length - 1)].cumulActuel;
+      const yR = yScale(yA0 + (yA1 - yA0) * frac);
+      roiOverlay = `
+        <line x1="${xR}" y1="${MT}" x2="${xR}" y2="${H - MB}" stroke="#000091" stroke-dasharray="4 3" stroke-width="1.5" />
+        <circle cx="${xR.toFixed(1)}" cy="${yR.toFixed(1)}" r="5" fill="#000091" stroke="#fff" stroke-width="1.5" />
+      `;
+    }
+
+    svg.innerHTML = `
+      ${gridY}
+      ${ticksX}
+      <line x1="${ML}" y1="${H - MB}" x2="${W - MR}" y2="${H - MB}" stroke="#666" stroke-width="1" />
+      <line x1="${ML}" y1="${MT}" x2="${ML}" y2="${H - MB}" stroke="#666" stroke-width="1" />
+      <text x="${ML + innerW / 2}" y="${H - 6}" text-anchor="middle" font-size="11" fill="#666">années</text>
+      <path d="${pathStr('cumulActuel')}" fill="none" stroke="#B34000" stroke-width="2.5" />
+      <path d="${pathStr('cumulProjet')}" fill="none" stroke="#169B62" stroke-width="2.5" />
+      ${eventsOverlay}
+      ${roiOverlay}
+    `;
+    return { roi, finalProjet: points[points.length - 1].cumulProjet, finalActuel: points[points.length - 1].cumulActuel };
+  }
+
+  function wizardStep6Bilan() {
+    const included = Object.keys(state.solutions).filter((k) => state.solutions[k]);
+    if (included.length === 0) {
+      return `
+        <p class="pae-wizard__eyebrow">Étape 6 sur 6 — votre bilan étalé</p>
+        <h2 id="wizard-title">Aucune solution sélectionnée</h2>
+        <p class="pae-wizard__lede">
+          Revenez à l'étape précédente et cliquez sur « J'inclus » sur au moins une solution
+          pour visualiser un bilan étalé dans le temps.
+        </p>
+      `;
+    }
+
+    const horizon = state.horizon;
+    return `
+      <p class="pae-wizard__eyebrow">Étape 6 sur 6 — votre bilan étalé sur ${horizon} ans</p>
+      <h2 id="wizard-title">Étalez vos chantiers dans le temps</h2>
+      <p class="pae-wizard__lede">
+        Choisissez l'année de démarrage de chaque chantier. La courbe compare
+        <strong style="color: var(--pae-warn)">le scénario « ne rien faire »</strong>
+        à <strong style="color: var(--pae-accent)">votre scénario</strong> :
+        investissements (sauts vers le haut) puis économies récurrentes (pente plus douce).
+      </p>
+
+      <div class="form-row">
+        <div style="width: 100%;">
+          <label class="fr-label" for="w6_horizon">Horizon d'analyse</label>
+          <div class="slider-wrap">
+            <input id="w6_horizon" type="range" min="15" max="25" step="1" value="${state.horizon}" />
+            <span class="slider-value" id="w6_horizon_v">${state.horizon} ans</span>
+          </div>
+        </div>
+      </div>
+
+      <h3 style="font-size: 1rem; margin: 1.5rem 0 0.5rem;">Année de démarrage par chantier</h3>
+      <div class="timeline-controls">
+        ${included.map((s) => {
+          const meta = SOLUTION_META[s];
+          const year = state.solutionsYear[s];
+          return `
+            <div class="timeline-row">
+              <span class="timeline-name">${meta.title.replace(/ \(.+\)/, '')}</span>
+              <div class="slider-wrap">
+                <input type="range" min="1" max="${Math.min(horizon, 10)}" step="1" value="${Math.min(year, horizon)}" data-year-for="${s}" />
+                <span class="slider-value" data-year-val="${s}">an ${Math.min(year, horizon)}</span>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+
+      <h3 style="font-size: 1rem; margin: 1.75rem 0 0.5rem;">Évolution des coûts cumulés</h3>
+      <div class="chart-legend" style="margin-bottom: 0.4rem;">
+        <span class="lg lg-actuel">— Ne rien faire</span>
+        <span class="lg lg-projet">— Votre scénario</span>
+        <span style="color: #000091; font-weight: 600;">▌ ROI</span>
+      </div>
+      <svg id="w6_chart" viewBox="0 0 680 320" preserveAspectRatio="xMidYMid meet" style="width: 100%; height: auto; background: #fafbfc; border: 1px solid var(--border-default-grey);" role="img" aria-label="Bilan étalé"></svg>
+      <p class="chart-roi" id="w6_roi" style="margin-top: 0.6rem;">—</p>
+
+      <div id="w6_recap" class="wizard-recap" style="margin-top: 1.25rem;"></div>
+    `;
+  }
+
+  function bindWizardStep6() {
+    // Slider horizon
+    const horEl = document.getElementById('w6_horizon');
+    if (horEl) {
+      horEl.addEventListener('input', (e) => {
+        state.horizon = parseInt(e.target.value, 10);
+        document.getElementById('w6_horizon_v').textContent = state.horizon + ' ans';
+        renderWizard(); // re-render pour limiter max des sliders années
+      });
+    }
+    // Sliders année par solution
+    document.querySelectorAll('[data-year-for]').forEach((el) => {
+      el.addEventListener('input', () => {
+        const s = el.dataset.yearFor;
+        state.solutionsYear[s] = parseInt(el.value, 10);
+        const valEl = document.querySelector(`[data-year-val="${s}"]`);
+        if (valEl) valEl.textContent = 'an ' + state.solutionsYear[s];
+        refreshStep6Chart();
+      });
+    });
+    refreshStep6Chart();
+  }
+
+  function refreshStep6Chart() {
+    const svg = document.getElementById('w6_chart');
+    if (!svg) return;
+    const horizon = state.horizon;
+    const { points, impacts, coutActuelAn } = calcEtalement(horizon);
+    const meta = drawEtalementChart(svg, points, horizon) || {};
+
+    // Libellé ROI
+    const roiEl = document.getElementById('w6_roi');
+    if (meta.roi !== null && meta.roi !== undefined) {
+      const anEntier = Math.floor(meta.roi);
+      const mois = Math.round((meta.roi - anEntier) * 12);
+      roiEl.classList.remove('no-cross');
+      roiEl.textContent = `Retour sur investissement à ${anEntier} an${anEntier > 1 ? 's' : ''}${mois > 0 ? ' ' + mois + ' mois' : ''}.`;
+    } else {
+      roiEl.classList.add('no-cross');
+      roiEl.textContent = `Pas de croisement sur ${horizon} ans (les investissements ne s'amortissent pas seuls).`;
+    }
+
+    // Recap chiffré — comparaison visuelle (cf. retour utilisateur : éviter
+    // l'effet « tout vert qui mélange ce qu'on récupère et ce qu'on dépense »).
+    const recapEl = document.getElementById('w6_recap');
+    if (recapEl) {
+      const impactsObj = impacts; // alias local
+      const totalInvestNet = Object.keys(impactsObj).reduce(
+        (acc, s) => acc + Math.max(0, impactsObj[s].cout - impactsObj[s].aides), 0
+      );
+      const totalAides = Object.keys(impactsObj).reduce((acc, s) => acc + impactsObj[s].aides, 0);
+      const coutActuel = meta.finalActuel || 0;
+      const coutScenario = meta.finalProjet || 0;
+      const energieResiduelle = Math.max(0, coutScenario - totalInvestNet);
+      const economie = coutActuel - coutScenario;
+      const isGain = economie >= 0;
+
+      recapEl.innerHTML = `
+        <div class="recap-compare">
+          <div class="recap-col recap-actuel">
+            <div class="recap-col-label">Sans rien faire</div>
+            <div class="recap-col-value">${fmt(coutActuel)}</div>
+            <div class="recap-col-sub">énergie cumulée sur ${horizon} ans</div>
+          </div>
+          <div class="recap-vs" aria-hidden="true">→</div>
+          <div class="recap-col recap-projet">
+            <div class="recap-col-label">Votre scénario</div>
+            <div class="recap-col-value">${fmt(coutScenario)}</div>
+            <ul class="recap-col-breakdown">
+              <li><span>Investissement net d'aides</span><strong>${fmt(totalInvestNet)}</strong></li>
+              <li><span>Énergie résiduelle ${horizon}&nbsp;ans</span><strong>${fmt(energieResiduelle)}</strong></li>
+            </ul>
+          </div>
+        </div>
+        <div class="recap-saving ${isGain ? 'gain' : 'loss'}">
+          <span class="recap-saving-label">${isGain ? `Vous économisez sur ${horizon} ans` : `Surcoût net sur ${horizon} ans`}</span>
+          <span class="recap-saving-value">${fmt(Math.abs(economie))}</span>
+        </div>
+        <p class="recap-aside">
+          <span class="fr-icon-money-euro-circle-line" aria-hidden="true"></span>
+          <strong>${fmt(totalAides)}</strong> d'aides publiques mobilisées (déjà déduites de l'investissement net ci-dessus).
+        </p>
+      `;
+    }
+  }
+
+  // Helper pour binder une tile dans le wizard (tile maj le state + callback optionnel)
+  function bindWizardTile(containerId, key, target, after) {
+    const root = document.getElementById(containerId);
+    if (!root) return;
+    root.querySelectorAll('.radio-tile, .dpe-tile').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('.radio-tile, .dpe-tile').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        const val = btn.dataset[key];
+        const [section, field] = target.split('.');
+        state[section][field] = val;
+        if (after) after();
+      });
+    });
+  }
+
+  /* ========================================================================
+   * MODES — landing / guided / expert (cf. ADR-015)
+   * ====================================================================== */
+  function showMode(mode) {
+    state.mode = mode;
+    document.getElementById('pae-landing').classList.toggle('pae-hidden', mode !== 'landing');
+    document.getElementById('pae-wizard').classList.toggle('pae-hidden', mode !== 'guided');
+    document.getElementById('pae-expert').classList.toggle('pae-hidden', mode !== 'expert');
+    if (mode === 'guided') {
+      renderWizard();
+    } else if (mode === 'expert') {
+      // Le mode expert ne sait gérer qu'un seul projet logement et un seul projet mobilité.
+      // Si le wizard a coché des solutions, on les traduit en priorité pour ne pas
+      // perdre les choix de l'utilisateur en arrivant en expert.
+      applyWizardSolutionsToProjets();
+      syncExpertUIFromState();
+      render();
+    }
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+
+  // Traduit state.solutions (multi-coché en mode guidé) en state.logement.projet
+  // + state.mobilite.projet (champ unique en mode expert). Priorité logement :
+  //   rénovation > PAC air/eau > photovoltaïque > on garde le projet courant.
+  // Pour la mobilité : VE neuf si « ve » coché, sinon on garde.
+  function applyWizardSolutionsToProjets() {
+    const sol = state.solutions;
+    if (!sol) return;
+    // Logement
+    if (sol.reno) state.logement.projet = 'reno_ampleur';
+    else if (sol.pac) state.logement.projet = 'pac_aireau';
+    else if (sol.pv)  state.logement.projet = 'pv_autoconso';
+    // Mobilité
+    if (sol.ve) state.mobilite.projet = 've_neuf';
+  }
+
+  // Met à jour les contrôles du mode expert pour refléter le state courant
+  // (utilisé quand on revient au mode expert après avoir saisi dans le wizard).
+  function syncExpertUIFromState() {
+    // Sliders
+    setVal('f_personnes', state.foyer.personnes); setTxt('f_personnes_v', state.foyer.personnes);
+    setVal('f_rfr', state.foyer.rfr);
+    setVal('l_surface', state.logement.surface); setTxt('l_surface_v', state.logement.surface + ' m²');
+    setVal('m_km', state.mobilite.km); setTxt('m_km_v', state.mobilite.km.toLocaleString('fr-FR') + ' km');
+    setVal('horizon', state.horizon); setTxt('horizon_v', state.horizon + ' ans');
+    // Tiles
+    syncTile('f_zone_tiles', 'zone', state.foyer.zone);
+    syncTile('l_statut_tiles', 'statut', state.logement.statut);
+    syncTile('l_type_tiles', 'type', state.logement.type);
+    syncTile('l_dpe_tiles', 'dpe', state.logement.dpe);
+    syncTile('l_chauff_tiles', 'chauff', state.logement.chauffage);
+    syncTile('l_ecs_tiles', 'ecs', state.logement.ecs);
+    syncTile('l_projet_tiles', 'projet', state.logement.projet);
+    syncTile('m_actu_tiles', 'actu', state.mobilite.actuel);
+    syncTile('m_mode_tiles', 'mode', state.mobilite.mode);
+    syncTile('m_projet_tiles', 'projet', state.mobilite.projet);
+    syncTile('m_borne_tiles', 'borne', state.mobilite.borne);
+  }
+  function setVal(id, v) { const el = document.getElementById(id); if (el) el.value = v; }
+  function setTxt(id, v) { const el = document.getElementById(id); if (el) el.textContent = v; }
+  function syncTile(containerId, key, value) {
+    const root = document.getElementById(containerId);
+    if (!root) return;
+    root.querySelectorAll('[data-' + key + ']').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset[key] === String(value));
+    });
+  }
+
+  // Bindings landing + switches
+  document.getElementById('landing-guided').addEventListener('click', () => showMode('guided'));
+  document.getElementById('landing-expert').addEventListener('click', () => showMode('expert'));
+  document.getElementById('wizard-to-expert').addEventListener('click', () => showMode('expert'));
+  document.getElementById('expert-to-wizard').addEventListener('click', () => showMode('guided'));
+
+  // Raccourcis clavier (← → pour naviguer, Esc pour passer en mode expert).
+  // Actifs uniquement quand le wizard est visible et qu'on n'est pas dans un champ saisissable.
+  document.addEventListener('keydown', (e) => {
+    if (state.mode !== 'guided') return;
+    const tag = (e.target.tagName || '').toLowerCase();
+    // Ne pas intercepter si l'utilisateur saisit dans un input texte / number / textarea / select
+    if (tag === 'input' || tag === 'textarea' || tag === 'select') {
+      // Pour les sliders (input type="range"), on laisse passer aussi → ← contrôlent le slider
+      return;
+    }
+    if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      wizardNext();
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      wizardPrev();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      showMode('expert');
+    }
+  });
+
+  // Rendu initial : mode landing
+  showMode('landing');
+  </script>
+
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.14.4/dist/dsfr.module.min.js"></script>
+  <script type="text/javascript" nomodule src="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.14.4/dist/dsfr.nomodule.min.js"></script>
+
+  <script type="application/json" id="business-modal-data">
+  {
+    "title": "Méthode, données et arbitrages — Passer à l'électrique",
+    "audience": "DGEC · pilotage du Plan d'électrification",
+    "intro": "Synthèse ménage (mobilité + chauffage + rénovation + solaire). Cette modale recense la méthode de calcul retenue, les données mobilisées et les arbitrages encore ouverts à valider avec vous avant publication.",
+    "updated": "2026-05-20",
+    "specs": [
+      { "label": "Spécification (Word)",      "href": "/docs/specs-metier/passer-a-electrique/passer-a-electrique-spec.docx",            "type": "docx" },
+      { "label": "Spécification (Markdown)",  "href": "/docs/specs-metier/passer-a-electrique/spec.md",                                  "type": "md" },
+      { "label": "Modèle économique (Excel)", "href": "/docs/specs-metier/passer-a-electrique/passer-a-electrique-simulateur-2026.xlsx", "type": "xlsx" },
+      { "label": "Code source (HTML)",        "href": "/passer-a-electrique/index.html",                                                  "type": "html" }
+    ],
+    "sections": {
+      "perimetre": [
+        {"q": "Public cible : foyer particulier en métropole — est-ce qu'on inclut DROM dès la v1 ou plus tard ?", "note": "Les barèmes MaPrimeRénov' et CEE diffèrent en outre-mer."},
+        {"q": "Décision aidée : « qu'est-ce que je peux faire en priorité ? » plutôt qu'un chiffrage juridiquement engageant. Validez-vous cette posture ?"},
+        {"q": "Champ couvert : VE neuve/occasion, PAC air/eau, isolation, panneaux solaires. Faut-il ajouter ECS solaire, batterie, borne résidentielle, vélo cargo ?", "status": "open"},
+        {"q": "Sortie attendue : wizard 6 étapes pour le grand public + mode expert pour ajuster — gardée comme posture ?"},
+        {"q": "Utilisateur secondaire (conseiller France Rénov', agent collectivité, journaliste) : on conçoit pour eux aussi, ou outil grand public seul ?"}
+      ],
+      "arbitrages": [
+        {"q": "Définition du « gain net cumulé » = aides + économies × horizon − coût des projets engagés. Formule maintenant alignée entre étape 5, étape 6 et mode expert.", "note": "Le mode expert intégrait auparavant les aides + économies sans déduire le coût projet (62 305 €) ; il est désormais cohérent avec le wizard (~12 800 €).", "status": "ok"},
+        {"q": "Horizon des économies récurrentes : 10 ans par défaut (paramétrable). À conserver, ou bascule par défaut à 5 / 15 ans ?"},
+        {"q": "Coût VE compté = surcoût vs thermique (9 000 €) et non prix total du VE — on suppose que le ménage rachèterait un véhicule de toute façon. Hypothèse à valider ?", "status": "open"},
+        {"q": "Tous les projets démarrent en année 1 par défaut (alignement guidé/expert + message « agir maintenant »). On garde, ou on rétablit un échelonnement par défaut ?", "note": "Avant correctif, le wizard étalait sur 4 ans : créait un décalage avec le mode expert."},
+        {"q": "Tally étape 5 : bascule visuelle en rouge avec libellé « Perte nette cumulée » si gain < 0. Acceptable côté éditorial, ou anxiogène ?", "status": "ok"},
+        {"q": "Aides cumulables : on additionne MPR + CEE + bonus, mais on plafonne quand ? (taux de prise en charge, reste à charge minimum 10 % très modestes, plafonds Anah)"},
+        {"q": "Reste à charge ménage : on suppose la trésorerie disponible, ou on propose un financement (éco-PTZ, prêts bonifiés) ?"},
+        {"q": "Économies d'énergie : kWh évités valorisés au tarif réglementé bleu, ou au TTC moyen incluant ARENH/marché ?"},
+        {"q": "Année de référence des barèmes : 2026 figé, ou prise en compte des évolutions PLF / loi de finances en cours d'année ?"},
+        {"q": "Bonus écologique VE 2026 : on fige le barème actuel ou on prévoit le rebasculement annoncé (score environnemental) ?"}
+      ],
+      "sources": [
+        {"q": "Barème MaPrimeRénov' (PAC, isolation, ventilation) — arrêté de référence et fréquence de mise à jour ?", "note": "Aujourd'hui codé en dur dans le JS."},
+        {"q": "Forfaits CEE « Coup de pouce » chauffage + rénovation d'ampleur — qui nous fournit la grille à jour ?"},
+        {"q": "Bonus écologique VE neuve + prime à la conversion + leasing social — barème à valider avec la DGEC mobilité."},
+        {"q": "Tarif réglementé EDF (option base / heures creuses) — snapshot mensuel suffisant, ou flux dynamique ?"},
+        {"q": "Prix moyens carburants (gazole, SP95-E10) — source CGDD hebdo ou prix-carburants.gouv.fr ?"},
+        {"q": "Plafonds RFR par part par tranche (très modeste / modeste / intermédiaire / supérieur) — fichier annuel Anah confirmé ?"},
+        {"q": "Productivité solaire moyenne par zone climatique (kWh/kWc/an) — base PVGIS ou ADEME ?"},
+        {"q": "Prix moyen d'un VE neuf (32 000 €) et d'un thermique équivalent (23 000 €) : valeurs de référence à confirmer ? Hypothèses figées en dur dans le JS.", "status": "todo"},
+        {"q": "Offres partenaires (EDF, Renault, Engie) — schéma JSON shared/partner-offers.json en cours de conception, à formaliser ADR.", "note": "Priorité 1 sur la fiche projet — sans ce schéma, intégration impossible.", "status": "todo"}
+      ],
+      "hypotheses": [
+        {"q": "Conso VE : 18 kWh/100 km par défaut. OK pour citadine moyenne, sous-estimé pour SUV/break — laisse-t-on l'utilisateur l'ajuster ?"},
+        {"q": "Kilométrage annuel : 12 000 km par défaut (moyenne nationale CGDD). On garde ?"},
+        {"q": "Coût borne domicile : valeur figée dans COUT_BORNE_DOMICILE — à exposer dans un accordéon « hypothèses » ?"},
+        {"q": "COP PAC air/eau : 3.5 fixe. Faut-il moduler selon zone climatique H1/H2/H3 ?"},
+        {"q": "Surface logement par défaut : 90 m² (T4 moyen). Acceptable ?"},
+        {"q": "Durée de vie : 12 ans (VE batterie), 15 ans (PAC), 25 ans (PV). Cohérent avec amortissements ADEME ?"},
+        {"q": "Taux d'inflation des prix de l'énergie : on fige à 0 % réel, ou on intègre +2 %/an comme la CRE ?"},
+        {"q": "Taux d'actualisation pour le cumul long terme : 4 % (taux usuel CGDD) ou 0 % (lecture grand public) ?"}
+      ],
+      "attention": [
+        {"q": "Cas limite RFR > plafond supérieur : on affiche « non éligible MPR » ou on bascule sur CEE seul ?"},
+        {"q": "Locataire vs propriétaire occupant : les aides rénovation ne s'appliquent pas pareil. Filtre actif ou simple alerte ?"},
+        {"q": "Copropriété : aides MPR Copro vs individuelles — on les traite ou on renvoie vers un autre outil ?"},
+        {"q": "VE en location longue durée (LLD / leasing social) : aides versées au loueur, pas au ménage. Calcul à adapter ?"},
+        {"q": "Ménage sans projet de rachat véhicule : compter le surcoût VE (9 000 €) reste-t-il valide, ou devrait-on basculer sur le prix complet ?", "status": "open"},
+        {"q": "Données personnelles : RFR saisi → est-ce qu'on déclare CNIL / RGPD sachant qu'on ne stocke rien côté serveur ?"},
+        {"q": "Stepper cliquable + raccourcis clavier (← → Esc) : auditable RGAA niveau AA ?"},
+        {"q": "Affichage des pertes nettes en rouge : pédagogique pour le ménage, mais comment évite-t-on un effet « bashing » sur certaines combinaisons (ex : PV seul sur logement mal orienté) ?"}
+      ]
+    }
+  }
+  </script>
+
+</body>
+</html>

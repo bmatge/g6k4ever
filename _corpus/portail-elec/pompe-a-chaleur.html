@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="fr" data-fr-scheme="system">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#000091">
+  <title>Simulateur pompe à chaleur — Aides, coût et amortissement 2026</title>
+  <meta name="description" content="Estimez le coût d'installation d'une pompe à chaleur, les aides mobilisables (MaPrimeRénov', CEE) et la durée d'amortissement de votre projet." />
+
+  <link rel="apple-touch-icon" href="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.14.4/dist/favicon/apple-touch-icon.png">
+  <link rel="icon" href="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.14.4/dist/favicon/favicon.svg" type="image/svg+xml">
+  <link rel="shortcut icon" href="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.14.4/dist/favicon/favicon.ico" type="image/x-icon">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.14.4/dist/dsfr.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.14.4/dist/utility/utility.min.css">
+  <style>
+    :root {
+      --pac-accent: #169B62; /* vert ADEME / transition */
+      --pac-warn: #B34000;
+    }
+    main { background: var(--background-default-grey); }
+    .simulateur-hero { background: var(--background-alt-blue-france); padding: 3rem 0 2rem; }
+    .simulateur-hero h1 { margin-bottom: 0.5rem; }
+    .simulateur-hero .fr-text--lead { color: var(--text-mention-grey); margin-bottom: 0; max-width: 56rem; }
+
+    .form-card {
+      background: var(--background-default-grey);
+      border: 1px solid var(--border-default-grey);
+      padding: 1.75rem;
+      height: 100%;
+    }
+    .form-card h2 {
+      font-size: 1.125rem;
+      margin: 0 0 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-default-grey);
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+
+    /* Slider personnalisé */
+    .slider-wrap { display: flex; align-items: center; gap: 1rem; }
+    .slider-wrap input[type=range] {
+      flex: 1; -webkit-appearance: none; appearance: none;
+      height: 4px; background: var(--border-default-grey); border-radius: 2px; outline: none;
+    }
+    .slider-wrap input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--background-active-blue-france); cursor: pointer; border: 2px solid #fff;
+      box-shadow: 0 1px 4px rgba(0,0,145,.3);
+    }
+    .slider-wrap input[type=range]::-moz-range-thumb {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--background-active-blue-france); cursor: pointer; border: 2px solid #fff;
+    }
+    .slider-value {
+      min-width: 5.5rem; text-align: right; font-weight: 700;
+      color: var(--text-active-blue-france); font-variant-numeric: tabular-nums;
+    }
+
+    /* Tuiles radio (revenus / type PAC) */
+    .radio-tiles { display: grid; gap: 0.5rem; }
+    .radio-tiles.cols-4 { grid-template-columns: repeat(4, 1fr); }
+    .radio-tiles.cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .radio-tile {
+      background: var(--background-default-grey);
+      border: 1px solid var(--border-default-grey);
+      padding: 0.85rem 0.6rem;
+      cursor: pointer; text-align: center;
+      transition: all .15s;
+      display: flex; flex-direction: column; justify-content: center; min-height: 4.5rem;
+    }
+    .radio-tile:not(.active):hover { background: var(--background-alt-grey); border-color: var(--border-action-high-blue-france); }
+    .radio-tile.active {
+      background: var(--background-active-blue-france);
+      border-color: var(--background-active-blue-france);
+      color: var(--text-inverted-blue-france);
+    }
+    .radio-tile.active .tile-sub { color: rgba(255,255,255,.85); }
+    .radio-tile .tile-main { font-weight: 700; font-size: 0.9rem; line-height: 1.2; }
+    .radio-tile .tile-sub { font-size: 0.75rem; color: var(--text-mention-grey); margin-top: 0.15rem; line-height: 1.2; }
+
+    /* KPI cards */
+    .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+    .kpi {
+      background: var(--background-default-grey);
+      border: 1px solid var(--border-default-grey);
+      padding: 1.25rem 1.25rem 1rem;
+      position: relative;
+    }
+    .kpi-label { font-size: 0.8125rem; color: var(--text-mention-grey); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; }
+    .kpi-value { font-size: 2rem; font-weight: 700; line-height: 1.1; margin: 0.5rem 0 0.25rem; font-variant-numeric: tabular-nums; }
+    .kpi-hint { font-size: 0.8125rem; color: var(--text-mention-grey); }
+    .kpi-cout { border-left: 4px solid var(--text-default-grey); }
+    .kpi-aides { border-left: 4px solid var(--background-active-blue-france); }
+    .kpi-aides .kpi-value { color: var(--text-active-blue-france); }
+    .kpi-reste { border-left: 4px solid var(--text-default-grey); }
+    .kpi-eco { border-left: 4px solid var(--pac-accent); }
+    .kpi-eco .kpi-value { color: var(--pac-accent); }
+    .kpi-eco.negative { border-left-color: var(--pac-warn); }
+    .kpi-eco.negative .kpi-value { color: var(--pac-warn); }
+
+    /* Facture optionnelle */
+    .facture-details {
+      border-top: 1px solid var(--border-default-grey);
+      padding-top: 1rem;
+    }
+    .facture-summary {
+      cursor: pointer;
+      font-weight: 500;
+      color: var(--text-action-high-blue-france);
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      list-style: none;
+      padding: .25rem 0;
+    }
+    .facture-summary::-webkit-details-marker { display: none; }
+    .facture-summary::before {
+      content: "▸";
+      font-size: .75rem;
+      transition: transform .15s;
+    }
+    .facture-details[open] .facture-summary::before { transform: rotate(90deg); }
+    .facture-input-row {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      margin-top: .25rem;
+    }
+    .facture-input-row .fr-input { flex: 1; }
+    .facture-unit {
+      color: var(--text-mention-grey);
+      font-size: .9rem;
+      min-width: 6ch;
+      font-variant-numeric: tabular-nums;
+    }
+    .facture-active-note {
+      color: var(--pac-accent);
+      font-weight: 500;
+      margin: .75rem 0 0;
+      padding: .5rem .75rem;
+      background: var(--background-contrast-green-emeraude, #eaf6ee);
+      border-left: 3px solid var(--pac-accent);
+    }
+
+    /* Breakdown directement dans le KPI Aides */
+    .kpi-aides-break {
+      list-style: none;
+      padding: 0;
+      margin: .25rem 0 .5rem;
+      display: flex;
+      flex-direction: column;
+      gap: .125rem;
+    }
+    .kpi-aides-break li {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: .8125rem;
+      color: var(--text-default-grey);
+      padding: 2px 0;
+      border-bottom: 1px dotted var(--border-default-grey);
+    }
+    .kpi-aides-break li:last-child { border-bottom: none; }
+    .kpi-aides-break .kab-label { color: var(--text-default-grey); }
+    .kpi-aides-break .kab-amount {
+      font-weight: 600;
+      color: var(--text-active-blue-france);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Spotlight — L'État accompagne votre transition.
+       Fond bleu pâle DSFR (token --background-contrast-blue-france),
+       texte sombre pour la lisibilité. Bande tricolore conservée pour le ton institutionnel. */
+    .aide-spotlight {
+      margin: 2rem 0;
+      background: var(--background-contrast-blue-france, #e3e3fd);
+      color: var(--text-default-grey, #3a3a3a);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 145, .06);
+    }
+    .aide-spotlight__stripe {
+      display: flex;
+      height: 4px;
+    }
+    .aide-spotlight__stripe span { flex: 1; display: block; }
+    .aide-spotlight__stripe span:nth-child(1) { background: #0055a4; } /* bleu */
+    .aide-spotlight__stripe span:nth-child(2) { background: #ffffff; } /* blanc */
+    .aide-spotlight__stripe span:nth-child(3) { background: #ef4135; } /* rouge */
+    .aide-spotlight__body { padding: 1.75rem 2rem 1.5rem; }
+    @media (max-width: 600px) { .aide-spotlight__body { padding: 1.25rem; } }
+    .aide-spotlight__eyebrow {
+      margin: 0 0 .5rem;
+      font-size: .75rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-action-high-blue-france, #000091);
+      font-weight: 600;
+    }
+    .aide-spotlight__lead h3 {
+      margin: 0 0 .5rem;
+      font-size: 1.5rem;
+      line-height: 1.25;
+      color: var(--text-title-blue-france, #000091);
+      font-weight: 700;
+    }
+    .aide-spotlight__pct {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text-action-high-blue-france, #000091);
+      padding: 0 .125rem;
+    }
+    .aide-spotlight__sub {
+      margin: 0 0 1.25rem;
+      font-size: .9375rem;
+      color: var(--text-default-grey, #3a3a3a);
+      line-height: 1.5;
+    }
+    .aide-spotlight__sub strong { color: var(--text-title-grey, #161616); }
+    .aide-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 1.25rem;
+      display: grid;
+      gap: .75rem;
+    }
+    .aide-list li {
+      background: var(--background-default-grey, #ffffff);
+      border-left: 3px solid var(--background-action-high-blue-france, #000091);
+      padding: .75rem 1rem;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: .25rem 1rem;
+      align-items: baseline;
+    }
+    .aide-list .aide-amount {
+      font-size: 1.25rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      grid-row: span 2;
+      align-self: center;
+      color: var(--text-action-high-blue-france, #000091);
+    }
+    .aide-list .aide-name {
+      font-weight: 600;
+      font-size: .9375rem;
+      color: var(--text-title-grey, #161616);
+    }
+    .aide-list .aide-source {
+      font-size: .75rem;
+      color: var(--text-mention-grey, #666666);
+      font-weight: 400;
+      margin-left: .375rem;
+    }
+    .aide-list .aide-desc {
+      grid-column: 2;
+      margin: 0;
+      font-size: .8125rem;
+      line-height: 1.5;
+      color: var(--text-default-grey, #3a3a3a);
+    }
+    .aide-spotlight__context {
+      margin: 0 0 1rem;
+      padding: .75rem 1rem;
+      background: var(--background-default-grey, #ffffff);
+      border-left: 2px solid var(--background-action-high-blue-france, #000091);
+      font-size: .875rem;
+      line-height: 1.5;
+      color: var(--text-default-grey, #3a3a3a);
+    }
+    .aide-spotlight__context strong { color: var(--text-title-grey, #161616); }
+    .aide-spotlight__cta {
+      margin: 0;
+      font-size: .8125rem;
+      color: var(--text-mention-grey, #666666);
+    }
+    .aide-spotlight__cta strong { color: var(--text-default-grey, #3a3a3a); }
+    .aide-spotlight__cta a {
+      color: var(--text-action-high-blue-france, #000091);
+      text-decoration: underline;
+      font-weight: 500;
+    }
+    .aide-spotlight__cta a:hover { color: #1212ff; }
+
+    /* Cas pas d'aides (ex. profil rose + PAC air/air) */
+    .aide-spotlight--none .aide-list,
+    .aide-spotlight--none .aide-spotlight__pct,
+    .aide-spotlight--none .aide-spotlight__context { display: none; }
+
+    /* Detail table */
+    .detail-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+    .detail-table td { padding: 0.75rem 0; border-bottom: 1px solid var(--border-default-grey); }
+    .detail-table tr:last-child td { font-weight: 700; font-size: 1.05rem; border-bottom: none; padding-top: 1rem; }
+    .detail-table td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+    .detail-table .neg { color: var(--text-active-blue-france); }
+    .detail-table .sub-label { color: var(--text-mention-grey); font-size: 0.85rem; margin-left: 0.5rem; font-weight: 400; }
+    .detail-table .badge-info {
+      display: inline-block; font-size: 0.7rem; padding: 2px 6px;
+      background: var(--background-contrast-info); color: var(--text-action-high-blue-france);
+      margin-left: 0.4rem; font-weight: 500; vertical-align: 1px;
+    }
+
+    /* Charts */
+    .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .chart-card {
+      background: var(--background-default-grey);
+      border: 1px solid var(--border-default-grey);
+      padding: 1.5rem;
+    }
+    .chart-card h3 { font-size: 1rem; margin: 0 0 0.25rem; }
+    .chart-card .chart-sub { font-size: 0.85rem; color: var(--text-mention-grey); margin-bottom: 1rem; }
+    .chart-canvas-wrap { position: relative; height: 280px; }
+
+    .hypotheses {
+      font-size: 0.85rem; color: var(--text-mention-grey); line-height: 1.6;
+      background: var(--background-alt-grey); padding: 1.25rem 1.5rem;
+      border-left: 4px solid var(--border-default-grey); margin-top: 2rem;
+    }
+    .hypotheses strong { color: var(--text-default-grey); }
+
+    /* Section anchors */
+    .section { padding: 2rem 0; }
+    .section h2.section-title {
+      font-size: 1.5rem; margin: 0 0 1.5rem; padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--background-active-blue-france);
+      display: inline-block;
+    }
+
+    .non-eligible-alert {
+      background: var(--background-contrast-warning);
+      padding: 0.75rem 1rem; font-size: 0.9rem; margin-top: 0.75rem;
+      border-left: 4px solid var(--background-action-high-warning); display: none;
+    }
+    .non-eligible-alert.shown { display: block; }
+
+    @media (max-width: 992px) {
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .charts-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .radio-tiles.cols-4 { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media print {
+      .fr-header__menu, .fr-footer__bottom, .simulateur-hero { display: none; }
+      .form-card { break-inside: avoid; }
+      .chart-card { break-inside: avoid; }
+    }
+  </style>
+  <link rel="stylesheet" href="/shared/portal-bar.css">
+  <link rel="stylesheet" href="/shared/business-modal.css">
+  <script src="/shared/portal-bar.js" defer></script>
+  <script src="/shared/business-modal.js" defer></script>
+</head>
+<body>
+  <a class="fr-skiplink" href="#contenu">Contenu</a>
+
+  <!-- En-tête République Française -->
+  <header role="banner" class="fr-header">
+    <div class="fr-header__body">
+      <div class="fr-container">
+        <div class="fr-header__body-row">
+          <div class="fr-header__brand fr-enlarge-link">
+            <div class="fr-header__brand-top">
+              <div class="fr-header__logo">
+                <p class="fr-logo">République<br>Française</p>
+              </div>
+            </div>
+            <div class="fr-header__service">
+              <p class="fr-header__service-title">Simulateur Pompe à chaleur</p>
+              <p class="fr-header__service-tagline">Estimation des coûts, des aides et de la rentabilité</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main role="main" id="contenu">
+
+    <!-- Hero -->
+    <section class="simulateur-hero">
+      <div class="fr-container">
+        <h1>Combien coûte vraiment une pompe à chaleur ?</h1>
+        <p class="fr-text--lead">
+          Simulez l'installation d'une pompe à chaleur dans votre logement&nbsp;: prix de l'équipement,
+          aides mobilisables, économies sur la facture d'énergie et durée d'amortissement.
+          Données mises à jour mai&nbsp;2026.
+        </p>
+      </div>
+    </section>
+
+    <!-- Formulaire de saisie -->
+    <section class="section">
+      <div class="fr-container">
+
+        <div class="fr-grid-row fr-grid-row--gutters">
+
+          <!-- Mon logement -->
+          <div class="fr-col-12 fr-col-md-6">
+            <div class="form-card">
+              <h2><span class="fr-icon-home-4-line" aria-hidden="true"></span> Mon logement</h2>
+
+              <div class="fr-mb-3w">
+                <label class="fr-label" for="surface">Surface chauffée
+                  <span class="fr-hint-text">Pièces de vie effectivement chauffées</span>
+                </label>
+                <div class="slider-wrap fr-mt-1w">
+                  <input type="range" id="surface" min="40" max="250" value="120" step="5" aria-label="Surface en mètres carrés" />
+                  <span class="slider-value"><span id="surface-out">120</span>&nbsp;m²</span>
+                </div>
+              </div>
+
+              <div class="fr-select-group fr-mb-3w">
+                <label class="fr-label" for="zone">Zone climatique
+                  <span class="fr-hint-text">Selon votre département (réglementation thermique)</span>
+                </label>
+                <select class="fr-select" id="zone">
+                  <option value="H1">H1 — Nord-est, montagne (climat froid)</option>
+                  <option value="H2" selected>H2 — Ouest, Centre, Sud-Ouest (climat tempéré)</option>
+                  <option value="H3">H3 — Méditerranée (climat doux)</option>
+                </select>
+              </div>
+
+              <div class="fr-select-group fr-mb-3w">
+                <label class="fr-label" for="isolation">État de l'isolation
+                  <span class="fr-hint-text">Conditionne fortement la consommation</span>
+                </label>
+                <select class="fr-select" id="isolation">
+                  <option value="passoire">Passoire thermique (DPE F-G)</option>
+                  <option value="moyen" selected>Isolation moyenne (DPE D-E)</option>
+                  <option value="bon">Bonne isolation (DPE B-C)</option>
+                </select>
+              </div>
+
+              <div class="fr-select-group">
+                <label class="fr-label" for="energie">Chauffage actuel
+                  <span class="fr-hint-text">Énergie principale du logement</span>
+                </label>
+                <select class="fr-select" id="energie">
+                  <option value="fioul">Chaudière fioul</option>
+                  <option value="gaz" selected>Chaudière gaz</option>
+                  <option value="propane">Chaudière propane / GPL</option>
+                  <option value="elec">Convecteurs électriques</option>
+                </select>
+              </div>
+
+              <details class="fr-mt-3w facture-details" id="facture-details">
+                <summary class="facture-summary">
+                  Affiner avec ma facture réelle
+                  <span class="fr-tag fr-tag--sm">optionnel</span>
+                </summary>
+                <p class="fr-hint-text fr-mt-1w fr-mb-2w">
+                  Si renseigné, le simulateur recalibre l'estimation sur votre consommation
+                  réelle plutôt que sur la surface et la zone climatique. Indiquez si possible
+                  uniquement la part <strong>chauffage</strong> (hors eau chaude / cuisson).
+                </p>
+
+                <div class="fr-input-group fr-mb-2w">
+                  <label class="fr-label" for="facture-montant">Montant annuel TTC</label>
+                  <div class="facture-input-row">
+                    <input class="fr-input" id="facture-montant" type="number" min="0" step="50"
+                           placeholder="ex. 2 100" inputmode="numeric" />
+                    <span class="facture-unit">€/an</span>
+                  </div>
+                </div>
+
+                <p class="fr-text--sm" style="text-align:center; color: var(--text-mention-grey); margin: .25rem 0;">— ou —</p>
+
+                <div class="fr-input-group">
+                  <label class="fr-label" for="facture-conso">Consommation annuelle
+                    <span class="fr-hint-text" id="facture-conso-hint">en kWh sur votre facture (ou m³ × 11,2 pour le gaz naturel)</span>
+                  </label>
+                  <div class="facture-input-row">
+                    <input class="fr-input" id="facture-conso" type="number" min="0" step="100"
+                           placeholder="ex. 18 000" inputmode="numeric" />
+                    <span class="facture-unit" id="facture-conso-unit">kWh/an</span>
+                  </div>
+                </div>
+
+                <p class="fr-text--sm facture-active-note" id="facture-active-note" hidden>
+                  ✓ Estimation calibrée sur vos données réelles.
+                </p>
+              </details>
+            </div>
+          </div>
+
+          <!-- Mon projet -->
+          <div class="fr-col-12 fr-col-md-6">
+            <div class="form-card">
+              <h2><span class="fr-icon-settings-5-line" aria-hidden="true"></span> Mon projet</h2>
+
+              <div class="fr-mb-3w">
+                <label class="fr-label">Type de pompe à chaleur</label>
+                <div class="fr-hint-text fr-mb-1w">SCOP&nbsp;: coefficient de performance saisonnier</div>
+                <div class="radio-tiles cols-3" id="pac-tiles">
+                  <button type="button" class="radio-tile active" data-pac="aireau">
+                    <span class="tile-main">Air / eau</span>
+                    <span class="tile-sub">SCOP 3,8</span>
+                  </button>
+                  <button type="button" class="radio-tile" data-pac="geo">
+                    <span class="tile-main">Géothermique</span>
+                    <span class="tile-sub">SCOP 4,5</span>
+                  </button>
+                  <button type="button" class="radio-tile" data-pac="airair">
+                    <span class="tile-main">Air / air</span>
+                    <span class="tile-sub">SCOP 3,5</span>
+                  </button>
+                </div>
+                <div class="non-eligible-alert" id="airair-alert">
+                  <span class="fr-icon-warning-line" aria-hidden="true"></span>&nbsp;La PAC air/air n'est pas éligible à MaPrimeRénov'&nbsp;2026 (parcours par geste).
+                </div>
+              </div>
+
+              <div>
+                <label class="fr-label">Profil de revenus</label>
+                <div class="fr-hint-text fr-mb-1w">
+                  Plafonds ANAH 2026, revenu fiscal de référence (couple Île-de-France, indicatif)
+                </div>
+                <div class="radio-tiles cols-4" id="revenus-tiles">
+                  <button type="button" class="radio-tile" data-rev="bleu">
+                    <span class="tile-main">Très modeste</span>
+                    <span class="tile-sub">&lt;&nbsp;33&nbsp;k€</span>
+                  </button>
+                  <button type="button" class="radio-tile" data-rev="jaune">
+                    <span class="tile-main">Modeste</span>
+                    <span class="tile-sub">33&nbsp;–&nbsp;40&nbsp;k€</span>
+                  </button>
+                  <button type="button" class="radio-tile active" data-rev="violet">
+                    <span class="tile-main">Intermédiaire</span>
+                    <span class="tile-sub">40&nbsp;–&nbsp;56&nbsp;k€</span>
+                  </button>
+                  <button type="button" class="radio-tile" data-rev="rose">
+                    <span class="tile-main">Supérieur</span>
+                    <span class="tile-sub">&gt;&nbsp;56&nbsp;k€</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Résultats financiers -->
+    <section class="section" style="background: var(--background-alt-grey);">
+      <div class="fr-container">
+        <h2 class="section-title">Estimation financière</h2>
+
+        <div class="kpi-grid">
+          <div class="kpi kpi-cout">
+            <div class="kpi-label">Coût installation</div>
+            <div class="kpi-value" id="kpi-cout">—</div>
+            <div class="kpi-hint">TTC, pose et matériel</div>
+          </div>
+          <div class="kpi kpi-aides">
+            <div class="kpi-label">Aides mobilisables</div>
+            <div class="kpi-value" id="kpi-aides">—</div>
+            <ul class="kpi-aides-break" id="kpi-aides-break"><!-- injected --></ul>
+            <div class="kpi-hint" id="kpi-aides-detail">MaPrimeRénov' + CEE</div>
+          </div>
+          <div class="kpi kpi-reste">
+            <div class="kpi-label">Reste à charge</div>
+            <div class="kpi-value" id="kpi-reste">—</div>
+            <div class="kpi-hint" id="kpi-reste-detail">soit <span id="kpi-reste-pct">—</span>% du coût</div>
+          </div>
+          <div class="kpi kpi-eco" id="kpi-eco-card">
+            <div class="kpi-label">Économies annuelles</div>
+            <div class="kpi-value" id="kpi-eco">—</div>
+            <div class="kpi-hint" id="kpi-eco-detail">vs chauffage actuel</div>
+          </div>
+        </div>
+
+        <!-- L'État accompagne votre transition -->
+        <aside class="aide-spotlight" id="aide-spotlight" aria-labelledby="aide-spotlight-title">
+          <div class="aide-spotlight__stripe" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+          <div class="aide-spotlight__body">
+            <div class="aide-spotlight__lead">
+              <p class="aide-spotlight__eyebrow">République Française · Plan d'électrification 2026</p>
+              <h3 id="aide-spotlight-title">
+                L'État finance <span class="aide-spotlight__pct" id="aide-pct">—</span> de votre projet
+              </h3>
+              <p class="aide-spotlight__sub" id="aide-spotlight-sub">—</p>
+            </div>
+
+            <ul class="aide-list" id="aide-list">
+              <!-- injected -->
+            </ul>
+
+            <p class="aide-spotlight__context" id="aide-spotlight-context">
+              Ces aides s'inscrivent dans le Plan d'électrification annoncé en avril 2026, qui vise
+              <strong>1 million de pompes à chaleur installées en 2030</strong> pour réduire la dépendance
+              de la France aux énergies fossiles importées.
+            </p>
+
+            <p class="aide-spotlight__cta">
+              <strong>Pour aller plus loin&nbsp;:</strong>
+              <a href="https://france-renov.gouv.fr" target="_blank" rel="noopener">France Rénov'</a> ·
+              <a href="https://mesaidesreno.beta.gouv.fr" target="_blank" rel="noopener">Mes Aides Réno (simulateur officiel)</a> ·
+              <a href="/plan-electrification/" rel="noopener">Plan d'électrification — suivi des 22 mesures</a>
+            </p>
+          </div>
+        </aside>
+
+        <div class="fr-grid-row fr-grid-row--gutters">
+          <div class="fr-col-12 fr-col-md-6">
+            <div class="chart-card">
+              <h3>Détail du financement</h3>
+              <p class="chart-sub">Décomposition du coût et des aides</p>
+              <table class="detail-table" id="detail-table"></table>
+            </div>
+          </div>
+          <div class="fr-col-12 fr-col-md-6">
+            <div class="chart-card">
+              <h3>Rentabilité du projet</h3>
+              <p class="chart-sub">Point d'équilibre&nbsp;: <strong id="point-equilibre">—</strong></p>
+              <div class="chart-canvas-wrap">
+                <canvas id="chart-amort" role="img" aria-label="Courbe d'amortissement de l'investissement sur 15 ans"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Comparaison énergies -->
+    <section class="section">
+      <div class="fr-container">
+        <h2 class="section-title">Comparaison avec les autres énergies</h2>
+
+        <div class="charts-grid">
+          <div class="chart-card">
+            <h3>Facture annuelle de chauffage</h3>
+            <p class="chart-sub">Coût en €/an pour le même besoin de chaleur</p>
+            <div class="chart-canvas-wrap">
+              <canvas id="chart-energies" role="img" aria-label="Comparaison du coût annuel de chauffage par énergie"></canvas>
+            </div>
+          </div>
+          <div class="chart-card">
+            <h3>Coût total sur 15 ans</h3>
+            <p class="chart-sub">Installation + énergie cumulée, inflation énergie 3 %/an</p>
+            <div class="chart-canvas-wrap">
+              <canvas id="chart-tco" role="img" aria-label="Coût total cumulé sur 15 ans par solution"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="hypotheses">
+          <strong>Hypothèses de calcul.</strong>
+          Besoin de chauffage&nbsp;: 90/110/130&nbsp;kWh utiles/m²/an en zones H3/H2/H1 (logement DPE D-E), ajusté selon l'isolation.
+          Prix TTC mai&nbsp;2026&nbsp;: élec 0,194&nbsp;€/kWh, gaz 0,126&nbsp;€/kWh, fioul 0,11&nbsp;€/kWh, propane 0,16&nbsp;€/kWh.
+          Rendements&nbsp;: chaudière fioul 80&nbsp;%, gaz à condensation 95&nbsp;%, propane 90&nbsp;%, élec direct 100&nbsp;%.
+          SCOP (saisonnier réel) PAC&nbsp;: air/eau 3,8 — géothermique 4,5 — air/air 3,5.
+          Coûts d'installation médians&nbsp;: PAC air/eau 14&nbsp;000&nbsp;€, géothermique 28&nbsp;000&nbsp;€, air/air 9&nbsp;000&nbsp;€ (TVA 5,5&nbsp;%, pose incluse).
+          MaPrimeRénov' parcours par geste 2026, plafonds travaux 12&nbsp;000&nbsp;€ (air/eau) et 20&nbsp;000&nbsp;€ (géo).
+          CEE Coup&nbsp;de&nbsp;pouce Chauffage bonifié si remplacement de chaudière fioul/gaz/propane (hors PAC air/air).
+          Inflation des prix de l'énergie&nbsp;: 3&nbsp;%/an. Entretien annuel non intégré.
+          <br><br>
+          <strong>Sources.</strong>
+          ANAH (MaPrimeRénov'), Commission de régulation de l'énergie (CRE), ADEME,
+          arrêté du 20 mai 2022 modifié (CEE Coup de pouce Chauffage), loi de finances 2026.
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer DSFR -->
+  <footer class="fr-footer" role="contentinfo">
+    <div class="fr-container">
+      <div class="fr-footer__body">
+        <div class="fr-footer__brand fr-enlarge-link">
+          <p class="fr-logo">République<br>Française</p>
+        </div>
+        <div class="fr-footer__content">
+          <p class="fr-footer__content-desc">
+            Simulateur indicatif. Pour un devis personnalisé, consultez un artisan
+            <strong>RGE QualiPAC</strong>. Démarche officielle&nbsp;: <a class="fr-footer__content-link" href="https://france-renov.gouv.fr" target="_blank" rel="noopener noreferrer">france-renov.gouv.fr</a>.
+          </p>
+          <ul class="fr-footer__content-list">
+            <li class="fr-footer__content-item"><a class="fr-footer__content-link" href="https://france-renov.gouv.fr" target="_blank" rel="noopener noreferrer">France Rénov'</a></li>
+            <li class="fr-footer__content-item"><a class="fr-footer__content-link" href="https://www.maprimerenov.gouv.fr" target="_blank" rel="noopener noreferrer">MaPrimeRénov'</a></li>
+            <li class="fr-footer__content-item"><a class="fr-footer__content-link" href="https://www.ademe.fr" target="_blank" rel="noopener noreferrer">ADEME</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="fr-footer__bottom">
+        <ul class="fr-footer__bottom-list">
+          <li class="fr-footer__bottom-item"><a class="fr-footer__bottom-link" href="#">Mentions légales</a></li>
+          <li class="fr-footer__bottom-item"><a class="fr-footer__bottom-link" href="#">Données personnelles</a></li>
+          <li class="fr-footer__bottom-item"><a class="fr-footer__bottom-link" href="#">Accessibilité&nbsp;: non conforme</a></li>
+        </ul>
+        <div class="fr-footer__bottom-copy">
+          <p>Simulateur indicatif — Données mai&nbsp;2026. Sauf mention contraire, tous les contenus de ce site sont sous licence
+            <a href="https://github.com/etalab/licence-ouverte/blob/master/LO.md" target="_blank" rel="noopener noreferrer">Licence Ouverte 2.0</a>.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.14.4/dist/dsfr.module.min.js"></script>
+  <script type="text/javascript" nomodule src="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.14.4/dist/dsfr.nomodule.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+
+  <script>
+  (function() {
+    'use strict';
+
+    // ===========================================================================
+    // DONNÉES DE RÉFÉRENCE (2026)
+    // ===========================================================================
+    const PRIX_KWH = { fioul: 0.11, gaz: 0.126, propane: 0.16, elec: 0.194 };
+    const RENDEMENT = { fioul: 0.80, gaz: 0.95, propane: 0.90, elec: 1.0 };
+    const SCOP = { aireau: 3.8, geo: 4.5, airair: 3.5 };
+
+    // Conversion conso brute → kWh finaux (énergie consommée) selon l'énergie
+    const KWH_PAR_UNITE = { fioul: 10, gaz: 1, propane: 13.8, elec: 1 };
+    // Libellé d'unité affiché dans l'input "Consommation annuelle"
+    const UNITE_CONSO = {
+      fioul:   { unit: 'litres/an', hint: 'en litres livrés (1 L ≈ 10 kWh)' },
+      gaz:     { unit: 'kWh/an',    hint: 'en kWh sur votre facture (ou m³ × 11,2 pour le gaz naturel)' },
+      propane: { unit: 'kg/an',     hint: 'en kg livrés (1 kg ≈ 13,8 kWh)' },
+      elec:    { unit: 'kWh/an',    hint: 'en kWh sur votre facture' }
+    };
+
+    // Besoin de chauffage kWh utiles/m²/an
+    const BESOIN_BASE = { H1: 130, H2: 110, H3: 90 };
+    const FACTEUR_ISOL = { passoire: 1.5, moyen: 1.0, bon: 0.65 };
+
+    // Coût d'installation médian TTC (pose incluse)
+    const COUT_PAC = { aireau: 14000, geo: 28000, airair: 9000 };
+
+    // MaPrimeRénov' 2026 — parcours par geste
+    const MPR = {
+      aireau: { bleu: 5000, jaune: 4000, violet: 3000, rose: 0 },
+      geo:    { bleu: 11000, jaune: 9000, violet: 6000, rose: 0 },
+      airair: { bleu: 0, jaune: 0, violet: 0, rose: 0 }
+    };
+    // Plafonds dépense éligible
+    const PLAFOND_MPR = { aireau: 12000, geo: 20000, airair: 0 };
+
+    // CEE Coup de pouce chauffage (remplacement chaudière fossile par PAC air/eau ou géo)
+    const CEE_BONIFIE = { bleu: 5000, jaune: 5000, violet: 4000, rose: 2500 };
+    const CEE_STANDARD = { bleu: 1000, jaune: 1000, violet: 800, rose: 500 };
+
+    // Bonus dépose cuve fioul
+    const BONUS_FIOUL = { bleu: 1200, jaune: 800, violet: 400, rose: 0 };
+
+    // ===========================================================================
+    // ÉTAT
+    // ===========================================================================
+    const state = {
+      surface: 120,
+      zone: 'H2',
+      isolation: 'moyen',
+      energie: 'gaz',
+      pac: 'aireau',
+      revenus: 'violet',
+      // Override optionnel : si l'un des deux est renseigné (> 0), on recalibre
+      factureMontant: null, // €/an
+      factureConso: null    // unité dépend de state.energie
+    };
+
+    // ===========================================================================
+    // UTILITAIRES
+    // ===========================================================================
+    const fmt = (n) => Math.round(n).toLocaleString('fr-FR') + ' €';
+    const fmtShort = (n) => {
+      const abs = Math.abs(n);
+      if (abs >= 1000) return Math.round(n / 100) / 10 + ' k€';
+      return Math.round(n) + ' €';
+    };
+
+    // ===========================================================================
+    // CALCULS
+    // ===========================================================================
+    function calcule() {
+      // ---- Besoin de chauffage (kWh utiles/an) ----
+      // Si l'utilisateur a renseigné sa facture réelle, on recalibre depuis ces données
+      // plutôt que d'estimer à partir de la surface × zone × isolation.
+      let besoinUtile;
+      let coutActuelOverride = null;        // mis si on a le montant € direct
+      let overrideActive = false;
+
+      if (state.factureMontant && state.factureMontant > 0) {
+        // kWh finaux consommés = montant / prix énergie ; kWh utiles = × rendement
+        const consoFinale = state.factureMontant / PRIX_KWH[state.energie];
+        besoinUtile = consoFinale * RENDEMENT[state.energie];
+        coutActuelOverride = state.factureMontant;
+        overrideActive = true;
+      } else if (state.factureConso && state.factureConso > 0) {
+        const consoFinale = state.factureConso * KWH_PAR_UNITE[state.energie];
+        besoinUtile = consoFinale * RENDEMENT[state.energie];
+        overrideActive = true;
+      } else {
+        besoinUtile = state.surface * BESOIN_BASE[state.zone] * FACTEUR_ISOL[state.isolation];
+      }
+
+      // Consommations par énergie (sans PAC)
+      const conso = {
+        fioul: besoinUtile / RENDEMENT.fioul,
+        gaz: besoinUtile / RENDEMENT.gaz,
+        propane: besoinUtile / RENDEMENT.propane,
+        elec: besoinUtile / RENDEMENT.elec
+      };
+      const couts = {
+        fioul: conso.fioul * PRIX_KWH.fioul,
+        gaz: conso.gaz * PRIX_KWH.gaz,
+        propane: conso.propane * PRIX_KWH.propane,
+        elec: conso.elec * PRIX_KWH.elec
+      };
+
+      // PAC
+      const consoPAC = besoinUtile / SCOP[state.pac];
+      const coutPAC = consoPAC * PRIX_KWH.elec;
+      couts.pac = coutPAC;
+
+      // Le coût "actuel" prend le montant direct si fourni (le plus précis),
+      // sinon le coût calculé depuis le besoin utile.
+      const coutActuel = coutActuelOverride != null ? coutActuelOverride : couts[state.energie];
+
+      // Installation
+      const coutInstall = COUT_PAC[state.pac];
+
+      // Aides
+      const mprBase = MPR[state.pac][state.revenus];
+      const mpr = Math.min(mprBase, PLAFOND_MPR[state.pac] * 0.5); // garde-fou
+      const mprFinal = mprBase; // simplification : on garde le barème direct
+
+      const remplaceFossile = ['fioul', 'gaz', 'propane'].includes(state.energie);
+      const eligibleCoupDePouce = remplaceFossile && state.pac !== 'airair';
+      const cee = eligibleCoupDePouce ? CEE_BONIFIE[state.revenus] : CEE_STANDARD[state.revenus];
+      const bonusFioul = (state.energie === 'fioul' && state.pac !== 'airair') ? BONUS_FIOUL[state.revenus] : 0;
+
+      let totalAides = mprFinal + cee + bonusFioul;
+      const plafondCumul = coutInstall * 0.90;
+      if (totalAides > plafondCumul) totalAides = plafondCumul;
+
+      const resteAcharge = Math.max(0, coutInstall - totalAides);
+      const economiesAn = coutActuel - coutPAC;
+
+      return {
+        besoinUtile, coutInstall,
+        mpr: mprFinal, cee, bonusFioul, totalAides,
+        resteAcharge, coutActuel, coutPAC, economiesAn,
+        couts, eligibleCoupDePouce,
+        overrideActive
+      };
+    }
+
+    // ===========================================================================
+    // RENDU KPI
+    // ===========================================================================
+    function renderKPI(r) {
+      document.getElementById('kpi-cout').textContent = fmt(r.coutInstall);
+      document.getElementById('kpi-aides').textContent = fmt(r.totalAides);
+      document.getElementById('kpi-reste').textContent = fmt(r.resteAcharge);
+
+      const pct = Math.round((r.resteAcharge / r.coutInstall) * 100);
+      document.getElementById('kpi-reste-pct').textContent = pct;
+
+      const ecoEl = document.getElementById('kpi-eco');
+      const ecoCard = document.getElementById('kpi-eco-card');
+      ecoEl.textContent = fmt(r.economiesAn);
+      const suffix = r.overrideActive ? ' · sur facture réelle' : '';
+      if (r.economiesAn < 0) {
+        ecoCard.classList.add('negative');
+        document.getElementById('kpi-eco-detail').textContent = 'surcoût annuel' + suffix;
+      } else {
+        ecoCard.classList.remove('negative');
+        document.getElementById('kpi-eco-detail').textContent = 'vs chauffage actuel' + suffix;
+      }
+      // Badge dans le bloc <details>
+      document.getElementById('facture-active-note').hidden = !r.overrideActive;
+
+      // Aides detail
+      const aidesDetail = state.pac === 'airair'
+        ? 'CEE uniquement (MPR exclue)'
+        : (r.eligibleCoupDePouce ? 'MaPrimeRénov\' + CEE bonifié' : 'MaPrimeRénov\' + CEE');
+      document.getElementById('kpi-aides-detail').textContent = aidesDetail;
+
+      // Breakdown dans le KPI + Spotlight État
+      renderAidesBreakdown(r);
+      renderAideSpotlight(r);
+    }
+
+    // ===========================================================================
+    // BREAKDOWN AIDES + SPOTLIGHT ÉTAT
+    // ===========================================================================
+    function buildAidesItems(r) {
+      // Retourne la liste ordonnée des aides actives avec leurs métadonnées.
+      const items = [];
+      if (r.mpr > 0) {
+        items.push({
+          amount: r.mpr,
+          name: "MaPrimeRénov'",
+          source: 'Agence nationale de l\'habitat (Anah)',
+          short: 'MPR',
+          desc: 'Aide principale de l\'État à la rénovation énergétique. Le barème est modulé selon les revenus pour soutenir prioritairement les ménages modestes — fléchage renforcé vers l\'électrification depuis le 1er septembre 2026 (Mesure 6 du Plan).'
+        });
+      }
+      if (r.cee > 0) {
+        const isBonif = r.eligibleCoupDePouce;
+        items.push({
+          amount: r.cee,
+          name: isBonif ? 'Coup de pouce Chauffage' : 'Prime CEE standard',
+          source: isBonif ? 'CEE bonifié — sortie fioul / gaz / propane' : 'Certificats d\'économies d\'énergie',
+          short: 'CEE',
+          desc: isBonif
+            ? 'Bonification du dispositif CEE pour le remplacement d\'une chaudière fossile par une PAC. Financé par les fournisseurs d\'énergie sous régulation DGEC.'
+            : 'Dispositif des Certificats d\'économies d\'énergie. Financé par les fournisseurs d\'énergie sous obligation de l\'État.'
+        });
+      }
+      if (r.bonusFioul > 0) {
+        items.push({
+          amount: r.bonusFioul,
+          name: 'Bonus dépose cuve à fioul',
+          source: 'Soutien spécifique sortie du fioul',
+          short: 'Cuve fioul',
+          desc: 'Aide complémentaire pour accompagner la neutralisation et l\'enlèvement de la cuve à fioul lors du passage à une énergie électrique.'
+        });
+      }
+      return items;
+    }
+
+    function renderAidesBreakdown(r) {
+      const ul = document.getElementById('kpi-aides-break');
+      const items = buildAidesItems(r);
+      if (!items.length) {
+        ul.innerHTML = '<li style="opacity:.7"><span class="kab-label">Aucune aide mobilisable</span><span class="kab-amount">0 €</span></li>';
+        return;
+      }
+      ul.innerHTML = items.map(i =>
+        `<li><span class="kab-label">${i.short}</span><span class="kab-amount">${fmt(i.amount)}</span></li>`
+      ).join('');
+    }
+
+    function renderAideSpotlight(r) {
+      const spotlight = document.getElementById('aide-spotlight');
+      const items = buildAidesItems(r);
+
+      if (!items.length || r.totalAides <= 0) {
+        spotlight.classList.add('aide-spotlight--none');
+        document.getElementById('aide-spotlight-title').innerHTML =
+          'Pour ce profil, peu d\'aides directes sont mobilisables';
+        document.getElementById('aide-spotlight-sub').textContent =
+          state.pac === 'airair'
+            ? 'La PAC air/air est exclue du parcours MaPrimeRénov\' par geste. Vous pouvez en revanche cumuler les CEE standard et bénéficier du fléchage des aides à la rénovation d\'ampleur si vous engagez un projet plus global.'
+            : 'Le barème dépend fortement du profil de revenus et du type de PAC. Tester un autre profil pour voir les aides correspondantes.';
+        document.getElementById('aide-list').innerHTML = '';
+        return;
+      }
+
+      spotlight.classList.remove('aide-spotlight--none');
+
+      const pct = Math.round((r.totalAides / r.coutInstall) * 100);
+      document.getElementById('aide-pct').textContent = pct + '%';
+      document.getElementById('aide-spotlight-title').innerHTML =
+        `L'État finance <span class="aide-spotlight__pct">${pct}%</span> de votre projet`;
+      document.getElementById('aide-spotlight-sub').innerHTML =
+        `Sur un investissement de <strong>${fmt(r.coutInstall)}</strong>, vous mobilisez ` +
+        `<strong>${fmt(r.totalAides)}</strong> d'aides publiques cumulables. ` +
+        `Votre reste à charge tombe à <strong>${fmt(r.resteAcharge)}</strong>.`;
+
+      document.getElementById('aide-list').innerHTML = items.map(i => `
+        <li>
+          <span class="aide-amount">${fmt(i.amount)}</span>
+          <span><span class="aide-name">${i.name}</span><span class="aide-source"> · ${i.source}</span></span>
+          <p class="aide-desc">${i.desc}</p>
+        </li>
+      `).join('');
+    }
+
+    // ===========================================================================
+    // RENDU TABLEAU
+    // ===========================================================================
+    function renderTable(r) {
+      const tbody = document.getElementById('detail-table');
+      const rows = [
+        ['Coût installation', 'TTC, pose comprise', fmt(r.coutInstall), ''],
+        [
+          'MaPrimeRénov\'',
+          state.pac === 'airair' ? 'Non éligible' : 'Profil ' + state.revenus,
+          state.pac === 'airair' ? '—' : '−' + fmt(r.mpr),
+          state.pac === 'airair' ? '' : 'neg'
+        ],
+        [
+          'Prime CEE',
+          r.eligibleCoupDePouce ? '<span class="badge-info">Coup de pouce bonifié</span>' : 'CEE standard',
+          '−' + fmt(r.cee),
+          'neg'
+        ]
+      ];
+      if (r.bonusFioul > 0) {
+        rows.push(['Bonus dépose cuve fioul', '', '−' + fmt(r.bonusFioul), 'neg']);
+      }
+      rows.push(['<strong>Reste à votre charge</strong>', '', fmt(r.resteAcharge), '']);
+
+      tbody.innerHTML = rows.map(([label, sub, val, cls]) => {
+        const subHtml = sub ? `<span class="sub-label">${sub}</span>` : '';
+        return `<tr><td>${label}${subHtml}</td><td class="${cls}">${val}</td></tr>`;
+      }).join('');
+    }
+
+    // ===========================================================================
+    // GRAPHIQUES
+    // ===========================================================================
+    let chartEnergies, chartAmort, chartTCO;
+
+    const COULEURS = {
+      fioul: '#5C2900',
+      gaz: '#806600',
+      propane: '#A87B00',
+      elec: '#0063CB',
+      pac: '#169B62',
+      neutre: '#929292',
+      actuel: '#CE614A'
+    };
+
+    function renderChartEnergies(r) {
+      const labels = ['Fioul', 'Gaz', 'Propane', 'Élec. direct', 'PAC ' + ({aireau:'air/eau', geo:'géo', airair:'air/air'})[state.pac]];
+      const data = [r.couts.fioul, r.couts.gaz, r.couts.propane, r.couts.elec, r.couts.pac];
+
+      // Couleurs : PAC verte, énergie actuelle en orange (accent), autres grises
+      const colors = ['#B3B3B3', '#B3B3B3', '#B3B3B3', '#B3B3B3', COULEURS.pac];
+      const idxActuel = {fioul:0, gaz:1, propane:2, elec:3}[state.energie];
+      if (idxActuel !== undefined) colors[idxActuel] = COULEURS.actuel;
+
+      if (chartEnergies) chartEnergies.destroy();
+      chartEnergies = new Chart(document.getElementById('chart-energies'), {
+        type: 'bar',
+        data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 0 }] },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: { label: (c) => fmt(c.parsed.y) + ' /an' },
+              padding: 10,
+              titleFont: { family: 'Marianne, sans-serif' },
+              bodyFont: { family: 'Marianne, sans-serif' }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { callback: (v) => Math.round(v/100)/10 + ' k€', font: { size: 11, family: 'Marianne, sans-serif' } },
+              grid: { color: 'rgba(0,0,0,0.05)' }
+            },
+            x: {
+              ticks: { font: { size: 11, family: 'Marianne, sans-serif' } },
+              grid: { display: false }
+            }
+          }
+        }
+      });
+    }
+
+    function renderChartAmort(r) {
+      const annees = 15;
+      const inflation = 0.03;
+      const labels = Array.from({length: annees + 1}, (_, i) => 'An ' + i);
+      const cumul = [];
+      let acc = -r.resteAcharge;
+      cumul.push(acc);
+      for (let i = 1; i <= annees; i++) {
+        acc += r.economiesAn * Math.pow(1 + inflation, i - 1);
+        cumul.push(acc);
+      }
+
+      // Calcul du point d'équilibre
+      let pointZero = null;
+      for (let i = 1; i < cumul.length; i++) {
+        if (cumul[i-1] < 0 && cumul[i] >= 0) {
+          const ratio = -cumul[i-1] / (cumul[i] - cumul[i-1]);
+          pointZero = i - 1 + ratio;
+          break;
+        }
+      }
+
+      const pointTxt = pointZero
+        ? `année ${Math.round(pointZero * 10) / 10}`
+        : (r.economiesAn > 0 ? 'au-delà de 15 ans' : 'jamais rentabilisé (surcoût)');
+      document.getElementById('point-equilibre').textContent = pointTxt;
+
+      if (chartAmort) chartAmort.destroy();
+      chartAmort = new Chart(document.getElementById('chart-amort'), {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Cumul net',
+            data: cumul,
+            borderColor: '#000091',
+            backgroundColor: 'rgba(0, 0, 145, 0.08)',
+            fill: true, tension: 0.15,
+            pointRadius: 0, pointHoverRadius: 5,
+            borderWidth: 2.5
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                title: (c) => 'Année ' + c[0].dataIndex,
+                label: (c) => 'Cumul : ' + fmt(c.parsed.y)
+              },
+              padding: 10
+            }
+          },
+          scales: {
+            y: {
+              ticks: { callback: (v) => Math.round(v/1000) + ' k€', font: { size: 11, family: 'Marianne, sans-serif' } },
+              grid: { color: (ctx) => ctx.tick.value === 0 ? '#161616' : 'rgba(0,0,0,0.05)' }
+            },
+            x: {
+              ticks: { font: { size: 11, family: 'Marianne, sans-serif' }, autoSkip: true, maxTicksLimit: 8 },
+              grid: { display: false }
+            }
+          }
+        }
+      });
+    }
+
+    function renderChartTCO(r) {
+      const annees = 15;
+      const inflation = 0.03;
+      const labels = ['Fioul', 'Gaz', 'Propane', 'Élec. direct', 'PAC ' + ({aireau:'air/eau', geo:'géo', airair:'air/air'})[state.pac]];
+
+      function tco(coutInstallEnergie, coutAnnuel) {
+        let total = coutInstallEnergie;
+        for (let i = 0; i < annees; i++) {
+          total += coutAnnuel * Math.pow(1 + inflation, i);
+        }
+        return total;
+      }
+
+      // Coût d'install hypothétique pour les autres énergies (remplacement chaudière)
+      const costAlt = { fioul: 8000, gaz: 5000, propane: 7000, elec: 2000 };
+      const data = [
+        tco(costAlt.fioul, r.couts.fioul),
+        tco(costAlt.gaz, r.couts.gaz),
+        tco(costAlt.propane, r.couts.propane),
+        tco(costAlt.elec, r.couts.elec),
+        tco(r.resteAcharge, r.couts.pac)
+      ];
+
+      const colors = ['#B3B3B3', '#B3B3B3', '#B3B3B3', '#B3B3B3', COULEURS.pac];
+
+      if (chartTCO) chartTCO.destroy();
+      chartTCO = new Chart(document.getElementById('chart-tco'), {
+        type: 'bar',
+        data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 0 }] },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: { callbacks: { label: (c) => 'Coût total : ' + fmt(c.parsed.y) }, padding: 10 }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { callback: (v) => Math.round(v/1000) + ' k€', font: { size: 11, family: 'Marianne, sans-serif' } },
+              grid: { color: 'rgba(0,0,0,0.05)' }
+            },
+            x: { ticks: { font: { size: 11, family: 'Marianne, sans-serif' } }, grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    // ===========================================================================
+    // RENDU GLOBAL
+    // ===========================================================================
+    function render() {
+      const r = calcule();
+      renderKPI(r);
+      renderTable(r);
+      renderChartEnergies(r);
+      renderChartAmort(r);
+      renderChartTCO(r);
+
+      // Alerte air/air
+      document.getElementById('airair-alert').classList.toggle('shown', state.pac === 'airair');
+    }
+
+    // ===========================================================================
+    // ÉVÉNEMENTS
+    // ===========================================================================
+    document.getElementById('surface').addEventListener('input', e => {
+      state.surface = +e.target.value;
+      document.getElementById('surface-out').textContent = state.surface;
+      render();
+    });
+    document.getElementById('zone').addEventListener('change', e => { state.zone = e.target.value; render(); });
+    document.getElementById('isolation').addEventListener('change', e => { state.isolation = e.target.value; render(); });
+    document.getElementById('energie').addEventListener('change', e => {
+      state.energie = e.target.value;
+      updateFactureLabels();
+      render();
+    });
+
+    // ---- Facture optionnelle ----
+    function updateFactureLabels() {
+      const u = UNITE_CONSO[state.energie];
+      document.getElementById('facture-conso-unit').textContent = u.unit;
+      document.getElementById('facture-conso-hint').textContent = u.hint;
+    }
+    updateFactureLabels();
+
+    const fmInput = document.getElementById('facture-montant');
+    const fcInput = document.getElementById('facture-conso');
+
+    fmInput.addEventListener('input', e => {
+      const v = parseFloat(e.target.value);
+      state.factureMontant = (isFinite(v) && v > 0) ? v : null;
+      // Exclusivité : si on tape un montant, on vide la conso brute
+      if (state.factureMontant != null) {
+        state.factureConso = null;
+        fcInput.value = '';
+      }
+      render();
+    });
+
+    fcInput.addEventListener('input', e => {
+      const v = parseFloat(e.target.value);
+      state.factureConso = (isFinite(v) && v > 0) ? v : null;
+      if (state.factureConso != null) {
+        state.factureMontant = null;
+        fmInput.value = '';
+      }
+      render();
+    });
+
+    document.querySelectorAll('#pac-tiles .radio-tile').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#pac-tiles .radio-tile').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.pac = btn.dataset.pac;
+        render();
+      });
+    });
+
+    document.querySelectorAll('#revenus-tiles .radio-tile').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#revenus-tiles .radio-tile').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.revenus = btn.dataset.rev;
+        render();
+      });
+    });
+
+    // Init
+    render();
+  })();
+  </script>
+
+  <script type="application/json" id="business-modal-data">
+  {
+    "title": "Méthode, données et arbitrages — Pompe à chaleur",
+    "audience": "DGEC bâtiment · service rénovation thermique",
+    "intro": "Coût d'installation d'une PAC après aides (MaPrimeRénov' + CEE) et durée d'amortissement. Voici les choix de modélisation et les données à valider avec vous.",
+    "updated": "2026-05-20",
+    "specs": [
+      { "label": "Spécification (Word)",      "href": "/docs/specs-metier/pompe-a-chaleur/pompe-a-chaleur-spec.docx",          "type": "docx" },
+      { "label": "Spécification (Markdown)",  "href": "/docs/specs-metier/pompe-a-chaleur/spec.md",                            "type": "md" },
+      { "label": "Modèle économique (Excel)", "href": "/docs/specs-metier/pompe-a-chaleur/pompe-a-chaleur-simulateur-2026.xlsx", "type": "xlsx" },
+      { "label": "Code source (HTML)",        "href": "/pompe-a-chaleur/index.html",                                            "type": "html" }
+    ],
+    "sections": {
+      "perimetre": [
+        {"q": "Maison individuelle propriétaire occupant uniquement, ou logement collectif / copropriété aussi ?", "note": "Aujourd'hui : MI propriétaire occupant."},
+        {"q": "Type de PAC couvert : air/eau, air/air, géothermie ? Aujourd'hui : air/eau et air/air. À étendre ?"},
+        {"q": "Remplacement d'une chaudière fioul / gaz / électrique : on traite les 3 ? Le surcoût d'aide diffère."},
+        {"q": "Spotlight État (% du surcoût financé) : l'argument fait-il consensus côté pilotage ?"},
+        {"q": "Input « facture réelle » pour calibrer le modèle : à conserver malgré le risque de saisie erronée ?"}
+      ],
+      "arbitrages": [
+        {"q": "Durée d'amortissement affichée : économies annuelles vs surcoût initial après aides — taux d'actualisation à fixer."},
+        {"q": "Économies d'énergie : on compare au coût de l'énergie remplacée (fioul, gaz) ou à un mix de référence ?"},
+        {"q": "Cumul MPR + CEE : on additionne ? Avec quel plafond combiné (la « pince » 100 % du coût TTC) ?"},
+        {"q": "Forfait CEE « Coup de pouce chauffage » : on prend le bonifié précarité ou le standard selon RFR ?"},
+        {"q": "Reste à charge minimum : règle des 10 % pour les « très modestes » — appliquée systématiquement ?"},
+        {"q": "Évolution prix énergies : on fige 2026 ou on intègre une courbe (gaz +X %, élec +Y %) ?"},
+        {"q": "ECS solaire / ballon thermodynamique en complément : couvert ou hors périmètre ?"}
+      ],
+      "sources": [
+        {"q": "Barème MaPrimeRénov' PAC air/eau et air/air 2026 : arrêté de référence et fréquence MAJ ?"},
+        {"q": "Forfaits CEE Coup de pouce chauffage 2026 (BAR-TH-171, BAR-TH-172) : grille à jour ?"},
+        {"q": "Plafonds RFR par part — fichier annuel Anah confirmé ?"},
+        {"q": "Tarif réglementé EDF base + HC/HP : snapshot à quelle fréquence ?"},
+        {"q": "Prix moyen du gaz naturel (TTC ménages, B1 / B2i) : source CRE ?"},
+        {"q": "Prix moyen du fioul domestique : source CGDD hebdo ?"},
+        {"q": "Coûts moyens d'installation PAC par puissance : statistiques ADEME / FNCH ou retours installateurs ?"},
+        {"q": "Offres partenaires (EDF Pulse Habitat, Engie, etc.) : à intégrer via shared/partner-offers.json.", "status": "todo"}
+      ],
+      "hypotheses": [
+        {"q": "COP saisonnier (SCOP) : 3.5 pour air/eau, 3.0 pour air/air. À moduler selon zone H1/H2/H3 ?"},
+        {"q": "Surface chauffée : 90 m² par défaut. OK ?"},
+        {"q": "Besoin thermique : 90 kWh/m²/an (logement non rénové) vs 50 kWh/m²/an (rénové) — variable saisie ou figée ?"},
+        {"q": "Durée de vie PAC : 15 ans. Cohérent avec amortissements ADEME ?"},
+        {"q": "Coût installation moyen : 12 000 € (air/eau) / 6 000 € (air/air) HT. Source à confirmer."},
+        {"q": "Entretien annuel obligatoire : 200 €/an. OK ?"},
+        {"q": "Provision remplacement compresseur à mi-vie : à inclure ou ignorer ?"}
+      ],
+      "attention": [
+        {"q": "DPE F/G en passoire thermique : PAC seule sans isolation = inefficace. Faut-il bloquer ou alerter ?", "status": "open"},
+        {"q": "Locataire : aides MPR Locataire vs Propriétaire — on n'a aujourd'hui que le PO. À étendre ?"},
+        {"q": "MaPrimeRénov' Parcours Rénovation Ampleur (anc. Sérénité) : bonification si rénovation globale. Géré ?"},
+        {"q": "RGE obligatoire pour bénéficier des aides : on l'affiche comme prérequis ?"},
+        {"q": "Bruit PAC extérieur : info à mentionner pour les acheteurs en pavillonnaire dense ?"},
+        {"q": "Coupures hivernales et back-up résistance électrique : impact sur les économies réelles à H1 ?"},
+        {"q": "Accessibilité RGAA : tiles cliquables PAC / Revenus — focus visible et ratio de contraste OK ?"}
+      ]
+    }
+  }
+  </script>
+</body>
+</html>

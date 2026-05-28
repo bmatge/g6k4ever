@@ -1,0 +1,50 @@
+# --- Référence figée G6K (lecture seule, non commitée) -----------------------
+# Le legacy reste dispo localement comme référence. Le sous-ensemble curé
+# nécessaire au projet vit dans _corpus/. Pour réobtenir le legacy :
+#   git clone https://github.com/eureka2/G6K G6K-code-legacy
+G6K-code-legacy/
+G6K-examples-data-legacy/
+
+# --- macOS -------------------------------------------------------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# --- Claude Code (paramètres locaux à l'utilisateur) -------------------------
+.claude/settings.local.json
+
+# --- Node / TypeScript / monorepo (prêt pour Phase 0) ------------------------
+node_modules/
+.pnpm-store/
+.pnpm-debug.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist/
+build/
+out/
+.turbo/
+.next/
+.vite/
+*.tsbuildinfo
+
+# Tests / coverage
+coverage/
+.vitest-cache/
+.nyc_output/
+
+# Env / secrets
+.env
+.env.local
+.env.*.local
+
+# Éditeurs / IDE
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.shared.json
+.idea/
+
+# Logs divers
+*.log

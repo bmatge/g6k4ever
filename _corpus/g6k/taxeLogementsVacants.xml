@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Simulator xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../doc/Simulator.xsd" name="taxeLogementsVacants" label="Simulateur - Vérifier si la taxe sur les logements vacants s'applique à votre commune ?" category="Particuliers" defaultView="dsfr-particuliers" referer="https://www.preprod.service-public.fr/particuliers/vosdroits/R65012" evaluate="" dynamic="0" memo="0" locale="fr-FR" timezone="Europe/Paris">
+	<Description edition="wysihtml"><![CDATA[
+<div class="Intro"><p>Vous possédez un logement non meublé inoccupé et vous souhaitez savoir si ce logement est dans une commune concernée par la taxe sur les logements vacants&nbsp;?</p>
+<p>Ce simulateur vous permet de le vérifier gratuitement en 1 minute.</p>
+</div>
+<div class="sp-panel sp-panel-open sp-blue-panel temps">
+<img src="/simulateur/calcul/assets/dsfr-particuliers/images/timer-line.png" width="24" height="24">
+<span class="">Réalisation : <strong>1 minute</strong></span>
+</div>
+<p class="fr-callout fr-my-4w fr-py-1w fr-px-3w">Toutes les informations demandées sont nécessaires</p>
+	]]></Description>
+	<DataSet dateFormat="d/m/Y" decimalPoint="," groupingSeparator=" " groupingSize="3" moneySymbol="€" symbolPosition="after" arbotypePage="simulateur" newSimulatorUrl="" dateLastVerfied="2023-09-12" userNameLastSave="admin" dateLastSave="2023-09-12 14:01:45" envLastSave="LOCAL" blockTitle="" additionalInformation="" startButtonTitle="" CloseButtonTitle="" FieldReceivingFocus="">
+		<Data id="1" name="commune" label="Commune" type="text"></Data>
+		<Data id="2" name="preavis" label="Preavis zone tendue" type="integer"></Data>
+		<Data id="3" name="nomCommune" label="Nom de la commune" type="text"></Data>
+		<Data id="4" name="RecevableTaxeLogementVacant" label="RecevableTaxeLogementVacant" type="boolean"></Data>
+		<Data id="5" name="CodeInsee" label="CodeInsee" type="text"></Data>
+		<Data source="1" id="6" name="RecevablePlus50000" label="RecevablePlus50000" type="text" index="'Ok'"></Data>
+		<Data source="2" id="7" name="RecevableDesequilibre" label="RecevableDesequilibre" type="text" index="'Ok'"></Data>
+	</DataSet>
+	<Steps>
+		<Step output="normal" id="1" name="zonage" label="Zonage" template="pages:article.html.twig" dynamic="1">
+			<Panels>
+				<Panel id="1" name="zonagePanel" label="">
+					<FieldSet id="1">
+						<Field label="Quelle est le nom ou le code postal de votre commune ?" widget="geoAPIZipCodeGetInfo" position="1" data="1" usage="input" newline="0" required="0" visibleRequired="0" colon="0" help="0" helpbefore="0">
+							<PostNote edition="wysihtml"><![CDATA[
+Exemple : Quimper ou 23200
+							]]></PostNote>
+						</Field>
+					</FieldSet>
+					<BlockInfo id="2" name="blocResultats" label="">
+						<Chapter id="1" name="chapitreResultats" label="">
+							<Section id="1" name="sectionResultats0" label="" role="">
+								<Content edition="manual"><![CDATA[
+<div id="fr-alert-1" class="fr-my-4w fr-alert fr-alert--warning"><strong>La taxe sur les logements vacants (TLV) s'applique sur la commune de #3</strong>
+Pour vérifier si votre logement est concerné par cette taxe, vous pouvez consulter notre page sur <a href="https://www.service-public.fr/particuliers/vosdroits/F2847" rel="nofollow" target="_blank" title="Page sur les taxes sur les logements vacants (TLV et THLV)">Service-Public.fr</a>
+En revanche, la taxe d'habitation sur les logements vacants (THLV) ne s'applique pas sur cette commune</div>
+								]]></Content>
+							</Section>
+						</Chapter>
+						<Chapter id="2" name="KO" label="">
+							<Section id="1" name="KO" label="" role="">
+								<Content edition="wysihtml"><![CDATA[
+<div id="fr-alert-1" class="fr-my-4w fr-alert fr-alert--info">
+<strong>La taxe sur les logements vacants ne s'applique pas sur la commune de #3</strong>
+En revanche, la taxe d'habitation sur les logements vacants (THLV) peut s'appliquer sur cette commune
+Pour vérifier si votre logement est concerné par la THLV, vous pouvez consulter notre page sur <a href="https://www.service-public.fr/particuliers/vosdroits/F2847" rel="nofollow" target="_blank" title="Page sur les taxes sur les logements vacants (TLV et THLV)">Service-Public.fr</a>
+</div>
+								]]></Content>
+							</Section>
+						</Chapter>
+					</BlockInfo>
+				</Panel>
+			</Panels>
+			<ActionList>
+				<Action label="Recommencer la simulation" class="btn-secondary" location="bottom" name="Restart" shape="button" what="submit" for="newSimulation"></Action>
+			</ActionList>
+		</Step>
+	</Steps>
+	<Sources>
+		<Source returnPath="0" returnType="assocArray" label="CommunePlusDe50K" id="1" datasource="TaxeLogementVacant" request="SELECT codeinsee as codeInsee, ok as Ok FROM PlusDe50000 WHERE codeInsee = '%1$s'">
+			<Parameter name="Param1" data="5" type="columnValue" origin="data"></Parameter>
+		</Source>
+		<Source returnPath="0" returnType="assocArray" label="Difference Offre et Demande" id="2" datasource="TaxeLogementVacant" request="SELECT codeinsee as codeInsee, id, nom as Nom, ok as Ok FROM DesequilibreOffreEtDemande WHERE codeInsee = '%1$s'">
+			<Parameter name="Param2" data="5" type="columnValue" origin="data"></Parameter>
+		</Source>
+	</Sources>
+	<BusinessRules>
+		<BusinessRule id="1" name="R1" attributactive="" label="Affiche le bouton restart">
+			<Conditions value="!defined(#2)">
+				<Condition operand="preavis" operator="blank"></Condition>
+			</Conditions>
+			<IfActions>
+				<Action step="1" action="Restart" id="1" name="hideObject" target="action"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action step="1" action="Restart" id="1" name="showObject" target="action"></Action>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="2" name="R2" attributactive="" label="Determine le code Insee et le nom de la ville">
+			<Conditions value="defined(#1)">
+				<Condition operand="commune" operator="present"></Condition>
+			</Conditions>
+			<IfActions>
+				<Action data="5" value="getInsee(#1)" id="1" name="setAttribute" target="content"></Action>
+				<Action data="3" value="getNomVille(#1)" id="2" name="setAttribute" target="content"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action data="5" id="1" name="unsetAttribute" target="content"></Action>
+				<Action data="3" id="2" name="unsetAttribute" target="content"></Action>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="3" name="R3" attributactive="" label="Taxe applicable">
+			<Conditions value="defined(#1) &amp;&amp; (#7 = 1 || #6 = 1)">
+				<Connector type="all">
+					<Condition operand="commune" operator="present"></Condition>
+					<Connector type="any">
+						<Condition operand="RecevableDesequilibre" operator="=" expression="1"></Condition>
+						<Condition operand="RecevablePlus50000" operator="=" expression="1"></Condition>
+					</Connector>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action data="4" value="true" id="1" name="setAttribute" target="content"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action data="4" value="false" id="1" name="setAttribute" target="content"></Action>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="4" name="R4" attributactive="" label="TLV s'applique">
+			<Conditions value="defined(#1) &amp;&amp; defined(#5) &amp;&amp; defined(#3) &amp;&amp; (#7 = 1 || #6 = 1)">
+				<Connector type="all">
+					<Condition operand="commune" operator="present"></Condition>
+					<Condition operand="CodeInsee" operator="present"></Condition>
+					<Condition operand="nomCommune" operator="present"></Condition>
+					<Connector type="any">
+						<Condition operand="RecevableDesequilibre" operator="=" expression="1"></Condition>
+						<Condition operand="RecevablePlus50000" operator="=" expression="1"></Condition>
+					</Connector>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action step="1" panel="1" blockinfo="2" chapter="1" id="1" name="showObject" target="chapter"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action step="1" panel="1" blockinfo="2" chapter="1" id="1" name="hideObject" target="chapter"></Action>
+			</ElseActions>
+		</BusinessRule>
+		<BusinessRule id="5" name="R5" attributactive="" label="TLV ne s'applique pas">
+			<Conditions value="defined(#1) &amp;&amp; defined(#5) &amp;&amp; defined(#3) &amp;&amp; !defined(#7) &amp;&amp; !defined(#6)">
+				<Connector type="all">
+					<Condition operand="commune" operator="present"></Condition>
+					<Condition operand="CodeInsee" operator="present"></Condition>
+					<Condition operand="nomCommune" operator="present"></Condition>
+					<Condition operand="RecevableDesequilibre" operator="blank"></Condition>
+					<Condition operand="RecevablePlus50000" operator="blank"></Condition>
+				</Connector>
+			</Conditions>
+			<IfActions>
+				<Action step="1" panel="1" blockinfo="2" chapter="2" id="1" name="showObject" target="chapter"></Action>
+			</IfActions>
+			<ElseActions>
+				<Action step="1" panel="1" blockinfo="2" chapter="2" id="1" name="hideObject" target="chapter"></Action>
+			</ElseActions>
+		</BusinessRule>
+	</BusinessRules>
+	<RelatedInformations edition="wysihtml"><![CDATA[
+<p>Mise en production : octobre 2017.</p>
+<p>Modification du texte de présentation : 26/10/2018.</p>
+	]]></RelatedInformations>
+</Simulator>

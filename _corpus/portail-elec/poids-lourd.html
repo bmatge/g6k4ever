@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="fr" data-fr-scheme="system">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#000091">
+  <title>Simulateur poids lourd électrique vs diesel — TCO 2026</title>
+  <meta name="description" content="Comparer le coût total de possession d'un poids lourd électrique vs diesel, avec l'aide jusqu'à 100 000 € du Plan d'électrification 2026.">
+
+  <link rel="apple-touch-icon" href="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.14.4/dist/favicon/apple-touch-icon.png">
+  <link rel="icon" href="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.14.4/dist/favicon/favicon.svg" type="image/svg+xml">
+  <link rel="shortcut icon" href="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.14.4/dist/favicon/favicon.ico" type="image/x-icon">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.14.4/dist/dsfr.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.14.4/dist/utility/utility.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root {
+      --pl-accent: #0063cb;
+      --pl-warn: #b34000;
+      --pl-good: #18753c;
+    }
+    .form-card {
+      background: var(--background-default-grey, #fff);
+      border: 1px solid var(--border-default-grey, #e5e5e5);
+      padding: 1.25rem 1.5rem;
+      height: 100%;
+    }
+    .form-card h2 {
+      font-size: 1.0625rem;
+      margin: 0 0 1rem;
+      color: var(--text-title-blue-france, #000091);
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .form-card h2 .fr-icon-tag-line::before,
+    .form-card h2 .fr-icon-road-map-line::before,
+    .form-card h2 .fr-icon-gas-station-fill::before { font-size: 1.25rem; }
+
+    .slider-wrap { display: flex; align-items: center; gap: .75rem; }
+    .slider-wrap input[type=range] { flex: 1; }
+    .slider-value {
+      font-weight: 700; color: var(--text-active-blue-france, #000091);
+      font-variant-numeric: tabular-nums;
+      min-width: 7ch; text-align: right;
+    }
+    .input-row { display: flex; gap: .5rem; align-items: center; }
+    .input-row .fr-input { flex: 1; }
+    .input-row .unit { color: var(--text-mention-grey, #666); min-width: 6ch; font-size: .9rem; }
+
+    .radio-tiles {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .5rem;
+    }
+    .radio-tile {
+      background: var(--background-alt-grey, #f6f6f6);
+      border: 1px solid var(--border-default-grey, #ddd);
+      padding: .75rem .875rem;
+      cursor: pointer;
+      text-align: left;
+      font-family: inherit;
+      transition: all .15s ease;
+      display: flex;
+      flex-direction: column;
+      gap: .125rem;
+    }
+    .radio-tile.active {
+      background: var(--background-contrast-blue-france, #e3e3fd);
+      border-color: var(--background-action-high-blue-france, #000091);
+      border-width: 2px;
+      padding: calc(.75rem - 1px) calc(.875rem - 1px);
+    }
+    .radio-tile .tile-main { font-weight: 600; font-size: .9375rem; }
+    .radio-tile .tile-sub { font-size: .75rem; color: var(--text-mention-grey, #666); }
+    .radio-tile.active .tile-main { color: var(--text-action-high-blue-france, #000091); }
+
+    /* KPIs */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    @media (max-width: 900px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+    .kpi {
+      background: var(--background-default-grey, #fff);
+      border: 1px solid var(--border-default-grey, #e5e5e5);
+      padding: 1rem 1.25rem;
+      border-left: 4px solid var(--text-default-grey, #666);
+    }
+    .kpi-label { font-size: .8125rem; color: var(--text-mention-grey, #666); text-transform: uppercase; letter-spacing: .5px; font-weight: 500; }
+    .kpi-value { font-size: 1.875rem; font-weight: 700; line-height: 1.1; margin: .5rem 0 .25rem; font-variant-numeric: tabular-nums; }
+    .kpi-hint { font-size: .8125rem; color: var(--text-mention-grey, #666); }
+    .kpi--surcout { border-left-color: #b34000; }
+    .kpi--surcout .kpi-value { color: #b34000; }
+    .kpi--econo { border-left-color: var(--pl-good); }
+    .kpi--econo .kpi-value { color: var(--pl-good); }
+    .kpi--tco { border-left-color: var(--text-action-high-blue-france, #000091); }
+    .kpi--tco .kpi-value { color: var(--text-action-high-blue-france, #000091); }
+    .kpi--bep { border-left-color: var(--text-action-high-blue-france, #000091); }
+    .kpi--bep .kpi-value { color: var(--text-action-high-blue-france, #000091); }
+    .kpi-neg .kpi-value { color: #b34000 !important; }
+
+    /* Spotlight État */
+    .aide-spotlight {
+      margin: 2rem 0;
+      background: var(--background-contrast-blue-france, #e3e3fd);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 145, .06);
+    }
+    .aide-spotlight__stripe { display: flex; height: 4px; }
+    .aide-spotlight__stripe span { flex: 1; }
+    .aide-spotlight__stripe span:nth-child(1) { background: #0055a4; }
+    .aide-spotlight__stripe span:nth-child(2) { background: #fff; }
+    .aide-spotlight__stripe span:nth-child(3) { background: #ef4135; }
+    .aide-spotlight__body { padding: 1.75rem 2rem 1.5rem; }
+    @media (max-width: 600px) { .aide-spotlight__body { padding: 1.25rem; } }
+    .aide-spotlight__eyebrow {
+      margin: 0 0 .5rem;
+      font-size: .75rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-action-high-blue-france, #000091);
+      font-weight: 600;
+    }
+    .aide-spotlight h3 {
+      margin: 0 0 .5rem;
+      font-size: 1.5rem;
+      line-height: 1.25;
+      color: var(--text-title-blue-france, #000091);
+      font-weight: 700;
+    }
+    .aide-spotlight__pct {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text-action-high-blue-france, #000091);
+      padding: 0 .125rem;
+    }
+    .aide-spotlight__sub {
+      margin: 0 0 1.25rem;
+      font-size: .9375rem;
+      color: var(--text-default-grey, #3a3a3a);
+      line-height: 1.5;
+    }
+    .aide-spotlight__sub strong { color: var(--text-title-grey, #161616); }
+    .aide-list { list-style: none; padding: 0; margin: 0 0 1.25rem; display: grid; gap: .75rem; }
+    .aide-list li {
+      background: #fff;
+      border-left: 3px solid var(--background-action-high-blue-france, #000091);
+      padding: .75rem 1rem;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: .25rem 1rem;
+      align-items: baseline;
+    }
+    .aide-amount {
+      font-size: 1.25rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: var(--text-action-high-blue-france, #000091);
+      white-space: nowrap;
+      grid-row: span 2;
+      align-self: center;
+    }
+    .aide-name { font-weight: 600; font-size: .9375rem; color: var(--text-title-grey, #161616); }
+    .aide-source { font-size: .75rem; color: var(--text-mention-grey, #666); margin-left: .375rem; font-weight: 400; }
+    .aide-desc { grid-column: 2; margin: 0; font-size: .8125rem; line-height: 1.5; color: var(--text-default-grey, #3a3a3a); }
+    .aide-spotlight__context {
+      margin: 0 0 1rem;
+      padding: .75rem 1rem;
+      background: #fff;
+      border-left: 2px solid var(--background-action-high-blue-france, #000091);
+      font-size: .875rem;
+      line-height: 1.5;
+      color: var(--text-default-grey, #3a3a3a);
+    }
+    .aide-spotlight__context strong { color: var(--text-title-grey, #161616); }
+    .aide-spotlight__cta { margin: 0; font-size: .8125rem; color: var(--text-mention-grey, #666); }
+    .aide-spotlight__cta a { color: var(--text-action-high-blue-france, #000091); text-decoration: underline; font-weight: 500; }
+
+    /* Charts */
+    .chart-card {
+      background: var(--background-default-grey, #fff);
+      border: 1px solid var(--border-default-grey, #e5e5e5);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .chart-card h3 { font-size: 1rem; margin: 0 0 .25rem; color: var(--text-title-blue-france, #000091); }
+    .chart-sub { font-size: .8125rem; color: var(--text-mention-grey, #666); margin: 0 0 1rem; }
+    .chart-canvas-wrap { position: relative; height: 280px; }
+
+    /* Detail table */
+    .detail-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+    .detail-table td { padding: 0.5rem 0; border-bottom: 1px solid var(--border-default-grey, #e5e5e5); }
+    .detail-table tr:last-child td { font-weight: 700; font-size: 1.05rem; border-bottom: none; padding-top: .875rem; }
+    .detail-table td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+    .detail-table .sub { color: var(--text-mention-grey, #666); font-size: 0.85rem; margin-left: 0.5rem; font-weight: 400; }
+    .detail-table .neg { color: var(--text-action-high-blue-france, #000091); }
+
+    /* Methodo */
+    .methodo {
+      background: var(--background-alt-grey, #f6f6f6);
+      padding: 1.5rem;
+      font-size: .875rem;
+      line-height: 1.6;
+      margin-top: 2rem;
+    }
+    .methodo h2 { margin-top: 0; }
+    .methodo table { width: 100%; border-collapse: collapse; margin-top: .5rem; }
+    .methodo th, .methodo td { padding: .375rem .5rem; text-align: left; border-bottom: 1px solid var(--border-default-grey, #ddd); }
+    .methodo th { background: #fff; font-weight: 600; }
+    .methodo code { background: #e5e5e5; padding: 1px 5px; font-size: .8125rem; }
+  </style>
+  <link rel="stylesheet" href="/shared/portal-bar.css">
+  <link rel="stylesheet" href="/shared/business-modal.css">
+  <script src="/shared/portal-bar.js" defer></script>
+  <script src="/shared/business-modal.js" defer></script>
+</head>
+<body class="fr-background-default--grey">
+
+<a class="fr-skiplink" href="#contenu">Contenu</a>
+
+<header role="banner" class="fr-header">
+  <div class="fr-header__body">
+    <div class="fr-container">
+      <div class="fr-header__body-row">
+        <div class="fr-header__brand fr-enlarge-link">
+          <div class="fr-header__brand-top">
+            <div class="fr-header__logo"><p class="fr-logo">République<br>Française</p></div>
+          </div>
+          <div class="fr-header__service">
+            <a href="/poids-lourd/" title="Simulateur poids lourd électrique">
+              <p class="fr-header__service-title">Poids lourd électrique vs diesel</p>
+            </a>
+            <p class="fr-header__service-tagline">Coût total de possession · Aide jusqu'à 100 000 € · Mesure 12 du Plan d'électrification</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main role="main" id="contenu" class="fr-container fr-py-4w">
+
+  <h1 class="fr-h2 fr-mb-1w">Mon poids lourd électrique est-il rentable&nbsp;?</h1>
+  <p class="fr-text--lead fr-mb-4w">
+    Calculez le coût total de possession (TCO) d'un poids lourd électrique vs diesel et identifiez votre
+    seuil de rentabilité. Le dossier de presse d'avril 2026 cite un <strong>pivot à 85 000 km/an</strong>
+    avec les aides renforcées et <strong>15 000 € d'économies annuelles</strong> dans un scénario conservateur.
+  </p>
+
+  <!-- ============ INPUTS ============ -->
+  <div class="fr-grid-row fr-grid-row--gutters">
+
+    <div class="fr-col-12 fr-col-md-4">
+      <div class="form-card">
+        <h2><span class="fr-icon-truck-line" aria-hidden="true"></span> Mon véhicule</h2>
+
+        <div class="fr-mb-3w">
+          <label class="fr-label">Type de poids lourd</label>
+          <div class="radio-tiles fr-mt-1w" id="type-tiles">
+            <button type="button" class="radio-tile active" data-type="tracteur">
+              <span class="tile-main">Tracteur routier</span>
+              <span class="tile-sub">40 t · longue distance · aide jusqu'à 100 000 €</span>
+            </button>
+            <button type="button" class="radio-tile" data-type="porteur">
+              <span class="tile-main">Porteur urbain</span>
+              <span class="tile-sub">19–26 t · livraison urbaine · aide jusqu'à 50 000 €</span>
+            </button>
+          </div>
+        </div>
+
+        <details>
+          <summary class="fr-text--bold">Prix d'achat et maintenance</summary>
+          <div class="fr-mt-2w">
+            <div class="fr-input-group fr-mb-2w">
+              <label class="fr-label" for="prix-diesel">Prix d'achat HT — version diesel</label>
+              <div class="input-row">
+                <input class="fr-input" id="prix-diesel" type="number" min="0" step="1000" value="110000">
+                <span class="unit">€ HT</span>
+              </div>
+            </div>
+            <div class="fr-input-group fr-mb-2w">
+              <label class="fr-label" for="prix-elec">Prix d'achat HT — version électrique</label>
+              <div class="input-row">
+                <input class="fr-input" id="prix-elec" type="number" min="0" step="1000" value="285000">
+                <span class="unit">€ HT</span>
+              </div>
+            </div>
+            <div class="fr-input-group fr-mb-2w">
+              <label class="fr-label" for="maint-diesel">Maintenance annuelle — diesel</label>
+              <div class="input-row">
+                <input class="fr-input" id="maint-diesel" type="number" min="0" step="100" value="7000">
+                <span class="unit">€/an</span>
+              </div>
+            </div>
+            <div class="fr-input-group">
+              <label class="fr-label" for="maint-elec">Maintenance annuelle — électrique</label>
+              <div class="input-row">
+                <input class="fr-input" id="maint-elec" type="number" min="0" step="100" value="4000">
+                <span class="unit">€/an</span>
+              </div>
+            </div>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <div class="fr-col-12 fr-col-md-4">
+      <div class="form-card">
+        <h2><span class="fr-icon-road-map-line" aria-hidden="true"></span> Mon exploitation</h2>
+
+        <div class="fr-mb-3w">
+          <label class="fr-label" for="km">Kilométrage annuel</label>
+          <div class="fr-hint-text">Pivot DGEC&nbsp;: 85 000 km/an pour un tracteur routier</div>
+          <div class="slider-wrap fr-mt-1w">
+            <input type="range" id="km" min="20000" max="200000" step="5000" value="85000">
+            <span class="slider-value"><span id="km-out">85 000</span>&nbsp;km</span>
+          </div>
+        </div>
+
+        <div class="fr-mb-3w">
+          <label class="fr-label" for="duree">Durée de détention</label>
+          <div class="slider-wrap fr-mt-1w">
+            <input type="range" id="duree" min="3" max="10" step="1" value="5">
+            <span class="slider-value"><span id="duree-out">5</span>&nbsp;ans</span>
+          </div>
+        </div>
+
+        <details>
+          <summary class="fr-text--bold">Consommations (par défaut FCM/T&amp;E)</summary>
+          <div class="fr-mt-2w">
+            <div class="fr-input-group fr-mb-2w">
+              <label class="fr-label" for="conso-diesel">Consommation diesel</label>
+              <div class="input-row">
+                <input class="fr-input" id="conso-diesel" type="number" min="0" step="0.5" value="30">
+                <span class="unit">L/100 km</span>
+              </div>
+            </div>
+            <div class="fr-input-group">
+              <label class="fr-label" for="conso-elec">Consommation électrique</label>
+              <div class="input-row">
+                <input class="fr-input" id="conso-elec" type="number" min="0" step="1" value="130">
+                <span class="unit">kWh/100 km</span>
+              </div>
+            </div>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <div class="fr-col-12 fr-col-md-4">
+      <div class="form-card">
+        <h2><span class="fr-icon-gas-station-fill" aria-hidden="true"></span> Prix de l'énergie</h2>
+
+        <div class="fr-input-group fr-mb-3w">
+          <label class="fr-label" for="prix-gazole">Prix gazole pro</label>
+          <div class="fr-hint-text">TTC, hors remboursement TIRC</div>
+          <div class="input-row fr-mt-1w">
+            <input class="fr-input" id="prix-gazole" type="number" min="0" step="0.01" value="1.85">
+            <span class="unit">€/L</span>
+          </div>
+        </div>
+
+        <div class="fr-input-group fr-mb-3w">
+          <label class="fr-label" for="prix-elec-kwh">Prix électricité recharge</label>
+          <div class="fr-hint-text">Mix dépôt (~0,20) + hub itinérance (~0,40 €/kWh)</div>
+          <div class="input-row fr-mt-1w">
+            <input class="fr-input" id="prix-elec-kwh" type="number" min="0" step="0.01" value="0.28">
+            <span class="unit">€/kWh</span>
+          </div>
+        </div>
+
+        <div class="fr-input-group">
+          <label class="fr-label" for="aide">Aide à l'achat mobilisable</label>
+          <div class="fr-hint-text">CEE bonifié, conditionné à fabrication EU. Max 100 000 € (tracteur), 50 000 € (porteur).</div>
+          <div class="input-row fr-mt-1w">
+            <input class="fr-input" id="aide" type="number" min="0" step="1000" value="100000">
+            <span class="unit">€</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============ KPIs ============ -->
+  <div class="kpi-grid">
+    <div class="kpi kpi--surcout" id="kpi-surcout-card">
+      <div class="kpi-label">Surcoût net à l'achat</div>
+      <div class="kpi-value" id="kpi-surcout">—</div>
+      <div class="kpi-hint" id="kpi-surcout-hint">vs diesel, après aide</div>
+    </div>
+    <div class="kpi kpi--econo" id="kpi-econo-card">
+      <div class="kpi-label">Économie annuelle</div>
+      <div class="kpi-value" id="kpi-econo">—</div>
+      <div class="kpi-hint">carburant + maintenance</div>
+    </div>
+    <div class="kpi kpi--bep" id="kpi-bep-card">
+      <div class="kpi-label">Point d'équilibre</div>
+      <div class="kpi-value" id="kpi-bep">—</div>
+      <div class="kpi-hint" id="kpi-bep-hint">avant retour sur investissement</div>
+    </div>
+    <div class="kpi kpi--tco" id="kpi-tco-card">
+      <div class="kpi-label">Gain TCO sur la période</div>
+      <div class="kpi-value" id="kpi-tco">—</div>
+      <div class="kpi-hint" id="kpi-tco-hint">vs diesel sur la durée de détention</div>
+    </div>
+  </div>
+
+  <!-- ============ SPOTLIGHT ÉTAT ============ -->
+  <aside class="aide-spotlight" id="spotlight" aria-labelledby="spotlight-title">
+    <div class="aide-spotlight__stripe" aria-hidden="true"><span></span><span></span><span></span></div>
+    <div class="aide-spotlight__body">
+      <p class="aide-spotlight__eyebrow">République Française · Plan d'électrification 2026 · Mesure 12</p>
+      <h3 id="spotlight-title">L'État finance <span class="aide-spotlight__pct" id="spot-pct">—</span> du surcoût de votre véhicule</h3>
+      <p class="aide-spotlight__sub" id="spot-sub">—</p>
+
+      <ul class="aide-list" id="spot-list"><!-- injected --></ul>
+
+      <p class="aide-spotlight__context">
+        Le Plan d'électrification 2026 vise <strong>2 000 poids lourds neufs électriques en 2026</strong>
+        et <strong>4 000 en 2027</strong>. L'aide à l'achat est conditionnée à une fabrication des véhicules
+        en Europe, pour soutenir la filière industrielle française et européenne
+        (Renault Trucks, Volvo, DAF, Mercedes-Benz…).
+      </p>
+
+      <p class="aide-spotlight__cta">
+        <strong>Pour aller plus loin&nbsp;:</strong>
+        <a href="https://www.ecologie.gouv.fr/aides-acquisition-vehicules-electriques" target="_blank" rel="noopener">Aides ministère de la Transition écologique</a> ·
+        <a href="https://www.ademe.fr/" target="_blank" rel="noopener">Programme E-Trans (Ademe)</a> ·
+        <a href="/plan-electrification/#m12">Mesure 12 du Plan</a>
+      </p>
+    </div>
+  </aside>
+
+  <!-- ============ CHARTS ============ -->
+  <div class="fr-grid-row fr-grid-row--gutters">
+    <div class="fr-col-12 fr-col-md-6">
+      <div class="chart-card">
+        <h3>TCO cumulé année par année</h3>
+        <p class="chart-sub">Le point de croisement = moment où l'électrique devient moins cher.</p>
+        <div class="chart-canvas-wrap">
+          <canvas id="chart-tco" role="img" aria-label="Courbe du coût total de possession cumulé sur la durée de détention"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+      <div class="chart-card">
+        <h3>Compétitivité selon le kilométrage</h3>
+        <p class="chart-sub">À partir de quel kilométrage annuel l'électrique gagne sur la durée de détention.</p>
+        <div class="chart-canvas-wrap">
+          <canvas id="chart-pivot" role="img" aria-label="Gain TCO en fonction du kilométrage annuel"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ DETAIL TABLE ============ -->
+  <div class="chart-card fr-mt-2w">
+    <h3>Détail du coût annuel</h3>
+    <table class="detail-table" id="detail-table"></table>
+  </div>
+
+  <!-- ============ MÉTHODOLOGIE ============ -->
+  <section class="methodo">
+    <h2 class="fr-h4">Méthodologie & hypothèses</h2>
+
+    <p>Le simulateur compare le <strong>coût total de possession (TCO)</strong> d'un poids lourd diesel et
+    d'un poids lourd électrique sur la durée de détention&nbsp;:</p>
+    <ul>
+      <li><strong>Coût d'acquisition</strong> = prix d'achat HT − aide mobilisable</li>
+      <li><strong>Coût d'opération annuel</strong> = (km/an × conso/100 × prix énergie) + maintenance</li>
+      <li><strong>TCO sur T années</strong> = acquisition + T × coût d'opération annuel</li>
+    </ul>
+
+    <h3 class="fr-h5">Valeurs par défaut et sources</h3>
+    <table>
+      <thead>
+        <tr><th>Paramètre</th><th>Valeur</th><th>Source / hypothèse</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Prix tracteur 40 t diesel</td><td>110 000 € HT</td><td>Indicatif marché 2026 (Renault T, Volvo FH, Iveco S-Way) — fourchette 95-130 k€</td></tr>
+        <tr><td>Prix tracteur 40 t électrique</td><td>285 000 € HT</td><td>Indicatif marché 2026 (Renault E-Tech T, Volvo FH Electric) — fourchette 250-340 k€</td></tr>
+        <tr><td>Consommation diesel</td><td>30 L/100 km</td><td>Données IRU / FCM 2024-2025 pour tracteur longue distance</td></tr>
+        <tr><td>Consommation électrique</td><td>130 kWh/100 km</td><td>Études T&amp;E 2024 pour tracteur 40 t en exploitation réelle</td></tr>
+        <tr><td>Maintenance diesel</td><td>7 000 €/an</td><td>Référentiel CNR (Comité national routier), pneumatiques + entretien</td></tr>
+        <tr><td>Maintenance électrique</td><td>4 000 €/an</td><td>Estimation : −40 % vs diesel (moins de pièces mobiles, pas de filtres, pas d'huile moteur)</td></tr>
+        <tr><td>Prix gazole pro</td><td>1,85 €/L</td><td>TTC pro après remboursement TICPE partielle — mai 2026, à ajuster</td></tr>
+        <tr><td>Prix électricité recharge</td><td>0,28 €/kWh</td><td>Mix recharge dépôt nocturne (~0,20) + hub itinérance jour (~0,40) selon usage</td></tr>
+        <tr><td>Aide tracteur</td><td>100 000 €</td><td>DP avril 2026 — CEE bonifié, conditionné fabrication EU, applicable à partir du 1<sup>er</sup> juin 2026</td></tr>
+        <tr><td>Aide porteur</td><td>50 000 €</td><td>Estimation — DP mentionne « quasi doublement » des aides porteur, base 25-30 k€ en 2025</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="fr-h5">Limites du modèle</h3>
+    <ul>
+      <li>Le modèle ne prend pas en compte la <strong>valeur résiduelle</strong> ni les évolutions de prix sur la période — TCO calculé en euros constants.</li>
+      <li>Le coût des <strong>infrastructures de recharge</strong> au dépôt (transformateur, bornes) n'est pas inclus — comptez 20-80 k€ supplémentaires selon la flotte.</li>
+      <li>Les <strong>économies de péages</strong> (réductions à venir pour PL électriques selon la directive Eurovignette) ne sont pas modélisées.</li>
+      <li>Le <strong>coût d'opportunité</strong> du capital immobilisé (financement, leasing) n'est pas pris en compte — pour une analyse fine, utiliser un outil de scoring TCO complet (CNR Études).</li>
+    </ul>
+
+    <p class="fr-text--sm" style="color:var(--text-mention-grey)">
+      <strong>Sources utiles pour fiabiliser&nbsp;:</strong>
+      <a href="https://www.cnr.fr" target="_blank" rel="noopener">CNR — Comité national routier</a> (référentiels de coûts) ·
+      <a href="https://www.transportenvironment.org" target="_blank" rel="noopener">Transport & Environment</a> (études techno PL élec) ·
+      <a href="https://www.ademe.fr" target="_blank" rel="noopener">Ademe</a> (programme E-Trans, suivi des aides versées).
+    </p>
+  </section>
+
+</main>
+
+<footer class="fr-footer" role="contentinfo">
+  <div class="fr-container">
+    <div class="fr-footer__body">
+      <div class="fr-footer__brand fr-enlarge-link">
+        <p class="fr-logo">République<br>Française</p>
+      </div>
+      <div class="fr-footer__content">
+        <p class="fr-footer__content-desc">
+          Simulateur pédagogique — calculs indicatifs, à confronter à un devis fournisseur réel.
+          Direction générale de l'énergie et du climat.
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  // ===========================================================================
+  // PRÉSETS PAR TYPE DE PL
+  // ===========================================================================
+  const PRESETS = {
+    tracteur: {
+      prixDiesel: 110000, prixElec: 285000,
+      consoDiesel: 30, consoElec: 130,
+      maintDiesel: 7000, maintElec: 4000,
+      aideMax: 100000
+    },
+    porteur: {
+      prixDiesel: 80000, prixElec: 195000,
+      consoDiesel: 25, consoElec: 100,
+      maintDiesel: 5000, maintElec: 3000,
+      aideMax: 50000
+    }
+  };
+
+  // ===========================================================================
+  // ÉTAT
+  // ===========================================================================
+  const state = {
+    type: 'tracteur',
+    km: 85000,
+    duree: 5,
+    prixDiesel: 110000, prixElec: 285000,
+    consoDiesel: 30, consoElec: 130,
+    maintDiesel: 7000, maintElec: 4000,
+    prixGazole: 1.85, prixElecKwh: 0.28,
+    aide: 100000
+  };
+
+  // ===========================================================================
+  // UTILITAIRES
+  // ===========================================================================
+  const fmtEur = (n) => Math.round(n).toLocaleString('fr-FR') + ' €';
+  const fmtK = (n) => {
+    const abs = Math.abs(n);
+    if (abs >= 1000) return (Math.round(n / 100) / 10).toLocaleString('fr-FR') + ' k€';
+    return Math.round(n) + ' €';
+  };
+  const $ = (id) => document.getElementById(id);
+
+  // ===========================================================================
+  // CALCULS
+  // ===========================================================================
+  function calcule() {
+    const s = state;
+    const aide = Math.min(s.aide, PRESETS[s.type].aideMax);
+
+    // Acquisition (HT, avec aide pour l'électrique)
+    const acqDiesel = s.prixDiesel;
+    const acqElec   = Math.max(0, s.prixElec - aide);
+
+    // Coût annuel d'opération
+    const carbDiesel = s.km * s.consoDiesel / 100 * s.prixGazole;
+    const carbElec   = s.km * s.consoElec / 100 * s.prixElecKwh;
+    const opDiesel = carbDiesel + s.maintDiesel;
+    const opElec   = carbElec   + s.maintElec;
+
+    // TCO sur la durée
+    const tcoDiesel = acqDiesel + s.duree * opDiesel;
+    const tcoElec   = acqElec   + s.duree * opElec;
+
+    // Économie annuelle = écart d'opération
+    const econoAn = opDiesel - opElec;
+
+    // Surcoût net à l'achat
+    const surcout = acqElec - acqDiesel;
+
+    // Point d'équilibre (en années) — où le TCO élec ≤ TCO diesel
+    const bep = econoAn > 0 ? surcout / econoAn : Infinity;
+
+    // Gain TCO sur la durée
+    const gainTco = tcoDiesel - tcoElec;
+
+    return {
+      aide, acqDiesel, acqElec,
+      carbDiesel, carbElec, opDiesel, opElec,
+      tcoDiesel, tcoElec, econoAn, surcout, bep, gainTco
+    };
+  }
+
+  // Calcule le kilométrage pivot pour la durée détention donnée
+  // (km/an à partir duquel l'élec est rentable sur T années)
+  function kmPivot() {
+    const s = state;
+    const aide = Math.min(s.aide, PRESETS[s.type].aideMax);
+    const surcout = (s.prixElec - aide) - s.prixDiesel;
+    const ecartMaint = s.maintDiesel - s.maintElec;
+    const ecartParKm = (s.consoDiesel * s.prixGazole - s.consoElec * s.prixElecKwh) / 100;
+    if (ecartParKm <= 0) return null;
+    return Math.max(0, (surcout - s.duree * ecartMaint) / (s.duree * ecartParKm));
+  }
+
+  // ===========================================================================
+  // RENDU KPIs + SPOTLIGHT
+  // ===========================================================================
+  function renderKPI(r) {
+    // Surcoût
+    $('kpi-surcout').textContent = fmtK(r.surcout);
+    $('kpi-surcout-card').classList.toggle('kpi-neg', r.surcout > 0);
+    $('kpi-surcout-hint').textContent = r.surcout > 0
+      ? 'reste après aide de ' + fmtK(r.aide)
+      : 'l\'aide couvre l\'écart de prix';
+
+    // Économie annuelle
+    $('kpi-econo').textContent = fmtK(r.econoAn);
+    $('kpi-econo-card').classList.toggle('kpi-neg', r.econoAn < 0);
+
+    // Point d'équilibre
+    if (r.bep === Infinity) {
+      $('kpi-bep').textContent = '—';
+      $('kpi-bep-hint').textContent = 'l\'électrique n\'est pas rentable à ce kilométrage';
+    } else if (r.bep <= 0) {
+      $('kpi-bep').textContent = 'immédiat';
+      $('kpi-bep-hint').textContent = 'rentable dès l\'acquisition';
+    } else {
+      $('kpi-bep').textContent = r.bep.toLocaleString('fr-FR', { maximumFractionDigits: 1 }) + ' ans';
+      const ok = r.bep <= state.duree;
+      $('kpi-bep-hint').textContent = ok
+        ? 'avant la fin de la détention (' + state.duree + ' ans)'
+        : 'au-delà de la durée de détention (' + state.duree + ' ans)';
+    }
+
+    // Gain TCO
+    $('kpi-tco').textContent = (r.gainTco >= 0 ? '+' : '') + fmtK(r.gainTco);
+    $('kpi-tco-card').classList.toggle('kpi-neg', r.gainTco < 0);
+    $('kpi-tco-hint').textContent = r.gainTco >= 0
+      ? 'économisé vs diesel sur ' + state.duree + ' ans'
+      : 'surcoût net vs diesel sur ' + state.duree + ' ans';
+  }
+
+  function renderSpotlight(r) {
+    // Pourcentage du surcoût (avant aide) financé par l'État
+    const surcoutBrut = state.prixElec - state.prixDiesel;
+    const pct = surcoutBrut > 0 ? Math.round((r.aide / surcoutBrut) * 100) : 0;
+    $('spot-pct').textContent = (pct > 100 ? 100 : pct) + '%';
+
+    $('spot-sub').innerHTML = surcoutBrut > 0
+      ? `Sur un surcoût brut de <strong>${fmtK(surcoutBrut)}</strong> pour passer à l'électrique, ` +
+        `vous mobilisez <strong>${fmtK(r.aide)}</strong> d'aide publique. Le reste à charge ` +
+        `tombe à <strong>${fmtK(Math.max(0, r.surcout))}</strong>.`
+      : `Aucun surcoût brut entre les deux versions à ces prix.`;
+
+    const items = [{
+      amount: r.aide,
+      name: state.type === 'tracteur' ? 'CEE bonifié — Tracteur routier électrique' : 'CEE bonifié — Porteur électrique',
+      source: 'Certificats d\'économies d\'énergie · DGEC',
+      desc: state.type === 'tracteur'
+        ? 'Aide à l\'acquisition portée à plus de 100 000 € (vs 60 000 € en 2025). Conditionnée à une fabrication du véhicule en Europe — soutien à la filière (Renault Trucks, Volvo, DAF…). Entrée en vigueur 1er juin 2026.'
+        : 'Aide spécifique porteur urbain quasi doublée par rapport à 2025. Conditionnée à une fabrication en Europe. Pertinent pour les enjeux qualité de l\'air en ville.'
+    }];
+
+    $('spot-list').innerHTML = items.map(i => `
+      <li>
+        <span class="aide-amount">${fmtEur(i.amount)}</span>
+        <span><span class="aide-name">${i.name}</span><span class="aide-source"> · ${i.source}</span></span>
+        <p class="aide-desc">${i.desc}</p>
+      </li>
+    `).join('');
+  }
+
+  function renderTable(r) {
+    const rows = [
+      ['Acquisition diesel', '', fmtEur(r.acqDiesel), ''],
+      ['Acquisition électrique', `prix ${fmtEur(state.prixElec)} − aide ${fmtEur(r.aide)}`, fmtEur(r.acqElec), 'neg'],
+      ['Carburant diesel', `${state.km.toLocaleString('fr-FR')} km × ${state.consoDiesel} L/100km × ${state.prixGazole} €/L`, fmtEur(r.carbDiesel) + '/an', ''],
+      ['Carburant électrique', `${state.km.toLocaleString('fr-FR')} km × ${state.consoElec} kWh/100km × ${state.prixElecKwh} €/kWh`, fmtEur(r.carbElec) + '/an', 'neg'],
+      ['Maintenance diesel', '', fmtEur(state.maintDiesel) + '/an', ''],
+      ['Maintenance électrique', '', fmtEur(state.maintElec) + '/an', 'neg'],
+      [
+        `<strong>TCO sur ${state.duree} ans — diesel</strong>`, '',
+        fmtEur(r.tcoDiesel), ''
+      ],
+      [
+        `<strong>TCO sur ${state.duree} ans — électrique</strong>`, '',
+        fmtEur(r.tcoElec), 'neg'
+      ]
+    ];
+    $('detail-table').innerHTML = rows.map(([l, s, v, c]) => {
+      const sub = s ? `<span class="sub">${s}</span>` : '';
+      return `<tr><td>${l}${sub}</td><td class="${c}">${v}</td></tr>`;
+    }).join('');
+  }
+
+  // ===========================================================================
+  // CHARTS
+  // ===========================================================================
+  let chartTco, chartPivot;
+
+  function renderChartTco(r) {
+    const labels = [];
+    const dataDiesel = [];
+    const dataElec = [];
+    for (let t = 0; t <= state.duree; t++) {
+      labels.push(t === 0 ? 'Achat' : t + ' an' + (t > 1 ? 's' : ''));
+      dataDiesel.push(r.acqDiesel + t * r.opDiesel);
+      dataElec.push(r.acqElec + t * r.opElec);
+    }
+    if (chartTco) chartTco.destroy();
+    chartTco = new Chart($('chart-tco'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label: 'Diesel', data: dataDiesel, borderColor: '#5C2900', backgroundColor: 'rgba(92,41,0,.1)', tension: 0, borderWidth: 2.5 },
+          { label: 'Électrique', data: dataElec, borderColor: '#169B62', backgroundColor: 'rgba(22,155,98,.1)', tension: 0, borderWidth: 2.5 }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom', labels: { font: { family: 'Marianne, sans-serif' } } },
+          tooltip: { callbacks: { label: (c) => c.dataset.label + ' : ' + fmtEur(c.parsed.y) } }
+        },
+        scales: {
+          y: { beginAtZero: true, ticks: { callback: (v) => Math.round(v/1000) + ' k€', font: { family: 'Marianne, sans-serif' } } },
+          x: { ticks: { font: { family: 'Marianne, sans-serif' } } }
+        }
+      }
+    });
+  }
+
+  function renderChartPivot(r) {
+    const pivot = kmPivot();
+    const kms = [];
+    const gains = [];
+    for (let k = 20000; k <= 200000; k += 10000) {
+      kms.push(k.toLocaleString('fr-FR'));
+      // Gain TCO si km/an = k (toutes choses égales par ailleurs)
+      const carbD = k * state.consoDiesel / 100 * state.prixGazole;
+      const carbE = k * state.consoElec / 100 * state.prixElecKwh;
+      const opD = carbD + state.maintDiesel;
+      const opE = carbE + state.maintElec;
+      const gain = (r.acqDiesel + state.duree * opD) - (r.acqElec + state.duree * opE);
+      gains.push(gain);
+    }
+    // Coloration : positif = vert, négatif = orange
+    const bgColors = gains.map(g => g >= 0 ? 'rgba(22,155,98,.55)' : 'rgba(206,97,74,.55)');
+    const borderColors = gains.map(g => g >= 0 ? '#169B62' : '#CE614A');
+
+    if (chartPivot) chartPivot.destroy();
+    chartPivot = new Chart($('chart-pivot'), {
+      type: 'bar',
+      data: {
+        labels: kms,
+        datasets: [{
+          label: 'Gain TCO vs diesel sur ' + state.duree + ' ans',
+          data: gains,
+          backgroundColor: bgColors,
+          borderColor: borderColors,
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              title: (items) => items[0].label + ' km/an',
+              label: (c) => (c.parsed.y >= 0 ? 'Gain de ' : 'Surcoût de ') + fmtEur(Math.abs(c.parsed.y))
+            }
+          },
+          // Subtle annotation note via title
+          title: pivot !== null && pivot > 0 && pivot < 200000 ? {
+            display: true,
+            text: 'Pivot ≈ ' + Math.round(pivot/1000) * 1000 + ' km/an',
+            font: { family: 'Marianne, sans-serif', size: 12 },
+            color: '#000091'
+          } : { display: false }
+        },
+        scales: {
+          y: { ticks: { callback: (v) => Math.round(v/1000) + ' k€', font: { family: 'Marianne, sans-serif' } } },
+          x: {
+            ticks: { font: { family: 'Marianne, sans-serif', size: 10 }, maxRotation: 60, minRotation: 60 },
+            grid: { display: false }
+          }
+        }
+      }
+    });
+  }
+
+  // ===========================================================================
+  // RENDU GLOBAL
+  // ===========================================================================
+  function render() {
+    const r = calcule();
+    renderKPI(r);
+    renderSpotlight(r);
+    renderTable(r);
+    renderChartTco(r);
+    renderChartPivot(r);
+  }
+
+  // ===========================================================================
+  // ÉVÉNEMENTS
+  // ===========================================================================
+  function applyPreset(type) {
+    state.type = type;
+    const p = PRESETS[type];
+    state.prixDiesel = p.prixDiesel;
+    state.prixElec = p.prixElec;
+    state.consoDiesel = p.consoDiesel;
+    state.consoElec = p.consoElec;
+    state.maintDiesel = p.maintDiesel;
+    state.maintElec = p.maintElec;
+    state.aide = p.aideMax;
+    // Sync inputs
+    $('prix-diesel').value = p.prixDiesel;
+    $('prix-elec').value = p.prixElec;
+    $('conso-diesel').value = p.consoDiesel;
+    $('conso-elec').value = p.consoElec;
+    $('maint-diesel').value = p.maintDiesel;
+    $('maint-elec').value = p.maintElec;
+    $('aide').value = p.aideMax;
+  }
+
+  document.querySelectorAll('#type-tiles .radio-tile').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#type-tiles .radio-tile').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      applyPreset(btn.dataset.type);
+      render();
+    });
+  });
+
+  $('km').addEventListener('input', e => {
+    state.km = +e.target.value;
+    $('km-out').textContent = state.km.toLocaleString('fr-FR');
+    render();
+  });
+  $('duree').addEventListener('input', e => {
+    state.duree = +e.target.value;
+    $('duree-out').textContent = state.duree;
+    render();
+  });
+
+  // Inputs numériques
+  [
+    ['prix-diesel', 'prixDiesel'],
+    ['prix-elec', 'prixElec'],
+    ['maint-diesel', 'maintDiesel'],
+    ['maint-elec', 'maintElec'],
+    ['conso-diesel', 'consoDiesel'],
+    ['conso-elec', 'consoElec'],
+    ['prix-gazole', 'prixGazole'],
+    ['prix-elec-kwh', 'prixElecKwh'],
+    ['aide', 'aide']
+  ].forEach(([id, key]) => {
+    $(id).addEventListener('input', e => {
+      const v = parseFloat(e.target.value);
+      state[key] = isFinite(v) && v >= 0 ? v : 0;
+      render();
+    });
+  });
+
+  // Init
+  render();
+})();
+</script>
+
+<script type="module" src="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.14.4/dist/dsfr.module.min.js"></script>
+<script type="text/javascript" nomodule src="https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.14.4/dist/dsfr.nomodule.min.js"></script>
+
+<script type="application/json" id="business-modal-data">
+{
+  "title": "Méthode, données et arbitrages — Poids lourd électrique vs diesel",
+  "audience": "DGEC mobilité · service fret · Mesure 12 du Plan",
+  "intro": "TCO d'un poids lourd électrique vs diesel selon le kilométrage annuel. Aide jusqu'à 100 k€ (tracteur) / 50 k€ (porteur). Cette modale recense les arbitrages et données à valider avec les transporteurs et la DGITM.",
+  "updated": "2026-05-20",
+  "specs": [
+    { "label": "Spécification (Word)",      "href": "/docs/specs-metier/poids-lourds/poids-lourds-spec.docx",  "type": "docx" },
+    { "label": "Spécification (Markdown)",  "href": "/docs/specs-metier/poids-lourds/spec.md",                "type": "md" },
+    { "label": "Modèle économique (Excel)", "href": "/docs/specs-metier/poids-lourds/poids-lourd-tco-2026.xlsx", "type": "xlsx" },
+    { "label": "Code source (HTML)",        "href": "/poids-lourd/index.html",                                "type": "html" }
+  ],
+  "sections": {
+    "perimetre": [
+      {"q": "Catégories couvertes : tracteur 40-44 t et porteur 19-26 t. Faut-il ajouter 12 t / 7,5 t (logistique urbaine) ?"},
+      {"q": "Usages : longue distance, régional, dernier km ? L'autonomie VE diffère radicalement."},
+      {"q": "Public cible : grand transporteur (flotte > 50 PL), PME (5-50), artisan (1-5) ? La logique d'aide cumulable change."},
+      {"q": "Mesure 12 du Plan d'électrification : on cite explicitement la mesure dans l'outil ?"},
+      {"q": "Comparaison vs gaz (BioGNV) à intégrer en option, ou strict diesel only ?"}
+    ],
+    "arbitrages": [
+      {"q": "Horizon TCO : 5 ans ou 7 ans (durée typique de détention 1er propriétaire en transport routier) ?", "note": "Aujourd'hui le pivot km/an est affiché."},
+      {"q": "Valeur résiduelle : marché de l'occasion VE PL quasi inexistant en 2026 — on met à zéro ou on prévoit une cote prudentielle ?"},
+      {"q": "Aide CEE TRA (transport routier) : on l'intègre ou on s'en tient à l'aide directe achat ?"},
+      {"q": "Plafond aide directe achat : 100 k€ tracteur / 50 k€ porteur — validés par DGEC ? Avec quelle date de fin de dispositif ?"},
+      {"q": "Bornes haute puissance (350-1000 kW) : on amortit le CAPEX recharge dans le TCO, ou on suppose accès tiers payant ?"},
+      {"q": "Coût conducteur : on l'exclut du TCO (égal entre VE/diesel) — sauf si formation VE nécessaire, à intégrer comme coût ponctuel ?"},
+      {"q": "Évolution prix énergies : taux d'inflation gazole / électricité sur 5 ans ?"}
+    ],
+    "sources": [
+      {"q": "Prix catalogue PL électriques (Renault Trucks, Volvo, Daimler, Scania, MAN, DAF) : qui maintient la grille ?", "status": "todo"},
+      {"q": "Prix gazole professionnel TTC pro (avec remboursement TICPE partiel) — source CGDD / DGEC ?"},
+      {"q": "Tarif électricité B2B haute puissance — barème CRE ou contrats négociés type AO ?"},
+      {"q": "Coûts d'entretien PL électrique : retours d'expérience flottes pilotes (Schneider Electric, FM Logistic, etc.) ?"},
+      {"q": "Fiscalité PL : TICPE remboursée, taxe à l'essieu, péages — à intégrer ?"},
+      {"q": "Mesure 12 : enveloppe budgétaire totale, échéance, modalités de versement — fiche détaillée DGEC ?"},
+      {"q": "Disponibilité bornes HPC le long des grands axes (PFAC, plan TEN-T) : data Avere / Gireve ?"}
+    ],
+    "hypotheses": [
+      {"q": "Conso VE : 120 kWh/100 km (tracteur 40t à pleine charge). Cohérent avec retours Renault E-Tech T ?"},
+      {"q": "Conso diesel : 32 L/100 km (tracteur 40t). OK avec moyenne CCFA ?"},
+      {"q": "Kilométrage annuel : pivot affiché ~80 k km/an. Plage à explorer ?"},
+      {"q": "Durée vie batterie : 8 ans / 1 000 000 km. À confirmer avec constructeurs."},
+      {"q": "Coût électricité moyen recharge mixte (dépôt 0,15 €/kWh + ailleurs 0,40 €/kWh) : split à valider."},
+      {"q": "Coût installation borne dépôt : 50 k€ pour 350 kW. Amortissement sur combien de PL ?"},
+      {"q": "Surcoût d'achat VE vs diesel : ~250 k€ avant aide. Hypothèse réaliste pour 2026 ?"}
+    ],
+    "attention": [
+      {"q": "Autonomie réelle en charge + froid + relief : -25 à -35 % vs théorique. On ajoute un slider « conditions sévères » ?"},
+      {"q": "TVS / taxe à l'essieu : exemption VE confirmée jusque quand ?"},
+      {"q": "Crédit d'impôt + suramortissement (art. 39 decies A) : régime 2026 ? Confirmé ?", "status": "open"},
+      {"q": "Accès aux bornes publiques HPC : maillage encore très lacunaire. Comment matérialiser ce risque ?"},
+      {"q": "Cas du transport sous température dirigée (frigo) : la conso électrique est ~+30 %. Géré ?"},
+      {"q": "Modèle 2 graphiques (TCO cumulé + pivot km/an) : compréhensible pour un patron de PME transport ?"},
+      {"q": "Confidentialité : les patrons saisiraient-ils leur kilométrage réel sans crainte de fuite concurrentielle ? Pas de stockage côté serveur — à rappeler."}
+    ]
+  }
+}
+</script>
+</body>
+</html>
