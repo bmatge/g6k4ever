@@ -6,11 +6,32 @@
   "description": "Runtime React + react-dsfr. Rend une définition. Buildable en bundle autonome embeddable. Phase 6.",
   "main": "./dist/index.js",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
-    "dev": "tsc -p tsconfig.build.json --watch",
+    "build": "vite build",
+    "build:lib": "tsc -p tsconfig.build.json",
+    "dev": "vite",
+    "preview": "vite preview",
     "test": "vitest run --passWithNoTests",
     "lint": "eslint src",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist .turbo *.tsbuildinfo"
+  },
+  "dependencies": {
+    "@codegouvfr/react-dsfr": "^1.32.2",
+    "@g6k4ever/blocks": "workspace:*",
+    "@g6k4ever/engine": "workspace:*",
+    "@g6k4ever/functions": "workspace:*",
+    "@g6k4ever/schema": "workspace:*",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/react": "^19.2.15",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.2",
+    "jsdom": "^29.1.1",
+    "vite": "^8.0.14"
   }
 }
