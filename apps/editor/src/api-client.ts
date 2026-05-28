@@ -126,4 +126,31 @@ export class ApiClient {
   run(slug: string, input: Record<string, unknown>): Promise<{ state: unknown }> {
     return this.request("POST", `/simulators/${slug}/run`, { input });
   }
+
+  /**
+   * Évalue un simulateur fourni en body, sans persistance. Utilisé par la
+   * preview de l'éditeur — bénéficie des `database`/`api` providers du backend.
+   */
+  runStateless(
+    simulator: Simulator,
+    input: Record<string, unknown>,
+  ): Promise<{ state: SerializedSimulatorState }> {
+    return this.request("POST", "/run-stateless", { simulator, input });
+  }
+}
+
+/**
+ * Sérialisation de `SimulatorState` reçue de l'API (les Map sont des Records).
+ */
+export interface SerializedSimulatorState {
+  values: Record<string, unknown>;
+  visibility: Record<string, boolean>;
+  notifications: Array<{
+    level: "error" | "warning";
+    message: string;
+    targetType: "data" | "step";
+    targetId: string | number;
+  }>;
+  stable: boolean;
+  iterations: number;
 }

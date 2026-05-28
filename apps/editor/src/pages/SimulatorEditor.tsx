@@ -1,7 +1,10 @@
-import { useEffect, useRef, useState, type JSX } from "react";
+import { useEffect, useMemo, useState, type JSX } from "react";
 import type { Simulator } from "@g6k4ever/schema";
-import { Simulator as RuntimeSimulator } from "@g6k4ever/runtime";
-import { createStandardRegistry } from "@g6k4ever/functions";
+import {
+  SimulatorViaApi,
+  deserializeSimulatorState,
+  type ServerEvaluator,
+} from "@g6k4ever/runtime";
 import { ApiError, type ApiClient } from "../api-client.js";
 import { JsonEditor } from "../widgets/JsonEditor.js";
 import { MetadataForm } from "../widgets/MetadataForm.js";
@@ -36,7 +39,19 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
   const [lockHeldBy, setLockHeldBy] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [tab, setTab] = useState<Tab>("metadata");
-  const functions = useRef(createStandardRegistry()).current;
+
+  // Évaluateur côté API — POST /run-stateless avec le draft en cours.
+  // Avantage : les sources `database`/`api` sont résolues par les providers
+  // du backend (mockés ou réels), pas seulement les `inline`.
+  const evaluator = useMemo<ServerEvaluator>(
+    () => ({
+      async evaluate(simulator, input) {
+        const res = await api.runStateless(simulator, input);
+        return deserializeSimulatorState(res.state);
+      },
+    }),
+    [api],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -255,9 +270,10 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
             }}
           >
             <p className="fr-text--xs fr-mb-1w" style={{ opacity: 0.7 }}>
-              Aperçu live (moteur exécuté côté client) :
+              Aperçu live via API (<code>POST /run-stateless</code>) — bénéficie des providers
+              backend pour les sources <code>database</code>/<code>api</code> :
             </p>
-            <RuntimeSimulator definition={draft} functions={functions} />
+            <SimulatorViaApi definition={draft} evaluator={evaluator} debounceMs={300} />
           </div>
         </div>
       </div>
