@@ -1,0 +1,188 @@
+{
+  "schemaVersion": 1,
+  "metadata": {
+    "name": "frais-locataire",
+    "label": "Simulateur des frais de mise en location imputables au locataire",
+    "description": "Permet de connaître la zone géographique dont dépend le logement concerné, qui détermine le prix maximum par m² des frais d'agence imputables au locataire.",
+    "defaultLocale": "fr-FR",
+    "dateFormat": "dd/MM/yyyy",
+    "authors": ["DGCCRF / G6K"]
+  },
+  "outputKind": "decision",
+  "data": [
+    {
+      "id": 1,
+      "name": "commune",
+      "label": "Code INSEE de la commune",
+      "type": "text",
+      "widget": "geoAPILocalities"
+    },
+    {
+      "id": 2,
+      "name": "frais",
+      "label": "Frais de mise en location pour le locataire",
+      "type": "integer",
+      "source": { "sourceId": "zonage-commune", "returnPath": "frais" }
+    },
+    {
+      "id": 3,
+      "name": "nomCommune",
+      "label": "Nom de la commune",
+      "type": "text",
+      "source": { "sourceId": "zonage-commune", "returnPath": "commune" }
+    }
+  ],
+  "sources": [
+    {
+      "kind": "database",
+      "id": "zonage-commune",
+      "label": "Zonage des communes (frais de mise en location)",
+      "connectionId": "g6k-zonage",
+      "query": "SELECT commune, zone, preavis, frais FROM zonageCommunes WHERE codeInsee = %1$s",
+      "parameters": [
+        { "name": "insee", "type": "text", "position": 1, "bindToDataId": 1 }
+      ],
+      "columns": [
+        { "name": "commune", "type": "text", "label": "Nom de la commune" },
+        { "name": "zone", "type": "integer", "label": "Zone (0=non tendue, 1=tendue, 2=très tendue)" },
+        { "name": "preavis", "type": "integer", "label": "Délai de préavis (mois)" },
+        { "name": "frais", "type": "integer", "label": "Code des frais (0/1/2)" }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": 1,
+      "name": "zonage",
+      "label": "Zonage",
+      "blocks": [
+        {
+          "id": "field-commune",
+          "type": "field",
+          "config": {
+            "dataId": 1,
+            "usage": "input",
+            "label": "Commune (nom ou code postal)",
+            "prompt": "Saisir le nom de la ville ou son code postal",
+            "required": true,
+            "widget": "geoAPILocalities"
+          }
+        },
+        {
+          "id": "blockinfo-resultats",
+          "type": "chapter",
+          "config": {
+            "title": "Résultat",
+            "blocks": [
+              {
+                "id": "section-zone-0",
+                "type": "text-section",
+                "config": {
+                  "content": "#3 n'est pas en zone tendue.\n\nLe tarif maximum imputable au locataire est de **8 €** TTC par m² de surface habitable.\n\nExemple : pour un logement de 26,30 m², le montant ne doit pas dépasser **210,40 € TTC**.\n\n*Attention : ce montant ne doit pas non plus dépasser celui imputé au bailleur.*"
+                }
+              },
+              {
+                "id": "section-zone-1",
+                "type": "text-section",
+                "config": {
+                  "content": "#3 est en zone tendue.\n\nLe tarif maximum imputable au locataire est de **10 €** TTC par m² de surface habitable.\n\nExemple : pour un logement de 26,30 m², le montant ne doit pas dépasser **263 € TTC**.\n\n*Attention : ce montant ne doit pas non plus dépasser celui imputé au bailleur.*"
+                }
+              },
+              {
+                "id": "section-zone-2",
+                "type": "text-section",
+                "config": {
+                  "content": "#3 est en zone très tendue.\n\nLe tarif maximum imputable au locataire est de **12 €** TTC par m² de surface habitable.\n\nExemple : pour un logement de 26,30 m², le montant ne doit pas dépasser **315,16 € TTC**.\n\n*Attention : ce montant ne doit pas non plus dépasser celui imputé au bailleur.*"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "rules": [
+    {
+      "id": "R1",
+      "name": "Afficher le résultat quand le zonage est résolu",
+      "conditions": {
+        "kind": "connector",
+        "type": "all",
+        "children": [
+          { "kind": "condition", "operand": 3, "operator": "present" },
+          { "kind": "condition", "operand": 2, "operator": "present" }
+        ]
+      },
+      "ifActions": [
+        { "kind": "showObject", "target": { "type": "blockinfo", "id": "blockinfo-resultats" } }
+      ],
+      "elseActions": [
+        { "kind": "hideObject", "target": { "type": "blockinfo", "id": "blockinfo-resultats" } }
+      ]
+    },
+    {
+      "id": "R2",
+      "name": "Zone non tendue (frais = 0)",
+      "conditions": {
+        "kind": "connector",
+        "type": "all",
+        "children": [
+          { "kind": "condition", "operand": 3, "operator": "present" },
+          { "kind": "condition", "operand": 2, "operator": "present" },
+          { "kind": "condition", "operand": 2, "operator": "=", "value": "0" }
+        ]
+      },
+      "ifActions": [
+        { "kind": "showObject", "target": { "type": "section", "id": "section-zone-0" } },
+        { "kind": "hideObject", "target": { "type": "section", "id": "section-zone-1" } },
+        { "kind": "hideObject", "target": { "type": "section", "id": "section-zone-2" } }
+      ]
+    },
+    {
+      "id": "R3",
+      "name": "Zone tendue (frais = 1)",
+      "conditions": {
+        "kind": "connector",
+        "type": "all",
+        "children": [
+          { "kind": "condition", "operand": 3, "operator": "present" },
+          { "kind": "condition", "operand": 2, "operator": "present" },
+          { "kind": "condition", "operand": 2, "operator": "=", "value": "1" }
+        ]
+      },
+      "ifActions": [
+        { "kind": "showObject", "target": { "type": "section", "id": "section-zone-1" } },
+        { "kind": "hideObject", "target": { "type": "section", "id": "section-zone-0" } },
+        { "kind": "hideObject", "target": { "type": "section", "id": "section-zone-2" } }
+      ]
+    },
+    {
+      "id": "R4",
+      "name": "Zone très tendue (frais = 2)",
+      "conditions": {
+        "kind": "connector",
+        "type": "all",
+        "children": [
+          { "kind": "condition", "operand": 3, "operator": "present" },
+          { "kind": "condition", "operand": 2, "operator": "present" },
+          { "kind": "condition", "operand": 2, "operator": "=", "value": "2" }
+        ]
+      },
+      "ifActions": [
+        { "kind": "showObject", "target": { "type": "section", "id": "section-zone-2" } },
+        { "kind": "hideObject", "target": { "type": "section", "id": "section-zone-0" } },
+        { "kind": "hideObject", "target": { "type": "section", "id": "section-zone-1" } }
+      ]
+    }
+  ],
+  "footnotes": [
+    {
+      "id": "fn-1",
+      "text": "Pour toute explication, consulter la fiche pratique : [Accès à un logement privé : frais d'agence immobilière](https://www.service-public.fr/particuliers/vosdroits/F375)"
+    },
+    {
+      "id": "fn-2",
+      "text": "**Surface habitable** : surface au sol déduction faite des murs, cloisons, marches et cages d'escaliers, gaines, embrasures de portes et de fenêtres. Certains espaces sont exclus : combles non aménagés, caves, sous-sol, remise, garages, terrasses, loggias, balcons, séchoirs extérieurs, vérandas, locaux communs, dépendances, espaces dont la hauteur est inférieure à 1,80 mètre."
+    }
+  ]
+}

@@ -1,0 +1,257 @@
+{
+  "schemaVersion": 1,
+  "metadata": {
+    "name": "taxe-logements-vacants",
+    "label": "Vérifier si la taxe sur les logements vacants s'applique à votre commune",
+    "description": "Permet à un propriétaire de logement non meublé inoccupé de vérifier si sa commune est concernée par la taxe sur les logements vacants (TLV).",
+    "defaultLocale": "fr-FR",
+    "dateFormat": "dd/MM/yyyy",
+    "authors": ["DGCCRF / G6K"]
+  },
+  "outputKind": "decision",
+  "data": [
+    { "id": 1, "name": "commune", "label": "Commune", "type": "text", "widget": "geoAPIZipCodeGetInfo" },
+    { "id": 2, "name": "preavis", "label": "Préavis zone tendue", "type": "integer" },
+    { "id": 3, "name": "nomCommune", "label": "Nom de la commune", "type": "text" },
+    {
+      "id": 4,
+      "name": "RecevableTaxeLogementVacant",
+      "label": "TLV applicable ?",
+      "type": "boolean"
+    },
+    { "id": 5, "name": "CodeInsee", "label": "Code INSEE", "type": "text" },
+    {
+      "id": 6,
+      "name": "RecevablePlus50000",
+      "label": "Commune de plus de 50 000 habitants",
+      "type": "text",
+      "source": { "sourceId": "plus-de-50000", "returnPath": "Ok" }
+    },
+    {
+      "id": 7,
+      "name": "RecevableDesequilibre",
+      "label": "Déséquilibre offre/demande",
+      "type": "text",
+      "source": { "sourceId": "desequilibre-offre-demande", "returnPath": "Ok" }
+    }
+  ],
+  "sources": [
+    {
+      "kind": "database",
+      "id": "plus-de-50000",
+      "label": "Communes de plus de 50 000 habitants",
+      "connectionId": "g6k-tlv",
+      "query": "SELECT codeinsee AS codeInsee, ok AS Ok FROM PlusDe50000 WHERE codeInsee = %1$s",
+      "parameters": [
+        { "name": "codeInsee", "type": "text", "position": 1, "bindToDataId": 5 }
+      ],
+      "columns": [
+        { "name": "codeInsee", "type": "text" },
+        { "name": "Ok", "type": "text" }
+      ]
+    },
+    {
+      "kind": "database",
+      "id": "desequilibre-offre-demande",
+      "label": "Communes en déséquilibre offre/demande",
+      "connectionId": "g6k-tlv",
+      "query": "SELECT codeinsee AS codeInsee, id, nom AS Nom, ok AS Ok FROM DesequilibreOffreEtDemande WHERE codeInsee = %1$s",
+      "parameters": [
+        { "name": "codeInsee", "type": "text", "position": 1, "bindToDataId": 5 }
+      ],
+      "columns": [
+        { "name": "codeInsee", "type": "text" },
+        { "name": "id", "type": "integer" },
+        { "name": "Nom", "type": "text" },
+        { "name": "Ok", "type": "text" }
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "id": 1,
+      "name": "zonage",
+      "label": "Zonage",
+      "blocks": [
+        {
+          "id": "field-commune",
+          "type": "field",
+          "config": {
+            "dataId": 1,
+            "usage": "input",
+            "label": "Quel est le nom ou le code postal de votre commune ?",
+            "hint": "Exemple : Quimper ou 23200",
+            "widget": "geoAPIZipCodeGetInfo"
+          }
+        },
+        {
+          "id": "blockinfo-resultats",
+          "type": "blockinfo",
+          "config": {
+            "blocks": [
+              {
+                "id": "chapter-tlv-applique",
+                "type": "chapter",
+                "config": {
+                  "blocks": [
+                    {
+                      "id": "section-tlv-applique",
+                      "type": "text-section",
+                      "config": {
+                        "variant": "warning",
+                        "content": "**La taxe sur les logements vacants (TLV) s'applique sur la commune de #3.**\n\nPour vérifier si votre logement est concerné par cette taxe, vous pouvez consulter notre page sur [Service-Public.fr](https://www.service-public.fr/particuliers/vosdroits/F2847).\n\nEn revanche, la taxe d'habitation sur les logements vacants (THLV) ne s'applique pas sur cette commune."
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "chapter-tlv-non-applique",
+                "type": "chapter",
+                "config": {
+                  "blocks": [
+                    {
+                      "id": "section-tlv-non-applique",
+                      "type": "text-section",
+                      "config": {
+                        "variant": "info",
+                        "content": "**La taxe sur les logements vacants ne s'applique pas sur la commune de #3.**\n\nEn revanche, la taxe d'habitation sur les logements vacants (THLV) peut s'appliquer sur cette commune. Pour vérifier si votre logement est concerné par la THLV, consultez notre page sur [Service-Public.fr](https://www.service-public.fr/particuliers/vosdroits/F2847)."
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "action-restart",
+          "type": "reset-button",
+          "config": { "label": "Recommencer la simulation" }
+        }
+      ]
+    }
+  ],
+  "rules": [
+    {
+      "id": "R1",
+      "name": "Affiche le bouton Recommencer dès qu'on a des données",
+      "conditions": { "kind": "condition", "operand": 2, "operator": "blank" },
+      "ifActions": [
+        { "kind": "hideObject", "target": { "type": "action", "id": "action-restart" } }
+      ],
+      "elseActions": [
+        { "kind": "showObject", "target": { "type": "action", "id": "action-restart" } }
+      ]
+    },
+    {
+      "id": "R2",
+      "name": "Affecte CodeInsee et nomCommune à partir de la commune saisie",
+      "conditions": { "kind": "condition", "operand": 1, "operator": "present" },
+      "ifActions": [
+        {
+          "kind": "setAttribute",
+          "target": { "type": "data", "id": 5, "attribute": "content" },
+          "value": "getInsee(#1)"
+        },
+        {
+          "kind": "setAttribute",
+          "target": { "type": "data", "id": 3, "attribute": "content" },
+          "value": "getNomVille(#1)"
+        }
+      ],
+      "elseActions": [
+        {
+          "kind": "unsetAttribute",
+          "target": { "type": "data", "id": 5, "attribute": "content" }
+        },
+        {
+          "kind": "unsetAttribute",
+          "target": { "type": "data", "id": 3, "attribute": "content" }
+        }
+      ]
+    },
+    {
+      "id": "R3",
+      "name": "Affecte RecevableTaxeLogementVacant",
+      "conditions": {
+        "kind": "connector",
+        "type": "all",
+        "children": [
+          { "kind": "condition", "operand": 1, "operator": "present" },
+          {
+            "kind": "connector",
+            "type": "any",
+            "children": [
+              { "kind": "condition", "operand": 7, "operator": "=", "value": "1" },
+              { "kind": "condition", "operand": 6, "operator": "=", "value": "1" }
+            ]
+          }
+        ]
+      },
+      "ifActions": [
+        {
+          "kind": "setAttribute",
+          "target": { "type": "data", "id": 4, "attribute": "content" },
+          "value": "true"
+        }
+      ],
+      "elseActions": [
+        {
+          "kind": "setAttribute",
+          "target": { "type": "data", "id": 4, "attribute": "content" },
+          "value": "false"
+        }
+      ]
+    },
+    {
+      "id": "R4",
+      "name": "TLV s'applique — affiche le chapitre",
+      "conditions": {
+        "kind": "connector",
+        "type": "all",
+        "children": [
+          { "kind": "condition", "operand": 1, "operator": "present" },
+          { "kind": "condition", "operand": 5, "operator": "present" },
+          { "kind": "condition", "operand": 3, "operator": "present" },
+          {
+            "kind": "connector",
+            "type": "any",
+            "children": [
+              { "kind": "condition", "operand": 7, "operator": "=", "value": "1" },
+              { "kind": "condition", "operand": 6, "operator": "=", "value": "1" }
+            ]
+          }
+        ]
+      },
+      "ifActions": [
+        { "kind": "showObject", "target": { "type": "chapter", "id": "chapter-tlv-applique" } }
+      ],
+      "elseActions": [
+        { "kind": "hideObject", "target": { "type": "chapter", "id": "chapter-tlv-applique" } }
+      ]
+    },
+    {
+      "id": "R5",
+      "name": "TLV ne s'applique pas — affiche le chapitre alternatif",
+      "conditions": {
+        "kind": "connector",
+        "type": "all",
+        "children": [
+          { "kind": "condition", "operand": 1, "operator": "present" },
+          { "kind": "condition", "operand": 5, "operator": "present" },
+          { "kind": "condition", "operand": 3, "operator": "present" },
+          { "kind": "condition", "operand": 7, "operator": "blank" },
+          { "kind": "condition", "operand": 6, "operator": "blank" }
+        ]
+      },
+      "ifActions": [
+        { "kind": "showObject", "target": { "type": "chapter", "id": "chapter-tlv-non-applique" } }
+      ],
+      "elseActions": [
+        { "kind": "hideObject", "target": { "type": "chapter", "id": "chapter-tlv-non-applique" } }
+      ]
+    }
+  ],
+  "footnotes": []
+}
