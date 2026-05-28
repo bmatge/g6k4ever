@@ -1,0 +1,11 @@
+node_modules
+dist
+build
+.turbo
+coverage
+pnpm-lock.yaml
+_corpus
+G6K-code-legacy
+G6K-examples-data-legacy
+*.min.js
+*.min.css

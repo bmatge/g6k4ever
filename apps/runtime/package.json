@@ -1,0 +1,16 @@
+{
+  "name": "@g6k4ever/runtime",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Runtime React + react-dsfr. Rend une définition. Buildable en bundle autonome embeddable. Phase 6.",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsc -p tsconfig.build.json --watch",
+    "test": "vitest run --passWithNoTests",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo *.tsbuildinfo"
+  }
+}

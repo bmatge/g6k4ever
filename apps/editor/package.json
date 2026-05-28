@@ -1,0 +1,16 @@
+{
+  "name": "@g6k4ever/editor",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Back-office no-code React + react-dsfr. Mode guidé/expert, preview live, lock, versions. Phase 7. C'est le produit.",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsc -p tsconfig.build.json --watch",
+    "test": "vitest run --passWithNoTests",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo *.tsbuildinfo"
+  }
+}

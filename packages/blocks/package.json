@@ -1,0 +1,24 @@
+{
+  "name": "@g6k4ever/blocks",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Registre de blocs DSFR — 1 définition par bloc, consommée par runtime ET éditeur. Phase 4.",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist", "README.md"],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsc -p tsconfig.build.json --watch",
+    "test": "vitest run --passWithNoTests",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo *.tsbuildinfo"
+  }
+}

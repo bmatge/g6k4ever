@@ -1,0 +1,24 @@
+{
+  "name": "@g6k4ever/engine",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Moteur d'évaluation TS pur (parser AST, évaluateur de règles, résolveurs injectés). Aucune dépendance UI/HTTP. Phase 3.",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist", "README.md"],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsc -p tsconfig.build.json --watch",
+    "test": "vitest run --passWithNoTests",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo *.tsbuildinfo"
+  }
+}

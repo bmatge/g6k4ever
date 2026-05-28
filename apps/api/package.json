@@ -1,0 +1,16 @@
+{
+  "name": "@g6k4ever/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "API Hono + SQLite — CRUD définitions, exécution, datasources, lock, versions, export. Phase 5.",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsc -p tsconfig.build.json --watch",
+    "test": "vitest run --passWithNoTests",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo *.tsbuildinfo"
+  }
+}
