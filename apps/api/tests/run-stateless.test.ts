@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { createApp } from "../src/index.js";
+import { createApp, createDb, runMigrations } from "../src/index.js";
 
 /**
  * Simulateur de test : variante de `frais-locataire` avec une datasource
@@ -101,7 +101,10 @@ const testSimulatorWithParam = {
 };
 
 describe("API — POST /run-stateless", () => {
-  const app = createApp();
+  // createApp() ouvre une DB. Pour ces tests stateless on utilise :memory:.
+  const { db, raw } = createDb({ url: ":memory:", enableWal: false });
+  runMigrations(raw);
+  const { app } = createApp({ db });
 
   it("GET / renvoie l'identité de l'API", async () => {
     const res = await app.request("/");

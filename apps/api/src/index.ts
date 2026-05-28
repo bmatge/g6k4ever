@@ -1,14 +1,27 @@
 /**
- * @g6k4ever/api — API Hono + (futur) SQLite.
+ * @g6k4ever/api — API Hono + SQLite (better-sqlite3 + Drizzle).
  *
- * Phase 5a (en cours) : POST /run-stateless — évaluation sans persistance.
- * Phase 5.2 (à venir) : CRUD simulators + lock + versions + export, avec DB driver à arrêter
- * (SQLite brut / Drizzle / Prisma — décision en attente).
+ * Phase 5.2 : persistance (CRUD simulators + lock + versions brouillon/publié)
+ * + couche d'abstraction datasources (inline réelle, database/api via providers
+ * branchables — mockés pour le MVP).
  *
- * Zéro logique métier — tout passe par @g6k4ever/engine (cf. CLAUDE.md §4).
+ * Zéro logique métier — toute évaluation passe par @g6k4ever/engine (cf. CLAUDE.md §4).
  */
 
 export const API_PACKAGE_VERSION = "0.0.0" as const;
 
 export { createApp, type ApiAppOptions } from "./app.js";
 export { createInlineResolver } from "./inline-resolver.js";
+export { createDb, type Db, type DbOptions } from "./db/client.js";
+export { runMigrations } from "./db/migrate.js";
+export { SimulatorService } from "./services/simulator-service.js";
+export { LockService, DEFAULT_LOCK_TTL_MS } from "./services/lock-service.js";
+export {
+  MultiDataSourceResolver,
+  MockDatabaseProvider,
+  MockApiProvider,
+  emptyProviderRegistry,
+  type ProviderRegistry,
+  type DatabaseConnectionProvider,
+  type ApiConnectionProvider,
+} from "./datasources/index.js";

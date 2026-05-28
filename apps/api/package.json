@@ -19,10 +19,14 @@
     "@g6k4ever/engine": "workspace:*",
     "@g6k4ever/functions": "workspace:*",
     "@g6k4ever/schema": "workspace:*",
+    "better-sqlite3": "^12.10.0",
+    "drizzle-orm": "^0.45.2",
     "hono": "^4.12.23"
   },
   "devDependencies": {
     "@hono/node-server": "^2.0.4",
+    "@types/better-sqlite3": "^7.6.13",
+    "drizzle-kit": "^0.31.10",
     "tsx": "^4.22.3"
   }
 }

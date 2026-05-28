@@ -1,13 +1,31 @@
 import { Hono } from "hono";
 import { Simulator } from "@g6k4ever/schema";
-import { evaluate, type SimulatorState, type Notification } from "@g6k4ever/engine";
+import {
+  evaluate,
+  type SimulatorState,
+  type Notification,
+  type FunctionRegistry,
+} from "@g6k4ever/engine";
 import { createStandardRegistry } from "@g6k4ever/functions";
-import { createInlineResolver } from "./inline-resolver.js";
+import { createDb, type Db } from "./db/client.js";
+import { runMigrations } from "./db/migrate.js";
+import { MultiDataSourceResolver } from "./datasources/multi-resolver.js";
+import { emptyProviderRegistry, type ProviderRegistry } from "./datasources/types.js";
+import { SimulatorService } from "./services/simulator-service.js";
+import { LockService } from "./services/lock-service.js";
+import { simulatorsRoutes } from "./routes/simulators.js";
+import { lockRoutes } from "./routes/lock.js";
+import { runRoutes } from "./routes/run.js";
 
-/**
- * Sérialise un `SimulatorState` (qui contient des `Map`) en objet JSON-able
- * avant la réponse.
- */
+export interface ApiAppOptions {
+  dbUrl?: string;
+  maxIterations?: number;
+  providers?: ProviderRegistry;
+  functions?: FunctionRegistry;
+  /** Injection d'un Db pré-créé (utile en tests `:memory:`). */
+  db?: Db;
+}
+
 function serializeState(state: SimulatorState): {
   values: Record<string, unknown>;
   visibility: Record<string, boolean>;
@@ -24,41 +42,70 @@ function serializeState(state: SimulatorState): {
   };
 }
 
-export interface ApiAppOptions {
-  /**
-   * Plafond d'itérations à passer au moteur. Par défaut 10 (cohérent avec
-   * docs/analysis/decisions.md D1).
-   */
-  maxIterations?: number;
-}
-
-export function createApp(opts: ApiAppOptions = {}): Hono {
-  const app = new Hono();
-  const functions = createStandardRegistry();
+/**
+ * Compose l'application Hono complète.
+ *
+ * Wiring :
+ *   /                                  identité
+ *   /healthz                           probe
+ *   /simulators                        GET / POST
+ *   /simulators/:slug                  GET / PUT / DELETE
+ *   /simulators/:slug/publish          POST
+ *   /simulators/:slug/lock             POST / DELETE / POST /heartbeat
+ *   /simulators/:slug/run              POST  (utilise la définition stockée)
+ *   /run-stateless                     POST  (utilise une définition fournie en body)
+ */
+export function createApp(opts: ApiAppOptions = {}): {
+  app: Hono;
+  closeDb: () => void;
+} {
+  const providers = opts.providers ?? emptyProviderRegistry();
+  const functions = opts.functions ?? createStandardRegistry();
   const maxIterations = opts.maxIterations ?? 10;
 
-  /**
-   * GET / — info & santé.
-   */
+  let db: Db;
+  let closeDb: () => void = () => undefined;
+  if (opts.db) {
+    db = opts.db;
+  } else {
+    const created = createDb({ url: opts.dbUrl ?? "./data/g6k4ever.db" });
+    runMigrations(created.raw);
+    db = created.db;
+    closeDb = () => created.raw.close();
+  }
+
+  const simulatorService = new SimulatorService(db);
+  const lockService = new LockService(db);
+
+  const app = new Hono();
+
   app.get("/", (c) =>
     c.json({
       name: "@g6k4ever/api",
       version: "0.0.0",
-      phase: "5a — /run-stateless only (Phase 5.2 ajoutera la persistance)",
-      endpoints: ["GET /", "GET /healthz", "POST /run-stateless"],
+      phase: "5.2 — persistance + datasources abstraites",
+      endpoints: [
+        "GET /",
+        "GET /healthz",
+        "GET /simulators",
+        "POST /simulators",
+        "GET /simulators/:slug",
+        "PUT /simulators/:slug",
+        "DELETE /simulators/:slug",
+        "POST /simulators/:slug/publish",
+        "POST /simulators/:slug/lock",
+        "POST /simulators/:slug/lock/heartbeat",
+        "DELETE /simulators/:slug/lock",
+        "POST /simulators/:slug/run",
+        "POST /run-stateless",
+      ],
     }),
   );
 
-  /**
-   * GET /healthz — probe de santé.
-   */
   app.get("/healthz", (c) => c.json({ status: "ok" }));
 
   /**
-   * POST /run-stateless — évalue un simulateur SANS persistance.
-   *
-   * Body : { simulator: Simulator, input: SimulatorInput }
-   * Réponse : { state: SimulatorState (sérialisé) } ou erreur 4xx avec détails.
+   * POST /run-stateless — évaluation sans persistance (Phase 5a).
    */
   app.post("/run-stateless", async (c) => {
     let body: unknown;
@@ -76,25 +123,17 @@ export function createApp(opts: ApiAppOptions = {}): Hono {
       return c.json({ error: "Body attendu : { simulator, input }" }, 400);
     }
     const { simulator: rawSim, input } = body as { simulator: unknown; input: unknown };
-
     const parsed = Simulator.safeParse(rawSim);
     if (!parsed.success) {
-      return c.json(
-        {
-          error: "Simulateur invalide",
-          details: parsed.error.format(),
-        },
-        400,
-      );
+      return c.json({ error: "Simulateur invalide", details: parsed.error.format() }, 400);
     }
     if (typeof input !== "object" || input === null || Array.isArray(input)) {
       return c.json({ error: "input doit être un objet { dataName: value }" }, 400);
     }
-
-    const datasources = createInlineResolver(parsed.data);
+    const resolver = new MultiDataSourceResolver(parsed.data, providers);
     try {
       const state = evaluate(parsed.data, input as Record<string, unknown>, {
-        resolvers: { datasources },
+        resolvers: { datasources: resolver },
         functions,
         maxIterations,
       });
@@ -106,5 +145,13 @@ export function createApp(opts: ApiAppOptions = {}): Hono {
     }
   });
 
-  return app;
+  // CRUD + lock + run sous /simulators.
+  app.route("/simulators", simulatorsRoutes(simulatorService, lockService));
+  app.route("/simulators", lockRoutes(lockService));
+  app.route(
+    "/simulators",
+    runRoutes({ service: simulatorService, providers, functions, maxIterations }),
+  );
+
+  return { app, closeDb };
 }

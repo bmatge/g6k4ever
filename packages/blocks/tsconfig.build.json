@@ -5,6 +5,7 @@
     "rootDir": "src",
     "outDir": "dist",
     "jsx": "react-jsx",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "tsBuildInfoFile": "./.tsbuildinfo.build"
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
