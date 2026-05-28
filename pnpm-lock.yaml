@@ -70,7 +70,54 @@ importers:
         specifier: ^4.22.3
         version: 4.22.3
 
-  apps/editor: {}
+  apps/editor:
+    dependencies:
+      '@codegouvfr/react-dsfr':
+        specifier: ^1.32.2
+        version: 1.32.2
+      '@g6k4ever/blocks':
+        specifier: workspace:*
+        version: link:../../packages/blocks
+      '@g6k4ever/engine':
+        specifier: workspace:*
+        version: link:../../packages/engine
+      '@g6k4ever/functions':
+        specifier: workspace:*
+        version: link:../../packages/functions
+      '@g6k4ever/runtime':
+        specifier: workspace:*
+        version: link:../runtime
+      '@g6k4ever/schema':
+        specifier: workspace:*
+        version: link:../../packages/schema
+      react:
+        specifier: ^19.2.6
+        version: 19.2.6
+      react-dom:
+        specifier: ^19.2.6
+        version: 19.2.6(react@19.2.6)
+    devDependencies:
+      '@testing-library/jest-dom':
+        specifier: ^6.9.1
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: ^16.3.2
+        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      '@types/react':
+        specifier: ^19.2.15
+        version: 19.2.15
+      '@types/react-dom':
+        specifier: ^19.2.3
+        version: 19.2.3(@types/react@19.2.15)
+      '@vitejs/plugin-react':
+        specifier: ^6.0.2
+        version: 6.0.2(vite@8.0.14(@types/node@22.19.19)(esbuild@0.28.0)(tsx@4.22.3))
+      jsdom:
+        specifier: ^29.1.1
+        version: 29.1.1
+      vite:
+        specifier: ^8.0.14
+        version: 8.0.14(@types/node@22.19.19)(esbuild@0.28.0)(tsx@4.22.3)
 
   apps/runtime:
     dependencies:

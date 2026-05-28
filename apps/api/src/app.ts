@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 import { Simulator } from "@g6k4ever/schema";
 import {
   evaluate,
@@ -78,6 +79,19 @@ export function createApp(opts: ApiAppOptions = {}): {
   const lockService = new LockService(db);
 
   const app = new Hono();
+
+  // CORS ouvert pour le dev (éditeur sur :5174 → API sur :3000). En prod,
+  // restreindre via une env var et passer une liste d'origines autorisées.
+  app.use(
+    "*",
+    cors({
+      origin: (origin) => origin ?? "*",
+      allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      allowHeaders: ["Content-Type", "X-User-Id"],
+      exposeHeaders: ["Content-Type"],
+      credentials: true,
+    }),
+  );
 
   app.get("/", (c) =>
     c.json({

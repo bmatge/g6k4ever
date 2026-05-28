@@ -6,8 +6,8 @@
   "description": "Runtime React + react-dsfr. Rend une définition. Buildable en bundle autonome embeddable. Phase 6.",
   "main": "./dist/index.js",
   "scripts": {
-    "build": "vite build",
-    "build:lib": "tsc -p tsconfig.build.json",
+    "build": "tsc -p tsconfig.build.json",
+    "build:app": "vite build",
     "dev": "vite",
     "preview": "vite preview",
     "test": "vitest run --passWithNoTests",
