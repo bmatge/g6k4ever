@@ -65,16 +65,17 @@ export function recomputeNaturalValues(
       }
       const params: Record<string, unknown> = {};
       let allParamsDefined = true;
-      if (sourceDef.kind === "database" || sourceDef.kind === "api") {
-        for (const p of sourceDef.parameters) {
-          if (p.bindToDataId !== undefined) {
-            const v = previousValues.get(p.bindToDataId);
-            if (v === undefined || v === null || v === "") {
-              allParamsDefined = false;
-              break;
-            }
-            params[p.name] = v;
+      // Tous les types de source (inline / database / api) acceptent maintenant
+      // un tableau `parameters`. Si un paramètre n'est pas borné (Data non encore
+      // définie), on attend la prochaine itération du point fixe.
+      for (const p of sourceDef.parameters) {
+        if (p.bindToDataId !== undefined) {
+          const v = previousValues.get(p.bindToDataId);
+          if (v === undefined || v === null || v === "") {
+            allParamsDefined = false;
+            break;
           }
+          params[p.name] = v;
         }
       }
       if (!allParamsDefined) {

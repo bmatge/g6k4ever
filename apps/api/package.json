@@ -7,10 +7,22 @@
   "main": "./dist/index.js",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "dev": "tsc -p tsconfig.build.json --watch",
+    "dev": "tsx watch src/server.ts",
+    "start": "node dist/server.js",
+    "type-build-only": "tsc -p tsconfig.build.json --watch",
     "test": "vitest run --passWithNoTests",
     "lint": "eslint src",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist .turbo *.tsbuildinfo"
+  },
+  "dependencies": {
+    "@g6k4ever/engine": "workspace:*",
+    "@g6k4ever/functions": "workspace:*",
+    "@g6k4ever/schema": "workspace:*",
+    "hono": "^4.12.23"
+  },
+  "devDependencies": {
+    "@hono/node-server": "^2.0.4",
+    "tsx": "^4.22.3"
   }
 }

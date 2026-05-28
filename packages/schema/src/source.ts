@@ -33,6 +33,13 @@ export const InlineDataSource = z.object({
   label: z.string().min(1),
   columns: z.array(ColumnSpec).min(1),
   rows: z.array(z.record(z.string(), z.unknown())),
+  /**
+   * Paramètres de lookup. Chaque paramètre `name` doit matcher une colonne
+   * de `columns` ; sa valeur est tirée de la Data `bindToDataId` au moment de
+   * la résolution. Si non fourni, le resolver matche la première ligne disponible
+   * (utile pour les barèmes constants).
+   */
+  parameters: z.array(ParameterSpec).default([]),
 });
 export type InlineDataSource = z.infer<typeof InlineDataSource>;
 
