@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 1,
+  "metadata": {
+    "name": "voiture-tco",
+    "label": "TCO Voiture — électrique vs thermique",
+    "description": "Comparez le coût total de possession (TCO) d'une voiture électrique et d'une voiture thermique sur la durée de détention. Prix d'achat - aides + usage cumulé sur N ans.",
+    "defaultLocale": "fr-FR",
+    "dateFormat": "dd/MM/yyyy",
+    "authors": ["g6k4ever — portail-elec"]
+  },
+  "outputKind": "calcul",
+  "data": [
+    { "id": 1, "name": "km", "label": "Kilométrage annuel (km/an)", "type": "integer", "default": "12000" },
+    { "id": 2, "name": "duree", "label": "Durée de possession (années)", "type": "integer", "default": "5" },
+    { "id": 3, "name": "prixVE", "label": "Prix d'achat VE (€)", "type": "money", "default": "35000" },
+    { "id": 4, "name": "prixTH", "label": "Prix d'achat thermique (€)", "type": "money", "default": "25000" },
+    { "id": 5, "name": "consoVE", "label": "Consommation VE (kWh/100km)", "type": "number", "default": "16" },
+    { "id": 6, "name": "consoTH", "label": "Consommation thermique (L/100km)", "type": "number", "default": "6.5" },
+    {
+      "id": 7,
+      "name": "rfrCat",
+      "label": "Tranche RFR / nombre de parts",
+      "type": "choice",
+      "default": "1",
+      "options": [
+        { "value": "0", "label": "RFR/part ≤ 15 400 € (bonus maximum)" },
+        { "value": "1", "label": "RFR/part 15 401 – 25 000 €" },
+        { "value": "2", "label": "RFR/part 25 001 – 50 000 €" },
+        { "value": "3", "label": "RFR/part > 50 000 € (pas de bonus)" }
+      ]
+    },
+    { "id": 8, "name": "pkwh", "label": "Prix de l'électricité (€/kWh)", "type": "money", "default": "0.20" },
+    { "id": 9, "name": "pessence", "label": "Prix du carburant (€/L)", "type": "money", "default": "1.90" },
+
+    {
+      "id": 100,
+      "name": "bonusVE",
+      "label": "Bonus écologique applicable (€)",
+      "type": "money",
+      "source": { "sourceId": "bareme-bonus", "returnPath": "montant" }
+    },
+
+    { "id": 200, "name": "coutAcquisitionVE", "label": "Acquisition VE nette d'aides (€)", "type": "money", "content": "#3 - #100" },
+    { "id": 201, "name": "coutAcquisitionTH", "label": "Acquisition thermique (€)", "type": "money", "content": "#4" },
+    { "id": 202, "name": "coutUsageAnnuelVE", "label": "Coût énergie annuel VE (€/an)", "type": "money", "content": "#1 / 100 * #5 * #8" },
+    { "id": 203, "name": "coutUsageAnnuelTH", "label": "Coût carburant annuel thermique (€/an)", "type": "money", "content": "#1 / 100 * #6 * #9" },
+    { "id": 204, "name": "coutUsageVE", "label": "Coût usage VE total (€)", "type": "money", "content": "#202 * #2" },
+    { "id": 205, "name": "coutUsageTH", "label": "Coût usage thermique total (€)", "type": "money", "content": "#203 * #2" },
+    { "id": 300, "name": "tcoVE", "label": "TCO Voiture électrique", "type": "money", "content": "#200 + #204" },
+    { "id": 301, "name": "tcoTH", "label": "TCO Voiture thermique", "type": "money", "content": "#201 + #205" },
+    { "id": 302, "name": "ecart", "label": "Écart en faveur de l'électrique (€)", "type": "money", "content": "#301 - #300" },
+    { "id": 303, "name": "ecartAnnuel", "label": "Économie annuelle moyenne (€/an)", "type": "money", "content": "#302 / #2" }
+  ],
+  "sources": [
+    {
+      "kind": "inline",
+      "id": "bareme-bonus",
+      "label": "Barème du bonus écologique 2026 (par tranche de RFR)",
+      "columns": [
+        { "name": "cat", "type": "integer" },
+        { "name": "montant", "type": "integer" }
+      ],
+      "rows": [
+        { "cat": 0, "montant": 7000 },
+        { "cat": 1, "montant": 4000 },
+        { "cat": 2, "montant": 2000 },
+        { "cat": 3, "montant": 0 }
+      ],
+      "parameters": [{ "name": "cat", "type": "integer", "position": 1, "bindToDataId": 7 }]
+    }
+  ],
+  "steps": [
+    {
+      "id": 1,
+      "name": "saisie",
+      "label": "Vos paramètres",
+      "blocks": [
+        {
+          "id": "section-vehicules",
+          "type": "text-section",
+          "config": {
+            "variant": "default",
+            "title": "Véhicules comparés",
+            "content": "Prix d'achat **VE neuf hors bonus**, prix d'achat **thermique équivalent**, et consommations indiquées par le constructeur."
+          }
+        },
+        { "id": "f-prixVE", "type": "field", "config": { "dataId": 3, "dataName": "prixVE", "dataType": "money", "label": "Prix d'achat VE (€)", "required": true } },
+        { "id": "f-prixTH", "type": "field", "config": { "dataId": 4, "dataName": "prixTH", "dataType": "money", "label": "Prix d'achat thermique (€)", "required": true } },
+        { "id": "f-consoVE", "type": "field", "config": { "dataId": 5, "dataName": "consoVE", "dataType": "number", "label": "Consommation VE (kWh/100km)", "required": true } },
+        { "id": "f-consoTH", "type": "field", "config": { "dataId": 6, "dataName": "consoTH", "dataType": "number", "label": "Consommation thermique (L/100km)", "required": true } },
+
+        {
+          "id": "section-usage",
+          "type": "text-section",
+          "config": {
+            "variant": "default",
+            "title": "Profil d'usage",
+            "content": "Le kilométrage annuel détermine l'amortissement des aides et du surcoût d'achat VE."
+          }
+        },
+        { "id": "f-km", "type": "field", "config": { "dataId": 1, "dataName": "km", "dataType": "integer", "label": "Kilométrage annuel (km/an)", "widget": "range", "min": 5000, "max": 40000, "step": 1000, "required": true } },
+        { "id": "f-duree", "type": "field", "config": { "dataId": 2, "dataName": "duree", "dataType": "integer", "label": "Durée de possession (années)", "widget": "range", "min": 1, "max": 15, "step": 1, "required": true } },
+        { "id": "f-rfrCat", "type": "field", "config": { "dataId": 7, "dataName": "rfrCat", "dataType": "choice", "label": "Tranche de revenu fiscal de référence par part", "required": true, "options": [{ "value": "0", "label": "≤ 15 400 € (bonus maximum)" }, { "value": "1", "label": "15 401 – 25 000 €" }, { "value": "2", "label": "25 001 – 50 000 €" }, { "value": "3", "label": "> 50 000 € (pas de bonus)" }] } },
+        { "id": "f-pkwh", "type": "field", "config": { "dataId": 8, "dataName": "pkwh", "dataType": "money", "label": "Prix de l'électricité (€/kWh)", "required": true } },
+        { "id": "f-pessence", "type": "field", "config": { "dataId": 9, "dataName": "pessence", "dataType": "money", "label": "Prix du carburant (€/L)", "required": true } }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "resultats",
+      "label": "Résultats",
+      "blocks": [
+        { "id": "kpi-ecart", "type": "kpi-card", "config": { "label": "Économie totale en faveur de l'électrique", "dataId": 302, "format": "money", "variant": "highlight", "hint": "Différence VE – thermique sur la durée." } },
+        { "id": "kpi-ecart-an", "type": "kpi-card", "config": { "label": "Économie annuelle moyenne", "dataId": 303, "format": "money" } },
+
+        {
+          "id": "bd-ve",
+          "type": "breakdown-table",
+          "config": {
+            "title": "TCO Voiture électrique",
+            "rows": [
+              { "label": "Prix d'achat VE", "dataId": 3, "format": "money" },
+              { "label": "Bonus écologique appliqué", "dataId": 100, "format": "money", "indent": 1 },
+              { "label": "Acquisition nette d'aides", "dataId": 200, "format": "money" },
+              { "label": "Coût énergie annuel", "dataId": 202, "format": "money" },
+              { "label": "Coût énergie total", "dataId": 204, "format": "money" },
+              { "label": "TCO VE", "dataId": 300, "format": "money", "emphasis": true }
+            ]
+          }
+        },
+        {
+          "id": "bd-th",
+          "type": "breakdown-table",
+          "config": {
+            "title": "TCO Voiture thermique",
+            "rows": [
+              { "label": "Prix d'achat thermique", "dataId": 201, "format": "money" },
+              { "label": "Coût carburant annuel", "dataId": 203, "format": "money" },
+              { "label": "Coût carburant total", "dataId": 205, "format": "money" },
+              { "label": "TCO thermique", "dataId": 301, "format": "money", "emphasis": true }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "rules": [],
+  "footnotes": []
+}

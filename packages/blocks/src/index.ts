@@ -20,6 +20,7 @@ export { createStandardRegistry } from "./standard.js";
 export { textSectionBlock, TextSectionConfig } from "./blocks/text-section.js";
 export { fieldBlock, FieldConfig } from "./blocks/field.js";
 export { kpiCardBlock, KpiCardConfig } from "./blocks/kpi-card.js";
+export { breakdownTableBlock, BreakdownTableConfig } from "./blocks/breakdown-table.js";
 export { chapterBlock, ChapterConfig } from "./blocks/chapter.js";
 export { blockInfoBlock, BlockInfoConfig } from "./blocks/blockinfo.js";
 export { resetButtonBlock, ResetButtonConfig } from "./blocks/reset-button.js";

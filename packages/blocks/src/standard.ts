@@ -7,14 +7,15 @@ import { blockInfoBlock } from "./blocks/blockinfo.js";
 import { resetButtonBlock } from "./blocks/reset-button.js";
 import { notificationBlock } from "./blocks/notification.js";
 import { footnoteBlock } from "./blocks/footnote.js";
+import { breakdownTableBlock } from "./blocks/breakdown-table.js";
 
 /**
  * Crée un registre pré-rempli avec tous les blocs MVP.
  *
- * Catalogue Phase 7.2 :
+ * Catalogue Phase 7.2 + 8 (TCO portail-elec) :
  *   - Saisie : `field` (11 types + variant range)
  *   - Texte : `text-section` (interpolation #var)
- *   - Résultat : `kpi-card`
+ *   - Résultat : `kpi-card`, `breakdown-table`
  *   - Structure : `chapter`, `blockinfo` (envelopes conditionnelles)
  *   - Information : `notification` (statique), `footnote`
  *   - Action : `reset-button`
@@ -24,6 +25,7 @@ export function createStandardRegistry(): BlockRegistry {
   registry.register(fieldBlock);
   registry.register(textSectionBlock);
   registry.register(kpiCardBlock);
+  registry.register(breakdownTableBlock);
   registry.register(chapterBlock);
   registry.register(blockInfoBlock);
   registry.register(notificationBlock);
