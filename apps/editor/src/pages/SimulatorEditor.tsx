@@ -12,6 +12,7 @@ import { DataEditor } from "../widgets/DataEditor.js";
 import { SourcesEditor } from "../widgets/SourcesEditor.js";
 import { RulesEditor } from "../widgets/RulesEditor.js";
 import { StepsEditor } from "../widgets/StepsEditor.js";
+import { CoherenceChecker } from "../widgets/CoherenceChecker.js";
 
 const HEARTBEAT_INTERVAL_MS = 5 * 60 * 1000;
 
@@ -194,6 +195,8 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
 
       {error ? <div className="fr-alert fr-alert--error fr-mb-2w"><p>{error}</p></div> : null}
 
+      <CoherenceChecker simulator={draft} />
+
       {/* 2-pane layout */}
       <div className="fr-grid-row fr-grid-row--gutters">
         {/* LEFT — éditeur */}
@@ -225,6 +228,7 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
                 <DataEditor
                   data={draft.data}
                   onChange={(data) => setDraft({ ...draft, data })}
+                  sources={draft.sources}
                   editable={editable}
                 />
               ) : tab === "sources" ? (

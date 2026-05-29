@@ -1,5 +1,6 @@
 import type { JSX } from "react";
 import type { DataSource, ColumnSpec, ParameterSpec, Data } from "@g6k4ever/schema";
+import { InlineRowsEditor } from "./InlineRowsEditor.js";
 
 interface SourcesEditorProps {
   sources: DataSource[];
@@ -223,10 +224,12 @@ export function SourcesEditor({ sources, onChange, data, editable }: SourcesEdit
                   data={data}
                   editable={editable}
                 />
-                <p className="fr-text--xs fr-mt-1w" style={{ opacity: 0.75 }}>
-                  Édition des lignes (`rows`) : utiliser l'onglet JSON brut pour l'instant.
-                  {source.rows.length} ligne{source.rows.length > 1 ? "s" : ""} actuellement.
-                </p>
+                <InlineRowsEditor
+                  columns={source.columns}
+                  rows={source.rows}
+                  onChange={(rows) => update(i, { ...source, rows })}
+                  editable={editable}
+                />
               </>
             ) : null}
           </div>

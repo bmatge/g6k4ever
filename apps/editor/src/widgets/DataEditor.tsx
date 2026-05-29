@@ -1,9 +1,11 @@
-import type { JSX } from "react";
-import type { Data, DataType } from "@g6k4ever/schema";
+import { useState, type JSX } from "react";
+import type { Data, DataSource, DataType } from "@g6k4ever/schema";
+import { DataDetails } from "./DataDetails.js";
 
 interface DataEditorProps {
   data: Data[];
   onChange: (next: Data[]) => void;
+  sources: DataSource[];
   editable: boolean;
 }
 
@@ -22,13 +24,13 @@ const DATA_TYPES: DataType[] = [
 ];
 
 /**
- * Tableau d'édition des Data — ajout, suppression, édition de tous les
- * attributs principaux (id, name, label, type).
- *
- * Édition fine (options pour `choice`, content expression, source) : à venir
- * en Phase 7.2b via un panneau de détail. Pour la prochaine session.
+ * Tableau d'édition des Data — ajout, suppression, édition des attributs
+ * principaux + panneau détaillé expansible par ligne (source link, content
+ * expression, options pour `choice`, default/min/max, widget hint).
  */
-export function DataEditor({ data, onChange, editable }: DataEditorProps): JSX.Element {
+export function DataEditor({ data, onChange, sources, editable }: DataEditorProps): JSX.Element {
+  const [openId, setOpenId] = useState<number | null>(null);
+
   const nextId = (): number => {
     if (data.length === 0) return 1;
     return Math.max(...data.map((d) => d.id)) + 1;
@@ -59,62 +61,22 @@ export function DataEditor({ data, onChange, editable }: DataEditorProps): JSX.E
             <th style={{ width: "22%" }}>Nom (slug)</th>
             <th style={{ width: "30%" }}>Libellé</th>
             <th style={{ width: "20%" }}>Type</th>
-            <th style={{ width: "15%" }}>Source</th>
+            <th style={{ width: "15%" }}>Info</th>
             <th style={{ width: "5%" }}></th>
           </tr>
         </thead>
         <tbody>
           {data.map((d, i) => (
-            <tr key={d.id}>
-              <td>{d.id}</td>
-              <td>
-                <input
-                  className="fr-input"
-                  type="text"
-                  disabled={!editable}
-                  value={d.name}
-                  onChange={(e) => update(i, { ...d, name: e.target.value })}
-                />
-              </td>
-              <td>
-                <input
-                  className="fr-input"
-                  type="text"
-                  disabled={!editable}
-                  value={d.label}
-                  onChange={(e) => update(i, { ...d, label: e.target.value })}
-                />
-              </td>
-              <td>
-                <select
-                  className="fr-select"
-                  disabled={!editable}
-                  value={d.type}
-                  onChange={(e) => update(i, { ...d, type: e.target.value as DataType })}
-                >
-                  {DATA_TYPES.map((t) => (
-                    <option key={t} value={t}>{t}</option>
-                  ))}
-                </select>
-              </td>
-              <td>
-                <span className="fr-text--xs">
-                  {d.source ? `→ ${d.source.sourceId}.${d.source.returnPath ?? "?"}` : "—"}
-                </span>
-              </td>
-              <td>
-                <button
-                  type="button"
-                  className="fr-btn fr-btn--sm fr-btn--tertiary-no-outline"
-                  disabled={!editable}
-                  onClick={() => remove(i)}
-                  aria-label={`Supprimer ${d.name}`}
-                  title="Supprimer"
-                >
-                  ✕
-                </button>
-              </td>
-            </tr>
+            <Row
+              key={d.id}
+              data={d}
+              isOpen={openId === d.id}
+              onToggle={() => setOpenId(openId === d.id ? null : d.id)}
+              onUpdate={(next) => update(i, next)}
+              onRemove={() => remove(i)}
+              sources={sources}
+              editable={editable}
+            />
           ))}
         </tbody>
       </table>
@@ -126,11 +88,90 @@ export function DataEditor({ data, onChange, editable }: DataEditorProps): JSX.E
       >
         + Nouvelle donnée
       </button>
-      <p className="fr-text--xs fr-mt-2w" style={{ opacity: 0.7 }}>
-        Pour éditer les détails avancés (options de `choice`, expression `content`,
-        liaison à une source) : utiliser l'onglet « JSON brut ». Panneau détaillé
-        à venir en Phase 7.2b.
-      </p>
     </div>
+  );
+}
+
+interface RowProps {
+  data: Data;
+  isOpen: boolean;
+  onToggle: () => void;
+  onUpdate: (next: Data) => void;
+  onRemove: () => void;
+  sources: DataSource[];
+  editable: boolean;
+}
+
+function Row({ data: d, isOpen, onToggle, onUpdate, onRemove, sources, editable }: RowProps): JSX.Element {
+  // Tags d'info compacts pour la colonne "Info"
+  const tags: string[] = [];
+  if (d.source) tags.push(`src:${d.source.sourceId}`);
+  if (d.content) tags.push("computed");
+  if (d.type === "choice" && d.options && d.options.length > 0) tags.push(`${d.options.length} opts`);
+
+  return (
+    <>
+      <tr>
+        <td>{d.id}</td>
+        <td>
+          <input
+            className="fr-input"
+            type="text"
+            disabled={!editable}
+            value={d.name}
+            onChange={(e) => onUpdate({ ...d, name: e.target.value })}
+          />
+        </td>
+        <td>
+          <input
+            className="fr-input"
+            type="text"
+            disabled={!editable}
+            value={d.label}
+            onChange={(e) => onUpdate({ ...d, label: e.target.value })}
+          />
+        </td>
+        <td>
+          <select
+            className="fr-select"
+            disabled={!editable}
+            value={d.type}
+            onChange={(e) => onUpdate({ ...d, type: e.target.value as DataType })}
+          >
+            {DATA_TYPES.map((t) => (
+              <option key={t} value={t}>{t}</option>
+            ))}
+          </select>
+        </td>
+        <td>
+          <button
+            type="button"
+            className="fr-btn fr-btn--sm fr-btn--tertiary-no-outline"
+            onClick={onToggle}
+            style={{ textAlign: "left" }}
+          >
+            {isOpen ? "▾" : "▸"} {tags.length > 0 ? <span className="fr-text--xs">{tags.join(" · ")}</span> : <span className="fr-text--xs" style={{ opacity: 0.5 }}>Détails</span>}
+          </button>
+        </td>
+        <td>
+          <button
+            type="button"
+            className="fr-btn fr-btn--sm fr-btn--tertiary-no-outline"
+            disabled={!editable}
+            onClick={onRemove}
+            aria-label={`Supprimer ${d.name}`}
+          >
+            ✕
+          </button>
+        </td>
+      </tr>
+      {isOpen ? (
+        <tr>
+          <td colSpan={6}>
+            <DataDetails data={d} onChange={onUpdate} sources={sources} editable={editable} />
+          </td>
+        </tr>
+      ) : null}
+    </>
   );
 }
