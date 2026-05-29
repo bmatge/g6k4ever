@@ -10,6 +10,7 @@ import { fraisLocataireInline } from "./frais-locataire-inline.js";
 import { voitureTcoInline } from "./voiture-tco-inline.js";
 import { pompeAChaleurInline } from "./pompe-a-chaleur-inline.js";
 import { factCheckerInline } from "./fact-checker-inline.js";
+import { gratificationStagiaireInline } from "./gratification-stagiaire-inline.js";
 
 const functions = createFunctionsRegistry();
 
@@ -49,6 +50,14 @@ const CATALOG: CatalogEntry[] = [
     description:
       "Arbre de décision pédagogique : 5 familles d'interrogations × 17 sujets sourcés. Démontre le mode `outputKind: decision` avec navigation conditionnelle.",
     definition: factCheckerInline,
+    initialInput: {},
+  },
+  {
+    slug: "gratification-stagiaire",
+    label: "Gratification d'un stagiaire",
+    description:
+      "Calcule la gratification minimale légale due à un stagiaire (12 mois). Démontre la primitive RepeatableGroup : 1 template × 12 itérations = 48 Data générées + un total.",
+    definition: gratificationStagiaireInline,
     initialInput: {},
   },
 ];

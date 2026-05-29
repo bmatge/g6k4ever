@@ -22,7 +22,7 @@ const selector = page.locator("#sim-selector");
 check("Sélecteur visible", await selector.isVisible());
 
 const options = await selector.locator("option").allTextContents();
-check("≥ 4 simulateurs proposés (frais-locataire, voiture-tco, PAC, fact-checker)", options.length >= 4, options.join(" | "));
+check("≥ 5 simulateurs proposés (frais-locataire, voiture-tco, PAC, fact-checker, gratification)", options.length >= 5, options.join(" | "));
 
 // frais-locataire avec Rennes pré-rempli
 let commune = page.getByLabel(/Code INSEE/i).first();
@@ -157,6 +157,57 @@ await nextBtn.click();
 await page.waitForTimeout(300);
 const lithiumNow = await page.getByText("Lithium et ressources minières").isVisible().catch(() => false);
 check("Après changement de sujet + Suivant : lithium chapter visible", lithiumNow);
+
+// === Gratification stagiaire — preuve d'usage RepeatableGroup ===
+console.log("\n=== GRATIFICATION STAGIAIRE (RepeatableGroup) ===");
+await selector.selectOption("gratification-stagiaire");
+await page.waitForTimeout(500);
+
+const gratifStepper = await page.locator(".fr-stepper__state").first().isVisible().catch(() => false);
+check("Gratification : stepper actif (3 étapes)", gratifStepper);
+
+const tauxField = page.getByLabel(/Taux minimum légal/i).first();
+const tauxDefault = await tauxField.inputValue();
+check("Taux minimum défaut = 0.15", tauxDefault === "0.15" || tauxDefault === "15", `value="${tauxDefault}"`);
+
+const plafondField = page.getByLabel(/Plafond horaire/i).first();
+const plafondDefault = await plafondField.inputValue();
+check("Plafond horaire défaut = 29", plafondDefault === "29", `value="${plafondDefault}"`);
+
+// Texte interpolé : "Au taux et au plafond saisis... 4.35 €/h"
+const infoVisible = await page.getByText(/4\.35/).first().isVisible().catch(() => false);
+check("Gratif minimale interpolée = 4.35 €/h", infoVisible);
+
+// Avancer à l'étape 2 (saisie des mois) — Suivant doit être enabled (required remplis par défaut)
+const gratifNextBtn = page.getByRole("button", { name: /^Suivant$/i }).first();
+const gratifNextEnabled = await gratifNextBtn.isEnabled().catch(() => false);
+check("'Suivant' enabled (taux + plafond ont des défauts)", gratifNextEnabled);
+
+await gratifNextBtn.click();
+await page.waitForTimeout(400);
+
+// Étape 2 : 12 chapters "Mois 1" à "Mois 12"
+const moisChapters = await page.locator("[data-block='chapter']").count();
+check("Étape 2 : ≥ 12 chapters Mois (un par mois)", moisChapters >= 12, `count=${moisChapters}`);
+
+// Saisir 151h sur 3 mois
+await page.getByLabel(/Heures effectuées au mois 1$/i).fill("151");
+await page.getByLabel(/Heures effectuées au mois 2$/i).fill("151");
+await page.getByLabel(/Heures effectuées au mois 3$/i).fill("151");
+await page.waitForTimeout(300);
+
+// Avancer à l'étape 3 (résultat)
+await page.getByRole("button", { name: /^Suivant$/i }).first().click();
+await page.waitForTimeout(400);
+
+// Vérifier KPI total
+const totalKpi = (await page.locator(".fr-tile__desc").first().textContent()) ?? "";
+const totalIsRight = /1\s?9(70|71)/.test(totalKpi); // 3 × 656.85 = 1970.55 (arrondi KPI 1971 €)
+check("Gratification totale 3 mois × 151h ≈ 1970-1971 €", totalIsRight, `text="${totalKpi.trim()}"`);
+
+// Vérifier breakdown table
+const breakdownRows = await page.locator("table tbody tr").count();
+check("Breakdown : 12 lignes mois", breakdownRows === 12, `count=${breakdownRows}`);
 
 // === Standalone mode (URL ?sim=) ===
 console.log("\n=== STANDALONE ?sim=fact-checker-... ===");

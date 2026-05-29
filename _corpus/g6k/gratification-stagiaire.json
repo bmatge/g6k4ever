@@ -1,0 +1,492 @@
+{
+  "schemaVersion": 1,
+  "metadata": {
+    "name": "gratification-stagiaire",
+    "label": "Gratification d'un stagiaire",
+    "description": "Calcule la gratification minimale légale due à un stagiaire sur une période de 1 à 12 mois. Reproduit le périmètre du simulateur G6K legacy (12 DataGroups identiques) via la primitive RepeatableGroup — preuve d'usage du schéma Phase 8c. La résolution du plafond horaire par mois via SQL est simplifiée en une saisie unique top-level.",
+    "defaultLocale": "fr-FR",
+    "dateFormat": "dd/MM/yyyy",
+    "authors": [
+      "Service-public.fr (legacy G6K)",
+      "g6k4ever — réécriture simplifiée"
+    ],
+    "navigation": "stepper"
+  },
+  "outputKind": "calcul",
+  "data": [
+    {
+      "id": 1,
+      "name": "tauxMinimal",
+      "label": "Taux minimum légal (% du plafond horaire de la sécurité sociale)",
+      "type": "percent",
+      "default": "0.15",
+      "description": "Fixé par décret. Modifiable si une convention de branche prévoit un taux supérieur."
+    },
+    {
+      "id": 2,
+      "name": "plafondHoraire",
+      "label": "Plafond horaire de la sécurité sociale (€/h)",
+      "type": "money",
+      "default": "29",
+      "description": "Plafond mensuel 2024 ≈ 3 925 € / 151,67 h ≈ 25,87 €/h. Saisi librement, le taux retenu (15 %) donne 4,35 €/h."
+    },
+    {
+      "id": 3,
+      "name": "gratifMinHeure",
+      "label": "Gratification minimale par heure (€/h)",
+      "type": "money",
+      "content": "#1 * #2"
+    },
+    {
+      "id": 4,
+      "name": "totalHeures",
+      "label": "Total des heures effectuées",
+      "type": "number",
+      "content": "sum(#102, #112, #122, #132, #142, #152, #162, #172, #182, #192, #202, #212)"
+    },
+    {
+      "id": 5,
+      "name": "totalGratification",
+      "label": "Gratification totale due au stagiaire (€)",
+      "type": "money",
+      "content": "sum(#103, #113, #123, #133, #143, #153, #163, #173, #183, #193, #203, #213)"
+    },
+    {
+      "id": 6,
+      "name": "nbMoisNonVides",
+      "label": "Nombre de mois renseignés",
+      "type": "integer",
+      "content": "count(#102, #112, #122, #132, #142, #152, #162, #172, #182, #192, #202, #212)"
+    }
+  ],
+  "sources": [],
+  "steps": [
+    {
+      "id": 1,
+      "name": "parametres",
+      "label": "Paramètres légaux",
+      "description": "Taux minimum et plafond horaire de la sécurité sociale — valeurs pré-remplies modifiables.",
+      "blocks": [
+        {
+          "id": "field-taux",
+          "type": "field",
+          "config": {
+            "dataId": 1,
+            "dataName": "tauxMinimal",
+            "dataType": "percent",
+            "label": "Taux minimum légal (% du plafond)",
+            "required": true
+          }
+        },
+        {
+          "id": "field-plafond",
+          "type": "field",
+          "config": {
+            "dataId": 2,
+            "dataName": "plafondHoraire",
+            "dataType": "money",
+            "label": "Plafond horaire SS (€/h)",
+            "required": true
+          }
+        },
+        {
+          "id": "txt-gratifMin",
+          "type": "text-section",
+          "config": {
+            "variant": "info",
+            "title": "Gratification minimale par heure",
+            "content": "Au taux et au plafond saisis ci-dessus, la gratification minimale légale s'élève à **#3 €/h** (= taux × plafond)."
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "saisieMois",
+      "label": "Heures effectuées par mois",
+      "description": "Saisissez les heures travaillées chaque mois (laissez à 0 les mois où le stagiaire n'a pas travaillé).",
+      "blocks": [
+        {
+          "id": "chap-mois-1",
+          "type": "chapter",
+          "config": {
+            "title": "Mois 1",
+            "blocks": [
+              {
+                "id": "field-nbHeures-1",
+                "type": "field",
+                "config": {
+                  "dataId": 102,
+                  "dataName": "nbHeures1",
+                  "dataType": "number",
+                  "label": "Heures effectuées au mois 1",
+                  "required": true
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "chap-mois-2",
+          "type": "chapter",
+          "config": {
+            "title": "Mois 2",
+            "blocks": [
+              {
+                "id": "field-nbHeures-2",
+                "type": "field",
+                "config": {
+                  "dataId": 112,
+                  "dataName": "nbHeures2",
+                  "dataType": "number",
+                  "label": "Heures effectuées au mois 2",
+                  "required": false
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "chap-mois-3",
+          "type": "chapter",
+          "config": {
+            "title": "Mois 3",
+            "blocks": [
+              {
+                "id": "field-nbHeures-3",
+                "type": "field",
+                "config": {
+                  "dataId": 122,
+                  "dataName": "nbHeures3",
+                  "dataType": "number",
+                  "label": "Heures effectuées au mois 3",
+                  "required": false
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "chap-mois-4",
+          "type": "chapter",
+          "config": {
+            "title": "Mois 4",
+            "blocks": [
+              {
+                "id": "field-nbHeures-4",
+                "type": "field",
+                "config": {
+                  "dataId": 132,
+                  "dataName": "nbHeures4",
+                  "dataType": "number",
+                  "label": "Heures effectuées au mois 4",
+                  "required": false
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "chap-mois-5",
+          "type": "chapter",
+          "config": {
+            "title": "Mois 5",
+            "blocks": [
+              {
+                "id": "field-nbHeures-5",
+                "type": "field",
+                "config": {
+                  "dataId": 142,
+                  "dataName": "nbHeures5",
+                  "dataType": "number",
+                  "label": "Heures effectuées au mois 5",
+                  "required": false
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "chap-mois-6",
+          "type": "chapter",
+          "config": {
+            "title": "Mois 6",
+            "blocks": [
+              {
+                "id": "field-nbHeures-6",
+                "type": "field",
+                "config": {
+                  "dataId": 152,
+                  "dataName": "nbHeures6",
+                  "dataType": "number",
+                  "label": "Heures effectuées au mois 6",
+                  "required": false
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "chap-mois-7",
+          "type": "chapter",
+          "config": {
+            "title": "Mois 7",
+            "blocks": [
+              {
+                "id": "field-nbHeures-7",
+                "type": "field",
+                "config": {
+                  "dataId": 162,
+                  "dataName": "nbHeures7",
+                  "dataType": "number",
+                  "label": "Heures effectuées au mois 7",
+                  "required": false
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "chap-mois-8",
+          "type": "chapter",
+          "config": {
+            "title": "Mois 8",
+            "blocks": [
+              {
+                "id": "field-nbHeures-8",
+                "type": "field",
+                "config": {
+                  "dataId": 172,
+                  "dataName": "nbHeures8",
+                  "dataType": "number",
+                  "label": "Heures effectuées au mois 8",
+                  "required": false
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "chap-mois-9",
+          "type": "chapter",
+          "config": {
+            "title": "Mois 9",
+            "blocks": [
+              {
+                "id": "field-nbHeures-9",
+                "type": "field",
+                "config": {
+                  "dataId": 182,
+                  "dataName": "nbHeures9",
+                  "dataType": "number",
+                  "label": "Heures effectuées au mois 9",
+                  "required": false
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "chap-mois-10",
+          "type": "chapter",
+          "config": {
+            "title": "Mois 10",
+            "blocks": [
+              {
+                "id": "field-nbHeures-10",
+                "type": "field",
+                "config": {
+                  "dataId": 192,
+                  "dataName": "nbHeures10",
+                  "dataType": "number",
+                  "label": "Heures effectuées au mois 10",
+                  "required": false
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "chap-mois-11",
+          "type": "chapter",
+          "config": {
+            "title": "Mois 11",
+            "blocks": [
+              {
+                "id": "field-nbHeures-11",
+                "type": "field",
+                "config": {
+                  "dataId": 202,
+                  "dataName": "nbHeures11",
+                  "dataType": "number",
+                  "label": "Heures effectuées au mois 11",
+                  "required": false
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "chap-mois-12",
+          "type": "chapter",
+          "config": {
+            "title": "Mois 12",
+            "blocks": [
+              {
+                "id": "field-nbHeures-12",
+                "type": "field",
+                "config": {
+                  "dataId": 212,
+                  "dataName": "nbHeures12",
+                  "dataType": "number",
+                  "label": "Heures effectuées au mois 12",
+                  "required": false
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "resultat",
+      "label": "Gratification totale",
+      "description": "Récapitulatif mois par mois et total dû au stagiaire.",
+      "blocks": [
+        {
+          "id": "kpi-total",
+          "type": "kpi-card",
+          "config": {
+            "label": "Gratification totale due (€)",
+            "dataId": 5,
+            "format": "money",
+            "variant": "highlight",
+            "hint": "Somme des gratifications dues chaque mois travaillé."
+          }
+        },
+        {
+          "id": "kpi-heures",
+          "type": "kpi-card",
+          "config": {
+            "label": "Total des heures effectuées",
+            "dataId": 4,
+            "format": "raw",
+            "hint": "Cumul sur tous les mois renseignés."
+          }
+        },
+        {
+          "id": "breakdown-mois",
+          "type": "breakdown-table",
+          "config": {
+            "title": "Détail par mois",
+            "rows": [
+              {
+                "label": "Mois 1",
+                "dataId": 103,
+                "format": "money"
+              },
+              {
+                "label": "Mois 2",
+                "dataId": 113,
+                "format": "money"
+              },
+              {
+                "label": "Mois 3",
+                "dataId": 123,
+                "format": "money"
+              },
+              {
+                "label": "Mois 4",
+                "dataId": 133,
+                "format": "money"
+              },
+              {
+                "label": "Mois 5",
+                "dataId": 143,
+                "format": "money"
+              },
+              {
+                "label": "Mois 6",
+                "dataId": 153,
+                "format": "money"
+              },
+              {
+                "label": "Mois 7",
+                "dataId": 163,
+                "format": "money"
+              },
+              {
+                "label": "Mois 8",
+                "dataId": 173,
+                "format": "money"
+              },
+              {
+                "label": "Mois 9",
+                "dataId": 183,
+                "format": "money"
+              },
+              {
+                "label": "Mois 10",
+                "dataId": 193,
+                "format": "money"
+              },
+              {
+                "label": "Mois 11",
+                "dataId": 203,
+                "format": "money"
+              },
+              {
+                "label": "Mois 12",
+                "dataId": 213,
+                "format": "money"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "rules": [],
+  "footnotes": [],
+  "groups": [
+    {
+      "id": "moisStage",
+      "label": "Mois du stage",
+      "iterations": 12,
+      "startIndex": 1,
+      "dataIdBase": 100,
+      "dataIdStride": 10,
+      "dataTemplates": [
+        {
+          "idOffset": 0,
+          "name": "mois{i}",
+          "label": "Mois {i}",
+          "type": "month"
+        },
+        {
+          "idOffset": 1,
+          "name": "annee{i}",
+          "label": "Année {i}",
+          "type": "year",
+          "default": "2024"
+        },
+        {
+          "idOffset": 2,
+          "name": "nbHeures{i}",
+          "label": "Heures effectuées au mois {i}",
+          "type": "number",
+          "min": "0",
+          "max": "250"
+        },
+        {
+          "idOffset": 3,
+          "name": "gratifMois{i}",
+          "label": "Gratification due au mois {i} (€)",
+          "type": "money",
+          "content": "#{i*10+92} * #3"
+        }
+      ]
+    }
+  ]
+}
