@@ -49,5 +49,6 @@ export function createBlankSimulator(slug: string, label: string): Simulator {
     ],
     rules: [],
     footnotes: [],
+    groups: [],
   };
 }

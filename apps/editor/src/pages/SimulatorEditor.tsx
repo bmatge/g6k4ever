@@ -1,10 +1,7 @@
-import { useEffect, useMemo, useState, type JSX } from "react";
+import { useEffect, useMemo, useRef, useState, type JSX } from "react";
 import type { Simulator } from "@g6k4ever/schema";
-import {
-  SimulatorViaApi,
-  deserializeSimulatorState,
-  type ServerEvaluator,
-} from "@g6k4ever/runtime";
+import { Simulator as RuntimeSimulator } from "@g6k4ever/runtime";
+import { createStandardRegistry } from "@g6k4ever/functions";
 import { ApiError, type ApiClient } from "../api-client.js";
 import { JsonEditor } from "../widgets/JsonEditor.js";
 import { MetadataForm } from "../widgets/MetadataForm.js";
@@ -41,17 +38,13 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
   const [saving, setSaving] = useState(false);
   const [tab, setTab] = useState<Tab>("metadata");
 
-  // Évaluateur côté API — POST /run-stateless avec le draft en cours.
-  // Avantage : les sources `database`/`api` sont résolues par les providers
-  // du backend (mockés ou réels), pas seulement les `inline`.
-  const evaluator = useMemo<ServerEvaluator>(
-    () => ({
-      async evaluate(simulator, input) {
-        const res = await api.runStateless(simulator, input);
-        return deserializeSimulatorState(res.state);
-      },
-    }),
-    [api],
+  // Moteur fonctions partagé pour la preview (sync, instant).
+  const functions = useRef(createStandardRegistry()).current;
+  // Détecte si le simulateur a des sources non-inline qui ne pourront pas
+  // s'évaluer en local (warning dans le pane preview).
+  const hasNonInlineSources = useMemo(
+    () => (draft?.sources ?? []).some((s) => s.kind !== "inline"),
+    [draft],
   );
 
   useEffect(() => {
@@ -115,6 +108,19 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
     }
   };
 
+  const handleExportJson = (): void => {
+    if (!draft) return;
+    const blob = new Blob([JSON.stringify(draft, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${draft.metadata.name}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   const handleForceTakeOver = async (): Promise<void> => {
     setError(null);
     try {
@@ -174,6 +180,14 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
           {lockStatus === "acquired" ? (
             <span className="fr-badge fr-badge--success fr-mr-1w">Verrou acquis</span>
           ) : null}
+          <button
+            type="button"
+            className="fr-btn fr-btn--tertiary fr-mr-1w"
+            onClick={() => handleExportJson()}
+            title="Télécharger la définition JSON pour intégration ailleurs"
+          >
+            Exporter JSON
+          </button>
           <button
             type="button"
             className="fr-btn fr-btn--secondary fr-mr-1w"
@@ -273,11 +287,38 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
               overflow: "auto",
             }}
           >
-            <p className="fr-text--xs fr-mb-1w" style={{ opacity: 0.7 }}>
-              Aperçu live via API (<code>POST /run-stateless</code>) — bénéficie des providers
-              backend pour les sources <code>database</code>/<code>api</code> :
-            </p>
-            <SimulatorViaApi definition={draft} evaluator={evaluator} debounceMs={300} />
+            <div className="fr-grid-row fr-grid-row--middle fr-mb-1w">
+              <div className="fr-col">
+                <p className="fr-text--xs" style={{ opacity: 0.7, margin: 0 }}>
+                  Aperçu live (moteur exécuté côté navigateur — instantané)
+                </p>
+              </div>
+              <div className="fr-col-auto">
+                <a
+                  href={`http://localhost:5173?sim=${encodeURIComponent(slug)}&source=api`}
+                  target="_blank"
+                  rel="noopener"
+                  className="fr-link fr-link--sm"
+                  title="Ouvrir dans une fenêtre standalone pour partage/intégration"
+                >
+                  Ouvrir standalone ↗
+                </a>
+              </div>
+            </div>
+            {hasNonInlineSources ? (
+              <div className="fr-alert fr-alert--warning fr-alert--sm fr-mb-1w">
+                <p className="fr-text--sm">
+                  Ce simulateur utilise des sources <code>database</code>/<code>api</code> non
+                  résolvables côté client : la preview ci-dessous est partielle. Le mode standalone
+                  (lien ci-dessus) appelle l'API en mode hébergé pour résolution complète.
+                </p>
+              </div>
+            ) : null}
+            <RuntimeSimulator
+              key={draft.metadata.name}
+              definition={draft}
+              functions={functions}
+            />
           </div>
         </div>
       </div>

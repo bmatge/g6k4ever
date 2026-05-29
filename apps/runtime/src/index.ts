@@ -21,3 +21,5 @@ export {
 export { fraisLocataireInline } from "./frais-locataire-inline.js";
 export { voitureTcoInline } from "./voiture-tco-inline.js";
 export { pompeAChaleurInline } from "./pompe-a-chaleur-inline.js";
+export { factCheckerInline } from "./fact-checker-inline.js";
+export { StandaloneApp } from "./StandaloneApp.js";
