@@ -8,8 +8,8 @@
  *     passé à la construction. Les `inline` sources sont servies directement
  *     depuis la définition du simulateur.
  *
- * Pour la prod (Phase 5.3+), remplacer `MockDatabaseProvider` / `MockApiProvider`
- * par des implémentations réelles (pool de connexions SQL, client HTTP avec cache).
+ * Phase 5.3 : ajout de `SqliteDatabaseProvider` et `HttpApiProvider` réels,
+ * + config par variables d'environnement.
  */
 
 export {
@@ -20,3 +20,11 @@ export {
 } from "./types.js";
 export { MockDatabaseProvider, MockApiProvider } from "./mock-providers.js";
 export { MultiDataSourceResolver } from "./multi-resolver.js";
+export { SqliteDatabaseProvider, compileQuery } from "./sqlite-provider.js";
+export { HttpApiProvider } from "./http-provider.js";
+export {
+  loadConnectionConfigFromEnv,
+  buildProviderRegistry,
+  buildMockRegistry,
+  type ConnectionConfig,
+} from "./connection-config.js";
