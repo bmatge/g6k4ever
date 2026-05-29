@@ -19,3 +19,5 @@ export {
   type ServerEvaluator,
 } from "./SimulatorViaApi.js";
 export { fraisLocataireInline } from "./frais-locataire-inline.js";
+export { voitureTcoInline } from "./voiture-tco-inline.js";
+export { pompeAChaleurInline } from "./pompe-a-chaleur-inline.js";

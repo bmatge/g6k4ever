@@ -17,6 +17,7 @@ export { runMigrations } from "./db/migrate.js";
 export { SimulatorService } from "./services/simulator-service.js";
 export { LockService, DEFAULT_LOCK_TTL_MS } from "./services/lock-service.js";
 export { startLockPurgeJob } from "./services/lock-purge.js";
+export { seedCorpus, type SeedOptions } from "./seed.js";
 export {
   MultiDataSourceResolver,
   MockDatabaseProvider,

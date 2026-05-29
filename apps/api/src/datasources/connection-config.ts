@@ -28,13 +28,15 @@ export interface ConnectionConfig {
 /**
  * Charge la config depuis `process.env`.
  *
- * Toute variable `G6K4EVER_DB_xxx` devient une connexion DB sous le clé `xxx`.
+ * Toute variable `G6K4EVER_DB_xxx` devient une connexion DB sous le clé `xxx`,
+ * SAUF `G6K4EVER_DB_URL` qui est réservée à la DB principale (cf. server.ts).
  */
 export function loadConnectionConfigFromEnv(env: NodeJS.ProcessEnv = process.env): ConnectionConfig {
   const databases: Record<string, string> = {};
   const prefix = "G6K4EVER_DB_";
+  const reservedKeys = new Set(["G6K4EVER_DB_URL"]);
   for (const [key, value] of Object.entries(env)) {
-    if (key.startsWith(prefix) && value) {
+    if (key.startsWith(prefix) && value && !reservedKeys.has(key)) {
       const id = key.slice(prefix.length).toLowerCase().replace(/_/g, "-");
       databases[id] = value;
     }
