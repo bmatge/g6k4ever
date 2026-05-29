@@ -8,6 +8,12 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "build:app": "vite build",
+    "build:lib:embedded": "G6K_RUNTIME_MODE=embedded vite build --config vite.lib.config.ts",
+    "build:lib:standalone": "G6K_RUNTIME_MODE=standalone vite build --config vite.lib.config.ts",
+    "build:lib": "pnpm build:lib:embedded && pnpm build:lib:standalone",
+    "measure:embedded": "pnpm build:lib:embedded && node scripts/measure-bundle.mjs embedded",
+    "measure:standalone": "pnpm build:lib:standalone && node scripts/measure-bundle.mjs standalone",
+    "measure": "pnpm measure:embedded && pnpm measure:standalone",
     "dev": "vite",
     "preview": "vite preview",
     "test": "vitest run --passWithNoTests",

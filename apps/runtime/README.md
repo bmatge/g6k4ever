@@ -1,8 +1,8 @@
 # @g6k4ever/runtime
 
-**Runtime React + `@codegouvfr/react-dsfr`.** Composant `<Simulator>` qui prend une définition de simulateur, exécute `@g6k4ever/engine` **côté client**, et rend le DOM via le registre de blocs `@g6k4ever/blocks`.
+**Runtime React + `@codegouvfr/react-dsfr`.** Composant `<Simulator>` qui prend une définition de simulateur, exécute `@g6k4ever/engine` **côté client**, et rend le DOM via le registre de blocs `@g6k4ever/blocks`. Phase 7.2b ajoute `<SimulatorViaApi>` pour évaluer via l'API (utile pour les sources `database`/`api`).
 
-> 📌 **Phase 6 livrée**. Voir [`ROADMAP.md`](../../ROADMAP.md) et l'agent [`runtime-dev`](../../.claude/agents/runtime-dev.md).
+> 📌 **Phases 6 + 6.2 livrées**. Voir [`ROADMAP.md`](../../ROADMAP.md) et l'agent [`runtime-dev`](../../.claude/agents/runtime-dev.md).
 
 ## Lancer la démo
 
@@ -11,60 +11,102 @@ pnpm build                                  # build des packages amont
 pnpm --filter @g6k4ever/runtime dev         # http://localhost:5173
 ```
 
-Ouvre la page, tape un code INSEE (`75056` Paris, `35238` Rennes, `48095` Mende…) et le simulateur réagit en live — sections de zonage qui s'affichent/se masquent selon la règle métier, texte interpolé avec `#3` (nom de la commune).
-
 ## API publique
+
+### Mode local (engine côté client)
 
 ```tsx
 import { Simulator, fraisLocataireInline } from "@g6k4ever/runtime";
 import { createStandardRegistry } from "@g6k4ever/functions";
 
-const functions = createStandardRegistry();
-
 <Simulator
-  definition={fraisLocataireInline}    // un Simulator (validé par Zod)
-  functions={functions}                  // FunctionRegistry (standard + métier)
-  initialInput={{ commune: "75056" }}   // entrées initiales (par nom de Data)
-  // resolver: ...                       // optionnel — défaut = inline only
-  // blocks: ...                         // optionnel — défaut = createStandardRegistry de @g6k4ever/blocks
-  // maxIterations: 10                  // optionnel
+  definition={fraisLocataireInline}
+  functions={createStandardRegistry()}
+  initialInput={{ commune: "75056" }}
 />
 ```
+
+### Mode API (l'évaluation passe par le backend — supporte database/api)
+
+```tsx
+import { SimulatorViaApi, deserializeSimulatorState } from "@g6k4ever/runtime";
+
+const evaluator = {
+  async evaluate(simulator, input) {
+    const res = await fetch("/api/run-stateless", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ simulator, input }),
+    });
+    const { state } = await res.json();
+    return deserializeSimulatorState(state);
+  },
+};
+
+<SimulatorViaApi
+  definition={mySimulator}
+  evaluator={evaluator}
+  debounceMs={300}
+/>
+```
+
+## Builds production (Phase 6.2)
+
+Deux modes de build de la **librairie** (différents du SPA demo qui sert `dev`) :
+
+```bash
+pnpm --filter @g6k4ever/runtime build:lib:embedded   # ≤ 30kB gz — React+DSFR externes
+pnpm --filter @g6k4ever/runtime build:lib:standalone # ≤ 45kB gz — React bundlé, DSFR externe
+```
+
+Mesure du poids gzipped avec garde-fou :
+
+```bash
+pnpm --filter @g6k4ever/runtime measure:embedded
+# Sortie :
+#   📦 @g6k4ever/runtime — bundle embedded
+#     Fichier                                     Raw    Gzipped
+#     ──────────────────────────────────── ────────── ──────────
+#     index.js                               136.2 kB    28.9 kB
+#     ──────────────────────────────────── ────────── ──────────
+#     TOTAL                                  136.2 kB    28.9 kB
+#     Budget : 120.0 kB gzipped — ✓ sous budget (-91.1 kB)
+```
+
+Le script exit avec code 1 si on dépasse le budget ≤120 kB gz (cf. [`CLAUDE.md`](../../CLAUDE.md) §11) — utilisable en CI.
+
+### Mode embedded
+
+Externalise `react`, `react-dom`, `react/jsx-runtime`, `@codegouvfr/react-dsfr/*`. Assume que le portail hôte les charge.
+
+→ **Bundle ≈ 29 kB gz** (engine + blocks + schema + jsep + nos composants)
+
+### Mode standalone
+
+Externalise uniquement `@codegouvfr/react-dsfr/*` (chargé via CDN officiel DSFR). Bundle React + react-dom inclus.
+
+→ **Bundle ≈ 41 kB gz**
+
+> Note : pour un déploiement vraiment autonome sans DSFR CDN, ajouter DSFR aux deps bundlées augmenterait le bundle d'environ +100 kB gz. Considéré comme inutile : tout simulateur public utilise déjà DSFR ailleurs sur la page.
 
 ## Architecture
 
 - **`<Simulator>`** maintient l'`input` user dans `useState`. À chaque changement, recompute le `SimulatorState` via `evaluate(definition, input, ...)`.
+- **`<SimulatorViaApi>`** : variante async qui debounce les changements (300ms) et appelle un evaluator serveur. Utile quand le simulateur a des sources `database`/`api` (sinon InlineOnlyResolver côté client suffit).
 - **`<StepView>`** rend une étape avec ses blocs filtrés par visibilité.
 - **`<BlocksList>`** descend récursivement dans les blocs envelope (`chapter`, `blockinfo`) et appelle le `render` du bloc lookupé dans le registre.
-- **`<NotificationsView>`** affiche les `notifyError`/`notifyWarning` du moteur.
 
 ### Visibilité multi-types
 
-Les règles `showObject`/`hideObject` ciblent des types sémantiques (`section`, `chapter`, `blockinfo`, `footnote`) tandis que les blocs concrets ont des types techniques (`text-section`, `kpi-card`, `accordion`…). Le runtime résout la visibilité par **ID** plutôt que par couple `type:id`, ce qui permet aux règles de fonctionner sans connaître l'implémentation visuelle.
-
-## Datasources
-
-Par défaut, un `InlineOnlyResolver` interne sert les sources `inline` directement depuis la définition. Pour des sources `database`/`api` (cf. Phase 5.2), passer un `resolver` custom (par ex. un client qui appelle `apps/api`).
+Les règles `showObject`/`hideObject` ciblent des types sémantiques (`section`, `chapter`, `blockinfo`, `footnote`) tandis que les blocs concrets ont des types techniques (`text-section`, `kpi-card`, `accordion`…). Le runtime résout la visibilité par **ID** plutôt que par couple `type:id`.
 
 ## Tests
 
-7 tests d'intégration React Testing Library (jsdom) :
-
-- rendu de l'étape et du champ
-- absence de section au démarrage
-- affichage de la bonne zone pour Paris / Rennes / Mende
-- interaction utilisateur : changer la saisie → re-render automatique avec le bon résultat
+7 tests d'intégration React Testing Library (jsdom) sur le composant `<Simulator>` local.
 
 ```bash
 pnpm --filter @g6k4ever/runtime test
 ```
-
-## À venir (Phase 6.2)
-
-- Build mode `embedded` (suppose DSFR initialisé par le host) vs `standalone` (ship DSFR), via deux configs Vite.
-- Mesure et garde-fou bundle size (≤ 120kB gz hors DSFR, cf. CLAUDE.md §11).
-- Variante `<SimulatorViaApi>` qui appelle `POST /simulators/:slug/run` au lieu de tourner l'engine en local — utile pour les modes hébergés.
-- Blocs manquants : `chapter`, `accordion` à items conditionnels, `breakdown-table`, `notification`, `footnote`, `reset-button` (en parallèle de la Phase 7 — éditeur).
 
 ## Règle non négociable
 
