@@ -281,6 +281,57 @@ const newPreviewKpi = (await previewBlock.locator(".fr-tile__desc").first().text
 const elapsed = Date.now() - t0;
 check("Preview KPI mis à jour après saisie (moteur local instant)", newPreviewKpi.includes("€"), `text="${newPreviewKpi.trim()}" — ${elapsed}ms`);
 
+// Section Étapes & blocs — nouveau layout 2 colonnes
+await page2.getByRole("button", { name: /^Étapes & blocs$/i }).first().click();
+await page2.waitForTimeout(400);
+
+// L'outline (gauche) doit lister les steps avec icône layout-grid
+const outlineTitle = await page2.getByText(/Plan du simulateur/i).isVisible().catch(() => false);
+check("Étapes & blocs : titre 'Plan du simulateur' présent", outlineTitle);
+
+// Au démarrage, step 1 sélectionnée → détail affiché
+const stepDetailVisible = await page2.locator("h2.fr-h4").first().isVisible().catch(() => false);
+check("Détail step 1 visible par défaut", stepDetailVisible);
+
+// Cliquer sur un bloc dans l'outline (e.g. "Prix d'achat VE")
+const outlineBlock = page2.getByRole("button", { name: /Prix d'achat VE/i }).first();
+const outlineBlockVisible = await outlineBlock.isVisible().catch(() => false);
+check("Outline liste les blocs (Prix d'achat VE visible)", outlineBlockVisible);
+
+if (outlineBlockVisible) {
+  await outlineBlock.click();
+  await page2.waitForTimeout(300);
+  // Breadcrumb sticky doit apparaître
+  const breadcrumbVisible = await page2.getByRole("navigation", { name: /breadcrumb/i }).isVisible().catch(() => false);
+  check("Breadcrumb visible après sélection d'un bloc", breadcrumbVisible);
+}
+
+// Aucun "(niveau X)" affiché
+const niveauMention = await page2.getByText(/\(niveau \d\)/).isVisible().catch(() => false);
+check("Pas de mention '(niveau X)' (F5.6)", !niveauMention);
+
+// Revenir sur la step 1 pour voir le bouton "Ajouter un bloc"
+const step1Outline = page2.locator("aside button").filter({ hasText: /Vos paramètres|Saisie|Première étape|step1/i }).first();
+if (await step1Outline.isVisible().catch(() => false)) {
+  await step1Outline.click();
+  await page2.waitForTimeout(200);
+}
+const addBlockBtn = page2.getByRole("button", { name: /Ajouter un (bloc|sous-bloc)/i }).first();
+check("Bouton 'Ajouter un bloc' présent sur l'écran step", await addBlockBtn.isVisible().catch(() => false));
+
+// Cliquer sur "Ajouter un bloc" → palette catégorisée s'ouvre
+if (await addBlockBtn.isVisible().catch(() => false)) {
+  await addBlockBtn.click();
+  await page2.waitForTimeout(200);
+  const paletteTitle = await page2.getByText(/Quel type de bloc/i).isVisible().catch(() => false);
+  check("Palette de blocs catégorisée s'ouvre", paletteTitle);
+  const groupHeader = await page2.getByText(/^Saisie$|^Texte$|^Structure$/i).first().isVisible().catch(() => false);
+  check("Palette affiche les catégories (F5.4)", groupHeader);
+  // Fermer
+  await page2.getByRole("button", { name: /Annuler/i }).first().click().catch(() => {});
+  await page2.waitForTimeout(100);
+}
+
 // Section Données
 await page2.getByRole("button", { name: /^Données$/i }).first().click();
 await page2.waitForTimeout(300);
