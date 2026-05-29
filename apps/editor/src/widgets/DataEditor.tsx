@@ -23,11 +23,6 @@ const DATA_TYPES: DataType[] = [
   "year",
 ];
 
-/**
- * Tableau d'édition des Data — ajout, suppression, édition des attributs
- * principaux + panneau détaillé expansible par ligne (source link, content
- * expression, options pour `choice`, default/min/max, widget hint).
- */
 export function DataEditor({ data, onChange, sources, editable }: DataEditorProps): JSX.Element {
   const [openId, setOpenId] = useState<number | null>(null);
 
@@ -38,14 +33,9 @@ export function DataEditor({ data, onChange, sources, editable }: DataEditorProp
 
   const add = (): void => {
     const id = nextId();
-    onChange([
-      ...data,
-      { id, name: `donnee${id}`, label: `Donnée ${id}`, type: "text" },
-    ]);
+    onChange([...data, { id, name: `donnee${id}`, label: `Donnée ${id}`, type: "text" }]);
   };
-  const remove = (i: number): void => {
-    onChange(data.filter((_, idx) => idx !== i));
-  };
+  const remove = (i: number): void => onChange(data.filter((_, idx) => idx !== i));
   const update = (i: number, next: Data): void => {
     const list = [...data];
     list[i] = next;
@@ -70,6 +60,7 @@ export function DataEditor({ data, onChange, sources, editable }: DataEditorProp
             <Row
               key={d.id}
               data={d}
+              allData={data}
               isOpen={openId === d.id}
               onToggle={() => setOpenId(openId === d.id ? null : d.id)}
               onUpdate={(next) => update(i, next)}
@@ -94,6 +85,7 @@ export function DataEditor({ data, onChange, sources, editable }: DataEditorProp
 
 interface RowProps {
   data: Data;
+  allData: Data[];
   isOpen: boolean;
   onToggle: () => void;
   onUpdate: (next: Data) => void;
@@ -102,8 +94,16 @@ interface RowProps {
   editable: boolean;
 }
 
-function Row({ data: d, isOpen, onToggle, onUpdate, onRemove, sources, editable }: RowProps): JSX.Element {
-  // Tags d'info compacts pour la colonne "Info"
+function Row({
+  data: d,
+  allData,
+  isOpen,
+  onToggle,
+  onUpdate,
+  onRemove,
+  sources,
+  editable,
+}: RowProps): JSX.Element {
   const tags: string[] = [];
   if (d.source) tags.push(`src:${d.source.sourceId}`);
   if (d.content) tags.push("computed");
@@ -150,7 +150,12 @@ function Row({ data: d, isOpen, onToggle, onUpdate, onRemove, sources, editable 
             onClick={onToggle}
             style={{ textAlign: "left" }}
           >
-            {isOpen ? "▾" : "▸"} {tags.length > 0 ? <span className="fr-text--xs">{tags.join(" · ")}</span> : <span className="fr-text--xs" style={{ opacity: 0.5 }}>Détails</span>}
+            {isOpen ? "▾" : "▸"}{" "}
+            {tags.length > 0 ? (
+              <span className="fr-text--xs">{tags.join(" · ")}</span>
+            ) : (
+              <span className="fr-text--xs" style={{ opacity: 0.5 }}>Détails</span>
+            )}
           </button>
         </td>
         <td>
@@ -168,7 +173,13 @@ function Row({ data: d, isOpen, onToggle, onUpdate, onRemove, sources, editable 
       {isOpen ? (
         <tr>
           <td colSpan={6}>
-            <DataDetails data={d} onChange={onUpdate} sources={sources} editable={editable} />
+            <DataDetails
+              data={d}
+              onChange={onUpdate}
+              sources={sources}
+              allData={allData}
+              editable={editable}
+            />
           </td>
         </tr>
       ) : null}

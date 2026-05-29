@@ -1,5 +1,6 @@
 import type { JSX } from "react";
 import type { Action, Data, ObjectTargetType } from "@g6k4ever/schema";
+import { ExpressionEditor } from "./ExpressionEditor.js";
 
 interface ActionListEditorProps {
   /** Étiquette de la liste (ex. « Actions si vrai » / « Sinon »). */
@@ -191,13 +192,12 @@ function ActionRow({ action, onChange, data, editable }: ActionRowProps): JSX.El
             </select>
           </div>
           <div className="fr-col-12 fr-col-md-5">
-            <input
-              className="fr-input"
-              type="text"
-              placeholder="expression (ex. getInsee(#1))"
-              disabled={!editable}
+            <ExpressionEditor
               value={action.value}
-              onChange={(e) => onChange({ ...action, value: e.target.value })}
+              onChange={(v) => onChange({ ...action, value: v })}
+              data={data}
+              editable={editable}
+              placeholder="expression (ex. getInsee(#1))"
             />
           </div>
         </>

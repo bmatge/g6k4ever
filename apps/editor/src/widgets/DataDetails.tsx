@@ -1,10 +1,13 @@
 import type { JSX } from "react";
 import type { Data, DataSource } from "@g6k4ever/schema";
+import { ExpressionEditor } from "./ExpressionEditor.js";
 
 interface DataDetailsProps {
   data: Data;
   onChange: (next: Data) => void;
   sources: DataSource[];
+  /** Autres Data du simulateur, pour autocomplétion #var dans content. */
+  allData?: Data[];
   editable: boolean;
 }
 
@@ -15,7 +18,7 @@ interface DataDetailsProps {
  * Le détail le plus important (et le plus utilisé) est la **liaison à une
  * source** : permet à une Data d'être résolue depuis une source SQL/inline/API.
  */
-export function DataDetails({ data, onChange, sources, editable }: DataDetailsProps): JSX.Element {
+export function DataDetails({ data, onChange, sources, allData = [], editable }: DataDetailsProps): JSX.Element {
   const sourceDef = data.source ? sources.find((s) => s.id === data.source!.sourceId) : null;
   const columnNames = sourceDef
     ? sourceDef.kind === "inline" || sourceDef.kind === "database"
@@ -101,17 +104,15 @@ export function DataDetails({ data, onChange, sources, editable }: DataDetailsPr
 
       {/* Content expression */}
       <div className="fr-input-group fr-mb-1w">
-        <label className="fr-label" htmlFor={`dd-content-${data.id}`}>
+        <label className="fr-label">
           Expression <code>content</code> (calcul automatique — ex. <code>#100 + #101</code>)
         </label>
-        <input
-          id={`dd-content-${data.id}`}
-          className="fr-input"
-          type="text"
-          placeholder="Expression jsep avec #id"
-          disabled={!editable}
+        <ExpressionEditor
           value={data.content ?? ""}
-          onChange={(e) => onChange({ ...data, content: e.target.value || undefined })}
+          onChange={(v) => onChange({ ...data, content: v || undefined })}
+          data={allData.filter((d) => d.id !== data.id)}
+          editable={editable}
+          placeholder="Expression jsep avec #id"
         />
       </div>
 
