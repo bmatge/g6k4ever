@@ -35,6 +35,10 @@ coverage/
 .vitest-cache/
 .nyc_output/
 
+# API DB locale (générée par dev:api)
+apps/api/data/
+data/
+
 # Env / secrets
 .env
 .env.local

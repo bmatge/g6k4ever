@@ -109,12 +109,24 @@ export function recomputeNaturalValues(
       }
       continue;
     }
-    // 4. Aucune définition naturelle : conserver l'override de l'itération
-    //    précédente si présent (c'est la voie d'écriture exclusive pour les
-    //    Data type `RecevableTaxeLogementVacant` qui ne sont écrites qu'en
-    //    setAttribute).
+    // 4. Conserver l'override de l'itération précédente si présent (setAttribute
+    //    a peut-être écrit une valeur, ou bien on a déjà évalué le default).
     if (previousValues.has(data.id)) {
       next.set(data.id, previousValues.get(data.id));
+      continue;
+    }
+    // 5. Valeur par défaut (expression) — utilisée comme « initial » quand
+    //    aucune autre voie ne fournit de valeur. Évaluée 1× lors de la 1re
+    //    itération ; les itérations suivantes la voient via previousValues
+    //    et peuvent être écrasées par un setAttribute.
+    if (data.default) {
+      try {
+        const v = evaluateExpression(data.default, previousValues, functions);
+        next.set(data.id, v);
+      } catch (err) {
+        if (!(err instanceof EvaluationError)) throw err;
+        // valeur défaut invalide → laisser undefined
+      }
     }
   }
 

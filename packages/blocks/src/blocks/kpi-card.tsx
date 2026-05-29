@@ -22,13 +22,19 @@ export const KpiCardConfig = z.object({
 });
 export type KpiCardConfig = z.infer<typeof KpiCardConfig>;
 
-function formatValue(value: unknown, format: KpiCardConfig["format"], currencySymbol: string): string {
+function formatValue(
+  value: unknown,
+  format: KpiCardConfig["format"] | undefined,
+  currencySymbol: string | undefined,
+): string {
   if (value === undefined || value === null) return "—";
   const num = Number(value);
   if (Number.isNaN(num)) return String(value);
-  switch (format) {
+  const symbol = currencySymbol ?? "€";
+  const fmt = format ?? "raw";
+  switch (fmt) {
     case "money":
-      return `${num.toLocaleString("fr-FR", { maximumFractionDigits: 2 })} ${currencySymbol}`;
+      return `${num.toLocaleString("fr-FR", { maximumFractionDigits: 0 })} ${symbol}`;
     case "percent":
       return `${(num * 100).toLocaleString("fr-FR", { maximumFractionDigits: 1 })} %`;
     case "integer":

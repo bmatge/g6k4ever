@@ -29,15 +29,17 @@ export type BreakdownTableConfig = z.infer<typeof BreakdownTableConfig>;
 
 function formatValue(
   value: unknown,
-  format: "raw" | "money" | "percent" | "integer",
-  currencySymbol: string,
+  format: "raw" | "money" | "percent" | "integer" | undefined,
+  currencySymbol: string | undefined,
 ): string {
   if (value === undefined || value === null) return "—";
   const num = Number(value);
   if (Number.isNaN(num)) return String(value);
-  switch (format) {
+  const symbol = currencySymbol ?? "€";
+  const fmt = format ?? "raw";
+  switch (fmt) {
     case "money":
-      return `${num.toLocaleString("fr-FR", { maximumFractionDigits: 0 })} ${currencySymbol}`;
+      return `${num.toLocaleString("fr-FR", { maximumFractionDigits: 0 })} ${symbol}`;
     case "percent":
       return `${(num * 100).toLocaleString("fr-FR", { maximumFractionDigits: 1 })} %`;
     case "integer":

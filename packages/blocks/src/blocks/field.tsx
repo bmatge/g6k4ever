@@ -104,26 +104,27 @@ const FieldRender: ComponentType<BlockRenderProps<FieldConfig>> = ({ config, sta
   }
 
   if (isRange) {
+    // Structure DSFR : label · fr-range__output (display) · input (sibling).
+    // L'input NE DOIT PAS être dans fr-range__output sinon DSFR le remplace.
     return (
       <div className="fr-fieldset__element">
         <div className="fr-range fr-range--sm">
           <label className="fr-label" htmlFor={`field-${config.dataId}`}>
             {config.label}
-            <span className="fr-hint-text">
-              Valeur : {current === undefined ? "—" : String(current)}
-            </span>
+            {config.hint ? <span className="fr-hint-text">{config.hint}</span> : null}
           </label>
           <div className="fr-range__output">
-            <input
-              type="range"
-              id={`field-${config.dataId}`}
-              min={config.min ?? 0}
-              max={config.max ?? 100}
-              step={config.step ?? 1}
-              value={current === undefined ? 0 : Number(current)}
-              onChange={(e) => onChange(Number(e.target.value))}
-            />
+            {current === undefined ? "—" : String(current)}
           </div>
+          <input
+            type="range"
+            id={`field-${config.dataId}`}
+            min={config.min ?? 0}
+            max={config.max ?? 100}
+            step={config.step ?? 1}
+            value={current === undefined ? config.min ?? 0 : Number(current)}
+            onChange={(e) => onChange(Number(e.target.value))}
+          />
         </div>
       </div>
     );
