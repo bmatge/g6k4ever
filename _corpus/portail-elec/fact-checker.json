@@ -9,7 +9,8 @@
     "authors": [
       "DGEC",
       "portail-elec (legacy)"
-    ]
+    ],
+    "navigation": "stepper"
   },
   "outputKind": "decision",
   "data": [

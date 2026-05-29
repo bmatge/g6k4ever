@@ -71,20 +71,28 @@ const kpiPac = (await page.locator(".fr-tile__desc").first().textContent()) ?? "
 const pacShowsMoney = kpiPac.includes("€");
 check("PAC KPI montre €", pacShowsMoney, `text="${kpiPac.trim()}"`);
 
-// === Fact-checker — arbre de décision ===
-console.log("\n=== FACT-CHECKER ===");
+// === Fact-checker — arbre de décision en mode stepper ===
+console.log("\n=== FACT-CHECKER (stepper) ===");
 await selector.selectOption("fact-checker-voiture-electrique");
 await page.waitForTimeout(500);
 
+// Le stepper DSFR est visible
+const stepperVisible = await page.locator(".fr-stepper__state").first().isVisible().catch(() => false);
+check("Stepper DSFR visible (mode wizard activé)", stepperVisible);
+
+const stepperState1 = (await page.locator(".fr-stepper__state").first().textContent()) ?? "";
+check("Étape 1 sur 2 affichée au démarrage", stepperState1.includes("1 sur 2"), `state="${stepperState1.trim()}"`);
+
 const familleSelect = page.getByLabel(/Quelle famille d'interrogation/i).first();
-check("Famille selector visible", await familleSelect.isVisible());
+check("Famille selector visible (étape 1)", await familleSelect.isVisible());
 
 const familleOptions = await familleSelect.locator("option").allTextContents();
 check("5 familles + placeholder", familleOptions.length >= 5, `count=${familleOptions.length}`);
 
-// Au démarrage, le chapter "Précisez votre interrogation" est masqué
-const sujetWrapperHidden = !(await page.getByText("Précisez votre interrogation", { exact: false }).first().isVisible().catch(() => false));
-check("Chapter 'Précisez votre interrogation' masqué tant que famille n'est pas choisie", sujetWrapperHidden);
+// Bouton "Suivant" doit être disabled (famille blank → field required)
+const nextBtn = page.getByRole("button", { name: /^Suivant$/i }).first();
+const nextDisabledInit = await nextBtn.isDisabled().catch(() => false);
+check("'Suivant' disabled tant qu'aucun field required n'est rempli", nextDisabledInit);
 
 // Choisir famille = environment
 await familleSelect.selectOption("environment");
@@ -93,33 +101,62 @@ await page.waitForTimeout(300);
 const sujetSelect = page.getByLabel(/Précisez votre interrogation/i).first();
 check("Sujet selector visible après choix famille", await sujetSelect.isVisible());
 
+// Suivant toujours disabled (sujet pas choisi)
+const nextStillDisabled = await nextBtn.isDisabled().catch(() => false);
+check("'Suivant' toujours disabled après seule famille (sujet required vide)", nextStillDisabled);
+
 // Choisir un sujet
 await sujetSelect.selectOption("environment.carbon_footprint");
 await page.waitForTimeout(300);
 
+const nextEnabled = await nextBtn.isEnabled().catch(() => false);
+check("'Suivant' enabled après sujet choisi", nextEnabled);
+
+// On reste à l'étape 1 tant qu'on n'a pas cliqué Suivant : le chapter de réponse n'est pas visible
+const carbonBeforeNext = await page.getByText("Bilan carbone du véhicule électrique en France").isVisible().catch(() => false);
+check("Chapter réponse PAS encore visible avant clic 'Suivant'", !carbonBeforeNext);
+
+// Cliquer Suivant
+await nextBtn.click();
+await page.waitForTimeout(300);
+
+const stepperState2 = (await page.locator(".fr-stepper__state").first().textContent()) ?? "";
+check("Après Suivant : étape 2 sur 2", stepperState2.includes("2 sur 2"), `state="${stepperState2.trim()}"`);
+
 const carbonChapter = await page.getByText("Bilan carbone du véhicule électrique en France").isVisible().catch(() => false);
-check("Chapter carbon_footprint visible après choix sujet", carbonChapter);
+check("Chapter carbon_footprint visible en étape 2", carbonChapter);
 
 const lithiumChapter = await page.getByText("Lithium et ressources minières").isVisible().catch(() => false);
-check("Chapter lithium_mining masqué (autre sujet de la même famille)", !lithiumChapter);
+check("Chapter lithium_mining masqué (autre sujet)", !lithiumChapter);
 
-const resaleChapter = await page.getByText("La valeur de revente des véhicules électriques").isVisible().catch(() => false);
-check("Chapter resale masqué (autre famille)", !resaleChapter);
-
-// Vérifier qu'on a bien les chiffres-clés sourcés
 const carbonStatVisible = await page.getByText(/70 %/i).first().isVisible().catch(() => false);
 check("Stat -70 % visible dans le chapitre actif", carbonStatVisible);
 
 const adviceVisible = await page.getByText(/Suède et en Norvège/i).first().isVisible().catch(() => false);
 check("Conseil pratique du sujet visible", adviceVisible);
 
-// Changer de sujet → bonne mise à jour
+// Le sélecteur famille de l'étape 1 ne doit PAS être visible
+const familleStillVisible = await familleSelect.isVisible().catch(() => false);
+check("Sélecteur famille masqué en étape 2 (mode stepper = une étape à la fois)", !familleStillVisible);
+
+// Bouton "Recommencer" sur la dernière étape
+const restartBtn = page.getByRole("button", { name: /Recommencer/i }).first();
+check("Bouton 'Recommencer' visible sur la dernière étape", await restartBtn.isVisible().catch(() => false));
+
+// Retour étape 1 via "Précédent"
+const prevBtn = page.getByRole("button", { name: /^Précédent$/i }).first();
+await prevBtn.click();
+await page.waitForTimeout(300);
+const backOnStep1 = (await page.locator(".fr-stepper__state").first().textContent()) ?? "";
+check("Précédent ramène à l'étape 1", backOnStep1.includes("1 sur 2"), `state="${backOnStep1.trim()}"`);
+
+// Changer de sujet, puis Suivant → chapter mis à jour
 await sujetSelect.selectOption("environment.lithium_mining");
+await page.waitForTimeout(200);
+await nextBtn.click();
 await page.waitForTimeout(300);
 const lithiumNow = await page.getByText("Lithium et ressources minières").isVisible().catch(() => false);
-const carbonGone = !(await page.getByText("Bilan carbone du véhicule électrique en France").isVisible().catch(() => false));
-check("Switch sujet : lithium maintenant visible", lithiumNow);
-check("Switch sujet : carbon_footprint masqué", carbonGone);
+check("Après changement de sujet + Suivant : lithium chapter visible", lithiumNow);
 
 // === Standalone mode (URL ?sim=) ===
 console.log("\n=== STANDALONE ?sim=fact-checker-... ===");
@@ -164,11 +201,26 @@ await page2.waitForTimeout(2500);
 const lockBadge = page2.locator(".fr-badge--success").first();
 check("Verrou acquis", await lockBadge.isVisible().catch(() => false));
 
-// Preview live (moteur local, instant)
+// Le sidemenu doit lister les 7 sections (Métadonnées / Données / Sources / Étapes / Règles / JSON / Tester)
+const sidemenuItems = page2.locator(".fr-sidemenu__list .fr-sidemenu__link");
+const sidemenuCount = await sidemenuItems.count();
+check("Sidemenu : 7 sections", sidemenuCount === 7, `count=${sidemenuCount}`);
+
+// Boutons d'intégration toujours visibles dans le sidemenu (footer)
+const standaloneLink = page2.getByRole("link", { name: /Ouvrir standalone/i }).first();
+check("Bouton 'Ouvrir standalone' toujours visible dans le sidemenu", await standaloneLink.isVisible().catch(() => false));
+
+const exportBtn = page2.getByRole("button", { name: /Exporter JSON/i }).first();
+check("Bouton 'Exporter JSON' toujours visible dans le sidemenu", await exportBtn.isVisible().catch(() => false));
+
+// Section "Tester" : cliquer dessus, puis vérifier la preview live
+await page2.getByRole("button", { name: /^▶ Tester$/i }).click();
+await page2.waitForTimeout(300);
+
 const previewBlock = page2.locator(".g6k-simulator").first();
 const previewPrixVE = previewBlock.getByLabel(/Prix d'achat VE/i).first();
 const previewValue = await previewPrixVE.inputValue();
-check("Preview affiche default prixVE=35000", previewValue === "35000", `value="${previewValue}"`);
+check("Section Tester : preview affiche default prixVE=35000", previewValue === "35000", `value="${previewValue}"`);
 
 // Modifier dans la preview (mesure perceived reactivity — ≤ 200ms)
 const t0 = Date.now();
@@ -178,24 +230,20 @@ const newPreviewKpi = (await previewBlock.locator(".fr-tile__desc").first().text
 const elapsed = Date.now() - t0;
 check("Preview KPI mis à jour après saisie (moteur local instant)", newPreviewKpi.includes("€"), `text="${newPreviewKpi.trim()}" — ${elapsed}ms`);
 
-// Bouton "Ouvrir standalone" présent + URL correcte
-const standaloneLink = page2.getByRole("link", { name: /Ouvrir standalone/i }).first();
-check("Bouton 'Ouvrir standalone' présent dans l'éditeur", await standaloneLink.isVisible().catch(() => false));
-
-// Bouton "Exporter JSON" présent
-const exportBtn = page2.getByRole("button", { name: /Exporter JSON/i }).first();
-check("Bouton 'Exporter JSON' présent dans l'éditeur", await exportBtn.isVisible().catch(() => false));
-
-// Onglet Données
-await page2.getByRole("tab", { name: "Données", exact: true }).click();
+// Section Données
+await page2.getByRole("button", { name: /^Données$/i }).first().click();
 await page2.waitForTimeout(300);
-const dataRows = await page2.locator(".fr-tabs__panel--selected table tbody tr").count();
-check("Onglet Données : ≥ 10 lignes Data", dataRows >= 10, `count=${dataRows}`);
+const dataRows = await page2.locator("table tbody tr").count();
+check("Section Données : ≥ 10 lignes Data", dataRows >= 10, `count=${dataRows}`);
 
-const firstLabelInput = page2.locator(".fr-tabs__panel--selected table tbody tr").first().locator("input").nth(1);
+const firstLabelInput = page2.locator("table tbody tr").first().locator("input").nth(1);
 await firstLabelInput.fill("Distance annuelle (km)");
 const newLabel = await firstLabelInput.inputValue();
 check("Saisie d'un label de Data fonctionne", newLabel === "Distance annuelle (km)");
+
+// Boutons d'intégration restent visibles même en section Données
+const exportBtnStillVisible = await page2.getByRole("button", { name: /Exporter JSON/i }).first().isVisible().catch(() => false);
+check("'Exporter JSON' reste visible quand on change de section", exportBtnStillVisible);
 
 await browser.close();
 console.log(`\n${allOk ? "🎉 TOUS LES TESTS E2E PASSENT" : "❌ DES TESTS ÉCHOUENT"}`);

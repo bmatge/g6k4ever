@@ -512,6 +512,7 @@ const simulator = {
     defaultLocale: "fr-FR",
     dateFormat: "dd/MM/yyyy",
     authors: ["DGEC", "portail-elec (legacy)"],
+    navigation: "stepper",
   },
   outputKind: "decision",
   data,

@@ -20,6 +20,7 @@ describe("<MetadataForm>", () => {
           defaultLocale: "fr-FR",
           dateFormat: "dd/MM/yyyy",
           authors: [],
+          navigation: "free",
         }}
         onChange={() => undefined}
         slugLocked={false}
@@ -41,6 +42,7 @@ describe("<MetadataForm>", () => {
           defaultLocale: "fr-FR",
           dateFormat: "dd/MM/yyyy",
           authors: [],
+          navigation: "free",
         }}
         onChange={() => undefined}
         slugLocked={true}
@@ -59,6 +61,7 @@ describe("<MetadataForm>", () => {
           defaultLocale: "fr-FR",
           dateFormat: "dd/MM/yyyy",
           authors: [],
+          navigation: "free",
         }}
         onChange={onChange}
         slugLocked={true}

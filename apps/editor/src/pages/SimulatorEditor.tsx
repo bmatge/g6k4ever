@@ -19,16 +19,27 @@ interface SimulatorEditorProps {
   onClose: () => void;
 }
 
-type Tab = "metadata" | "data" | "sources" | "steps" | "rules" | "json";
+type Section = "metadata" | "data" | "sources" | "steps" | "rules" | "json" | "test";
 
-const TAB_LABELS: Record<Tab, string> = {
+const SECTION_LABELS: Record<Section, string> = {
   metadata: "Métadonnées",
   data: "Données",
   sources: "Sources",
   steps: "Étapes & blocs",
   rules: "Règles",
   json: "JSON brut",
+  test: "Tester",
 };
+
+const SECTION_ORDER: Section[] = [
+  "metadata",
+  "data",
+  "sources",
+  "steps",
+  "rules",
+  "json",
+  "test",
+];
 
 export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): JSX.Element {
   const [draft, setDraft] = useState<Simulator | null>(null);
@@ -36,7 +47,7 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
   const [lockStatus, setLockStatus] = useState<"idle" | "acquired" | "held-by-other" | "not-found">("idle");
   const [lockHeldBy, setLockHeldBy] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const [tab, setTab] = useState<Tab>("metadata");
+  const [section, setSection] = useState<Section>("metadata");
 
   // Moteur fonctions partagé pour la preview (sync, instant).
   const functions = useRef(createStandardRegistry()).current;
@@ -182,14 +193,6 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
           ) : null}
           <button
             type="button"
-            className="fr-btn fr-btn--tertiary fr-mr-1w"
-            onClick={() => handleExportJson()}
-            title="Télécharger la définition JSON pour intégration ailleurs"
-          >
-            Exporter JSON
-          </button>
-          <button
-            type="button"
             className="fr-btn fr-btn--secondary fr-mr-1w"
             onClick={() => void handleSave()}
             disabled={!editable || saving}
@@ -211,116 +214,189 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
 
       <CoherenceChecker simulator={draft} />
 
-      {/* 2-pane layout */}
+      {/* Sidemenu layout : navigation à gauche, contenu pleine largeur à droite */}
       <div className="fr-grid-row fr-grid-row--gutters">
-        {/* LEFT — éditeur */}
-        <div className="fr-col-12 fr-col-md-6">
-          <div className="fr-tabs">
-            <ul className="fr-tabs__list" role="tablist">
-              {(["metadata", "data", "sources", "steps", "rules", "json"] as Tab[]).map((t) => (
-                <li key={t} role="presentation">
+        {/* LEFT — sidemenu */}
+        <div className="fr-col-12 fr-col-md-3">
+          <nav
+            className="fr-sidemenu"
+            role="navigation"
+            aria-labelledby="sidemenu-title"
+            style={{ position: "sticky", top: "1rem" }}
+          >
+            <div className="fr-sidemenu__inner">
+              <button
+                className="fr-sidemenu__btn"
+                aria-controls="sidemenu-wrapper"
+                aria-expanded="false"
+              >
+                Sections
+              </button>
+              <div className="fr-collapse" id="sidemenu-wrapper">
+                <div className="fr-sidemenu__title" id="sidemenu-title">
+                  Édition du simulateur
+                </div>
+                <ul className="fr-sidemenu__list">
+                  {SECTION_ORDER.map((s) => (
+                    <li
+                      key={s}
+                      className={`fr-sidemenu__item${s === section ? " fr-sidemenu__item--active" : ""}`}
+                    >
+                      <button
+                        type="button"
+                        className="fr-sidemenu__link"
+                        aria-current={s === section ? "page" : undefined}
+                        onClick={() => setSection(s)}
+                      >
+                        {s === "test" ? <>▶ {SECTION_LABELS[s]}</> : SECTION_LABELS[s]}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* Actions toujours visibles */}
+                <div
+                  className="fr-mt-3w fr-pt-2w"
+                  style={{ borderTop: "1px solid var(--border-default-grey)" }}
+                >
+                  <p className="fr-text--xs fr-mb-1w" style={{ opacity: 0.7 }}>
+                    Intégration & export
+                  </p>
+                  <a
+                    href={`http://localhost:5173?sim=${encodeURIComponent(slug)}&source=api`}
+                    target="_blank"
+                    rel="noopener"
+                    className="fr-btn fr-btn--secondary fr-btn--sm fr-mb-1w"
+                    style={{ display: "block", textAlign: "center" }}
+                    title="Ouvrir dans un onglet standalone (prêt à iframe)"
+                  >
+                    Ouvrir standalone ↗
+                  </a>
                   <button
                     type="button"
-                    className="fr-tabs__tab"
-                    role="tab"
-                    aria-selected={tab === t}
-                    onClick={() => setTab(t)}
+                    className="fr-btn fr-btn--tertiary fr-btn--sm"
+                    style={{ display: "block", width: "100%", textAlign: "center" }}
+                    onClick={() => handleExportJson()}
+                    title="Télécharger la définition JSON"
                   >
-                    {TAB_LABELS[t]}
+                    Exporter JSON
                   </button>
-                </li>
-              ))}
-            </ul>
-            <div className="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel">
-              {tab === "metadata" ? (
-                <MetadataForm
-                  value={draft.metadata}
-                  onChange={(metadata) => setDraft({ ...draft, metadata })}
-                  slugLocked={true}
-                />
-              ) : tab === "data" ? (
-                <DataEditor
-                  data={draft.data}
-                  onChange={(data) => setDraft({ ...draft, data })}
-                  sources={draft.sources}
-                  editable={editable}
-                />
-              ) : tab === "sources" ? (
-                <SourcesEditor
-                  sources={draft.sources}
-                  onChange={(sources) => setDraft({ ...draft, sources })}
-                  data={draft.data}
-                  editable={editable}
-                />
-              ) : tab === "steps" ? (
-                <StepsEditor
-                  steps={draft.steps}
-                  onChange={(steps) => setDraft({ ...draft, steps })}
-                  data={draft.data}
-                  editable={editable}
-                />
-              ) : tab === "rules" ? (
-                <RulesEditor
-                  rules={draft.rules}
-                  onChange={(rules) => setDraft({ ...draft, rules })}
-                  data={draft.data}
-                  editable={editable}
-                />
-              ) : (
-                <JsonEditor value={draft} onChange={(v) => setDraft(v)} height="60vh" />
-              )}
+                </div>
+              </div>
             </div>
-          </div>
+          </nav>
         </div>
 
-        {/* RIGHT — preview live */}
-        <div className="fr-col-12 fr-col-md-6">
+        {/* RIGHT — contenu de la section sélectionnée (pleine largeur) */}
+        <div className="fr-col-12 fr-col-md-9">
           <div
             style={{
               border: "1px solid var(--border-default-grey)",
               borderRadius: 4,
-              padding: "1rem",
+              padding: "1.5rem",
               backgroundColor: "var(--background-default-grey)",
-              position: "sticky",
-              top: "1rem",
-              maxHeight: "calc(100vh - 2rem)",
-              overflow: "auto",
+              minHeight: "60vh",
             }}
           >
-            <div className="fr-grid-row fr-grid-row--middle fr-mb-1w">
-              <div className="fr-col">
-                <p className="fr-text--xs" style={{ opacity: 0.7, margin: 0 }}>
-                  Aperçu live (moteur exécuté côté navigateur — instantané)
-                </p>
-              </div>
-              <div className="fr-col-auto">
-                <a
-                  href={`http://localhost:5173?sim=${encodeURIComponent(slug)}&source=api`}
-                  target="_blank"
-                  rel="noopener"
-                  className="fr-link fr-link--sm"
-                  title="Ouvrir dans une fenêtre standalone pour partage/intégration"
-                >
-                  Ouvrir standalone ↗
-                </a>
-              </div>
-            </div>
-            {hasNonInlineSources ? (
-              <div className="fr-alert fr-alert--warning fr-alert--sm fr-mb-1w">
-                <p className="fr-text--sm">
-                  Ce simulateur utilise des sources <code>database</code>/<code>api</code> non
-                  résolvables côté client : la preview ci-dessous est partielle. Le mode standalone
-                  (lien ci-dessus) appelle l'API en mode hébergé pour résolution complète.
-                </p>
-              </div>
-            ) : null}
-            <RuntimeSimulator
-              key={draft.metadata.name}
-              definition={draft}
-              functions={functions}
-            />
+            {section === "metadata" ? (
+              <MetadataForm
+                value={draft.metadata}
+                onChange={(metadata) => setDraft({ ...draft, metadata })}
+                slugLocked={true}
+              />
+            ) : section === "data" ? (
+              <DataEditor
+                data={draft.data}
+                onChange={(data) => setDraft({ ...draft, data })}
+                sources={draft.sources}
+                editable={editable}
+              />
+            ) : section === "sources" ? (
+              <SourcesEditor
+                sources={draft.sources}
+                onChange={(sources) => setDraft({ ...draft, sources })}
+                data={draft.data}
+                editable={editable}
+              />
+            ) : section === "steps" ? (
+              <StepsEditor
+                steps={draft.steps}
+                onChange={(steps) => setDraft({ ...draft, steps })}
+                data={draft.data}
+                editable={editable}
+              />
+            ) : section === "rules" ? (
+              <RulesEditor
+                rules={draft.rules}
+                onChange={(rules) => setDraft({ ...draft, rules })}
+                data={draft.data}
+                editable={editable}
+              />
+            ) : section === "json" ? (
+              <JsonEditor value={draft} onChange={(v) => setDraft(v)} height="70vh" />
+            ) : (
+              <TestPanel
+                draft={draft}
+                functions={functions}
+                hasNonInlineSources={hasNonInlineSources}
+                slug={slug}
+              />
+            )}
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+interface TestPanelProps {
+  draft: Simulator;
+  functions: ReturnType<typeof createStandardRegistry>;
+  hasNonInlineSources: boolean;
+  slug: string;
+}
+
+function TestPanel({ draft, functions, hasNonInlineSources, slug }: TestPanelProps): JSX.Element {
+  return (
+    <div>
+      <div className="fr-grid-row fr-grid-row--middle fr-mb-2w">
+        <div className="fr-col">
+          <h2 className="fr-h4" style={{ margin: 0 }}>
+            ▶ Tester
+          </h2>
+          <p className="fr-text--xs" style={{ opacity: 0.7, margin: 0 }}>
+            Aperçu live — moteur exécuté côté navigateur, instantané.
+          </p>
+        </div>
+        <div className="fr-col-auto">
+          <a
+            href={`http://localhost:5173?sim=${encodeURIComponent(slug)}&source=api`}
+            target="_blank"
+            rel="noopener"
+            className="fr-link"
+          >
+            Ouvrir standalone ↗
+          </a>
+        </div>
+      </div>
+      {hasNonInlineSources ? (
+        <div className="fr-alert fr-alert--warning fr-alert--sm fr-mb-2w">
+          <p className="fr-text--sm">
+            Ce simulateur utilise des sources <code>database</code>/<code>api</code> non résolvables
+            côté client : l'aperçu ci-dessous est partiel. Le mode standalone (lien ci-dessus)
+            appelle l'API en mode hébergé pour résolution complète.
+          </p>
+        </div>
+      ) : null}
+      <div
+        style={{
+          border: "1px solid var(--border-default-grey)",
+          borderRadius: 4,
+          padding: "1rem",
+          backgroundColor: "var(--background-default-white)",
+        }}
+      >
+        <RuntimeSimulator key={draft.metadata.name} definition={draft} functions={functions} />
       </div>
     </div>
   );
