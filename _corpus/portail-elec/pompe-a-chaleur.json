@@ -1,0 +1,233 @@
+{
+  "schemaVersion": 1,
+  "metadata": {
+    "name": "pompe-a-chaleur",
+    "label": "Coût d'une pompe à chaleur après aides",
+    "description": "Estimer le coût net d'une PAC après MaPrimeRénov' et CEE, et son amortissement par rapport au chauffage actuel.",
+    "defaultLocale": "fr-FR",
+    "dateFormat": "dd/MM/yyyy",
+    "authors": ["g6k4ever — portail-elec"]
+  },
+  "outputKind": "calcul",
+  "data": [
+    { "id": 1, "name": "surface", "label": "Surface habitable (m²)", "type": "integer", "default": "100" },
+    {
+      "id": 2,
+      "name": "zone",
+      "label": "Zone climatique",
+      "type": "choice",
+      "default": "H2",
+      "options": [
+        { "value": "H1", "label": "H1 (Nord/Est — climat le plus froid)" },
+        { "value": "H2", "label": "H2 (Centre-Ouest — climat tempéré)" },
+        { "value": "H3", "label": "H3 (Sud — climat doux)" }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "isolation",
+      "label": "Niveau d'isolation",
+      "type": "choice",
+      "default": "moyen",
+      "options": [
+        { "value": "bon", "label": "Bon (RT 2012 / RE 2020)" },
+        { "value": "moyen", "label": "Moyen (réno années 2000)" },
+        { "value": "mauvais", "label": "Mauvais (passoire thermique)" }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "energieActuelle",
+      "label": "Énergie de chauffage actuelle",
+      "type": "choice",
+      "default": "gaz",
+      "options": [
+        { "value": "fioul", "label": "Fioul" },
+        { "value": "gaz", "label": "Gaz naturel" },
+        { "value": "propane", "label": "Propane" },
+        { "value": "elec", "label": "Électricité (convecteurs)" }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "rfrCat",
+      "label": "Tranche de revenus (MaPrimeRénov')",
+      "type": "choice",
+      "default": "intermediaire",
+      "options": [
+        { "value": "tres-modeste", "label": "Très modeste (MaPrimeRénov' Bleu)" },
+        { "value": "modeste", "label": "Modeste (Jaune)" },
+        { "value": "intermediaire", "label": "Intermédiaire (Violet)" },
+        { "value": "superieur", "label": "Supérieur (Rose)" }
+      ]
+    },
+
+    {
+      "id": 100,
+      "name": "coefBesoin",
+      "label": "Coefficient besoin utile (kWh/m²/an)",
+      "type": "number",
+      "source": { "sourceId": "coef-besoin", "returnPath": "coef" }
+    },
+    {
+      "id": 101,
+      "name": "prixEnergieActuelle",
+      "label": "Prix de l'énergie actuelle (€/kWh)",
+      "type": "money",
+      "source": { "sourceId": "prix-energie", "returnPath": "prix" }
+    },
+    {
+      "id": 102,
+      "name": "prixElec",
+      "label": "Prix de l'électricité (€/kWh)",
+      "type": "money",
+      "default": "0.20"
+    },
+    {
+      "id": 103,
+      "name": "copPac",
+      "label": "Coefficient de performance PAC moyen",
+      "type": "number",
+      "default": "3.5"
+    },
+    {
+      "id": 104,
+      "name": "primeRenov",
+      "label": "MaPrimeRénov' applicable (€)",
+      "type": "money",
+      "source": { "sourceId": "mpr", "returnPath": "montant" }
+    },
+    {
+      "id": 105,
+      "name": "primeCEE",
+      "label": "Prime CEE (€)",
+      "type": "money",
+      "default": "4000"
+    },
+
+    { "id": 200, "name": "besoinUtile", "label": "Besoin utile (kWh/an)", "type": "integer", "content": "#1 * #100" },
+    { "id": 201, "name": "factureActuelle", "label": "Facture chauffage actuelle (€/an)", "type": "money", "content": "#200 * #101" },
+    { "id": 202, "name": "consoPacKwh", "label": "Conso PAC (kWh/an)", "type": "integer", "content": "#200 / #103" },
+    { "id": 203, "name": "factureFuturePac", "label": "Facture chauffage avec PAC (€/an)", "type": "money", "content": "#202 * #102" },
+    { "id": 204, "name": "economieAnnuelle", "label": "Économie annuelle (€/an)", "type": "money", "content": "#201 - #203" },
+
+    { "id": 300, "name": "coutInstallation", "label": "Coût d'installation PAC (€)", "type": "money", "content": "#1 * 250" },
+    { "id": 301, "name": "aidesTotales", "label": "Total des aides (€)", "type": "money", "content": "#104 + #105" },
+    { "id": 302, "name": "coutNet", "label": "Coût net après aides (€)", "type": "money", "content": "#300 - #301" },
+    { "id": 303, "name": "amortissementAnnees", "label": "Durée d'amortissement (années)", "type": "number", "content": "#302 / #204" }
+  ],
+  "sources": [
+    {
+      "kind": "inline",
+      "id": "coef-besoin",
+      "label": "Coefficient besoin utile (kWh/m²/an) selon zone × isolation",
+      "columns": [
+        { "name": "zone", "type": "text" },
+        { "name": "iso", "type": "text" },
+        { "name": "coef", "type": "integer" }
+      ],
+      "rows": [
+        { "zone": "H1", "iso": "bon", "coef": 80 },
+        { "zone": "H1", "iso": "moyen", "coef": 140 },
+        { "zone": "H1", "iso": "mauvais", "coef": 220 },
+        { "zone": "H2", "iso": "bon", "coef": 65 },
+        { "zone": "H2", "iso": "moyen", "coef": 120 },
+        { "zone": "H2", "iso": "mauvais", "coef": 190 },
+        { "zone": "H3", "iso": "bon", "coef": 50 },
+        { "zone": "H3", "iso": "moyen", "coef": 95 },
+        { "zone": "H3", "iso": "mauvais", "coef": 160 }
+      ],
+      "parameters": [
+        { "name": "zone", "type": "text", "position": 1, "bindToDataId": 2 },
+        { "name": "iso", "type": "text", "position": 2, "bindToDataId": 3 }
+      ]
+    },
+    {
+      "kind": "inline",
+      "id": "prix-energie",
+      "label": "Prix de l'énergie actuelle (€/kWh PCI)",
+      "columns": [
+        { "name": "energie", "type": "text" },
+        { "name": "prix", "type": "number" }
+      ],
+      "rows": [
+        { "energie": "fioul", "prix": 0.155 },
+        { "energie": "gaz", "prix": 0.115 },
+        { "energie": "propane", "prix": 0.18 },
+        { "energie": "elec", "prix": 0.20 }
+      ],
+      "parameters": [{ "name": "energie", "type": "text", "position": 1, "bindToDataId": 4 }]
+    },
+    {
+      "kind": "inline",
+      "id": "mpr",
+      "label": "MaPrimeRénov' 2026 — installation PAC air/eau (forfait)",
+      "columns": [
+        { "name": "cat", "type": "text" },
+        { "name": "montant", "type": "integer" }
+      ],
+      "rows": [
+        { "cat": "tres-modeste", "montant": 9000 },
+        { "cat": "modeste", "montant": 7000 },
+        { "cat": "intermediaire", "montant": 4000 },
+        { "cat": "superieur", "montant": 0 }
+      ],
+      "parameters": [{ "name": "cat", "type": "text", "position": 1, "bindToDataId": 5 }]
+    }
+  ],
+  "steps": [
+    {
+      "id": 1,
+      "name": "logement",
+      "label": "Votre logement",
+      "blocks": [
+        { "id": "f-surface", "type": "field", "config": { "dataId": 1, "dataName": "surface", "dataType": "integer", "label": "Surface habitable (m²)", "widget": "range", "min": 30, "max": 250, "step": 5, "required": true } },
+        { "id": "f-zone", "type": "field", "config": { "dataId": 2, "dataName": "zone", "dataType": "choice", "label": "Zone climatique", "required": true, "options": [{ "value": "H1", "label": "H1 (Nord/Est)" }, { "value": "H2", "label": "H2 (Centre-Ouest)" }, { "value": "H3", "label": "H3 (Sud)" }] } },
+        { "id": "f-isolation", "type": "field", "config": { "dataId": 3, "dataName": "isolation", "dataType": "choice", "label": "Niveau d'isolation", "required": true, "options": [{ "value": "bon", "label": "Bon" }, { "value": "moyen", "label": "Moyen" }, { "value": "mauvais", "label": "Mauvais" }] } },
+        { "id": "f-energie", "type": "field", "config": { "dataId": 4, "dataName": "energieActuelle", "dataType": "choice", "label": "Énergie actuelle", "required": true, "options": [{ "value": "fioul", "label": "Fioul" }, { "value": "gaz", "label": "Gaz" }, { "value": "propane", "label": "Propane" }, { "value": "elec", "label": "Électricité" }] } },
+        { "id": "f-rfr", "type": "field", "config": { "dataId": 5, "dataName": "rfrCat", "dataType": "choice", "label": "Tranche MaPrimeRénov'", "required": true, "options": [{ "value": "tres-modeste", "label": "Très modeste (Bleu)" }, { "value": "modeste", "label": "Modeste (Jaune)" }, { "value": "intermediaire", "label": "Intermédiaire (Violet)" }, { "value": "superieur", "label": "Supérieur (Rose)" }] } }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "resultats",
+      "label": "Coût et amortissement",
+      "blocks": [
+        { "id": "kpi-cout-net", "type": "kpi-card", "config": { "label": "Coût net après aides", "dataId": 302, "format": "money", "variant": "highlight" } },
+        { "id": "kpi-economie", "type": "kpi-card", "config": { "label": "Économie annuelle", "dataId": 204, "format": "money" } },
+        { "id": "kpi-amort", "type": "kpi-card", "config": { "label": "Durée d'amortissement (années)", "dataId": 303, "format": "raw" } },
+
+        {
+          "id": "bd-installation",
+          "type": "breakdown-table",
+          "config": {
+            "title": "Coût d'installation",
+            "rows": [
+              { "label": "Coût brut (250 €/m²)", "dataId": 300, "format": "money" },
+              { "label": "MaPrimeRénov'", "dataId": 104, "format": "money", "indent": 1 },
+              { "label": "Prime CEE", "dataId": 105, "format": "money", "indent": 1 },
+              { "label": "Total aides", "dataId": 301, "format": "money" },
+              { "label": "Coût net après aides", "dataId": 302, "format": "money", "emphasis": true }
+            ]
+          }
+        },
+        {
+          "id": "bd-chauffage",
+          "type": "breakdown-table",
+          "config": {
+            "title": "Économies de chauffage",
+            "rows": [
+              { "label": "Besoin utile", "dataId": 200, "format": "raw" },
+              { "label": "Facture actuelle (€/an)", "dataId": 201, "format": "money" },
+              { "label": "Conso PAC (kWh/an)", "dataId": 202, "format": "raw" },
+              { "label": "Facture future PAC (€/an)", "dataId": 203, "format": "money" },
+              { "label": "Économie annuelle", "dataId": 204, "format": "money", "emphasis": true }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "rules": [],
+  "footnotes": []
+}
