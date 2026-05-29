@@ -40,3 +40,4 @@ export { preprocessExpression, dataIdFromIdentifier } from "./expression/preproc
 export { evaluateConditionExpr, evaluateExpression } from "./condition.js";
 export { interpolate } from "./interpolate.js";
 export { applyAction } from "./action.js";
+export { expandGroups, interpolateI } from "./expand-groups.js";

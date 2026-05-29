@@ -6,6 +6,7 @@ import { BusinessRule } from "./rule.js";
 import { Step } from "./step.js";
 import { Footnote } from "./footnote.js";
 import { isUnaryOperator, walkConditionExpr } from "./condition.js";
+import { RepeatableGroup } from "./repeatable-group.js";
 
 /**
  * Type de sortie d'un simulateur.
@@ -51,6 +52,11 @@ export const Simulator = z
     steps: z.array(Step).min(1, "Un simulateur doit avoir au moins une étape."),
     rules: z.array(BusinessRule).default([]),
     footnotes: z.array(Footnote).default([]),
+    /**
+     * Groupes répétables — chacun génère N copies de Data templates au moment
+     * de l'évaluation (cf. `@g6k4ever/engine` `expandGroups`). Vide par défaut.
+     */
+    groups: z.array(RepeatableGroup).default([]),
   })
   .superRefine((sim, ctx) => {
     // Unicité des id de Data

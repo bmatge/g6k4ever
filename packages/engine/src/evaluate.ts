@@ -12,6 +12,7 @@ import {
   snapshotState,
   statesEqual,
 } from "./pipeline.js";
+import { expandGroups } from "./expand-groups.js";
 
 const DEFAULT_MAX_ITERATIONS = 10;
 
@@ -29,13 +30,15 @@ const DEFAULT_MAX_ITERATIONS = 10;
  * après `maxIterations` itérations.
  */
 export function evaluate(
-  simulator: Simulator,
+  rawSimulator: Simulator,
   input: SimulatorInput,
   options: EvaluateOptions,
 ): SimulatorState {
   const maxIterations = options.maxIterations ?? DEFAULT_MAX_ITERATIONS;
   const { resolvers, functions } = options;
 
+  // Expansion préalable des groupes répétables (no-op si pas de groups).
+  const simulator = expandGroups(rawSimulator);
   const state = buildInitialState(simulator, input);
 
   let previous = snapshotState(state);

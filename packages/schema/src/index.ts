@@ -40,4 +40,5 @@ export { Block } from "./block.js";
 export { Step } from "./step.js";
 export { Footnote } from "./footnote.js";
 export { Simulator, Metadata, OutputKind } from "./simulator.js";
+export { RepeatableGroup, DataTemplate } from "./repeatable-group.js";
 export { toJsonSchema } from "./json-schema.js";
