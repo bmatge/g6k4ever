@@ -33,6 +33,15 @@ export const Metadata = z.object({
   dateFormat: z.string().default("dd/MM/yyyy"),
   /** Auteur(s) ou organisation. */
   authors: z.array(z.string()).default([]),
+  /**
+   * Mode de navigation entre étapes.
+   * - `free` (défaut) : toutes les étapes visibles sont rendues les unes sous
+   *   les autres, l'utilisateur scrolle.
+   * - `stepper` : une seule étape rendue à la fois, navigation avec
+   *   "Précédent / Suivant" et un `fr-stepper` DSFR en haut. Les fields
+   *   `required: true` bloquent l'avancée tant qu'ils ne sont pas remplis.
+   */
+  navigation: z.enum(["free", "stepper"]).default("free"),
 });
 export type Metadata = z.infer<typeof Metadata>;
 

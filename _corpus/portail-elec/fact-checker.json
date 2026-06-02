@@ -1,0 +1,1414 @@
+{
+  "schemaVersion": 1,
+  "metadata": {
+    "name": "fact-checker-voiture-electrique",
+    "label": "Fact-checker — voiture électrique",
+    "description": "Mise en perspective des idées reçues sur la voiture électrique. Sélectionnez une famille puis le sujet précis pour voir les chiffres-clés sourcés, une analyse et un conseil pratique. Wording institutionnel factuel (DGEC / portail-elec).",
+    "defaultLocale": "fr-FR",
+    "dateFormat": "dd/MM/yyyy",
+    "authors": [
+      "DGEC",
+      "portail-elec (legacy)"
+    ],
+    "navigation": "stepper"
+  },
+  "outputKind": "decision",
+  "data": [
+    {
+      "id": 1,
+      "name": "famille",
+      "label": "Quelle famille d'interrogation vous concerne ?",
+      "type": "choice",
+      "description": "Choisissez la grande catégorie qui correspond à votre question sur la voiture électrique.",
+      "options": [
+        {
+          "value": "financial",
+          "label": "Coût et financement"
+        },
+        {
+          "value": "usage",
+          "label": "Autonomie et recharge"
+        },
+        {
+          "value": "confidence",
+          "label": "Confiance et habitudes"
+        },
+        {
+          "value": "territorial",
+          "label": "Logement et géographie"
+        },
+        {
+          "value": "environment",
+          "label": "Environnement et choix de société"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "sujet",
+      "label": "Précisez votre interrogation",
+      "type": "choice",
+      "description": "Sujet précis dans la famille sélectionnée.",
+      "options": [
+        {
+          "value": "financial.purchase_price",
+          "label": "Le prix d'achat me paraît trop élevé"
+        },
+        {
+          "value": "financial.resale",
+          "label": "Je doute de la valeur de revente"
+        },
+        {
+          "value": "financial.charging_install",
+          "label": "L'installation d'une borne à domicile me semble coûteuse"
+        },
+        {
+          "value": "financial.battery_cost",
+          "label": "Je redoute le coût d'un remplacement de batterie"
+        },
+        {
+          "value": "usage.range_anxiety",
+          "label": "L'autonomie me paraît insuffisante"
+        },
+        {
+          "value": "usage.charge_time",
+          "label": "Le temps de recharge me paraît trop long"
+        },
+        {
+          "value": "usage.charging_network",
+          "label": "Le réseau de bornes publiques me semble insuffisant"
+        },
+        {
+          "value": "usage.reliability",
+          "label": "Je crains que les bornes soient souvent en panne"
+        },
+        {
+          "value": "confidence.fear_stranded",
+          "label": "Je crains de tomber en panne d'énergie"
+        },
+        {
+          "value": "confidence.technology_anxiety",
+          "label": "La technologie me paraît complexe"
+        },
+        {
+          "value": "confidence.habit_change",
+          "label": "Je ne souhaite pas modifier mes habitudes"
+        },
+        {
+          "value": "territorial.apartment",
+          "label": "Je suis locataire ou en appartement sans borne"
+        },
+        {
+          "value": "territorial.rural",
+          "label": "Je vis en zone rurale, les bornes me semblent rares"
+        },
+        {
+          "value": "territorial.long_distance",
+          "label": "Je fais régulièrement de longs trajets"
+        },
+        {
+          "value": "environment.carbon_footprint",
+          "label": "Je doute du bilan environnemental réel"
+        },
+        {
+          "value": "environment.lithium_mining",
+          "label": "L'impact de l'extraction du lithium me préoccupe"
+        },
+        {
+          "value": "environment.forced_change",
+          "label": "Le calendrier réglementaire me semble contraignant"
+        }
+      ]
+    }
+  ],
+  "sources": [],
+  "steps": [
+    {
+      "id": 1,
+      "name": "selection",
+      "label": "Choisissez votre interrogation",
+      "description": "Sélectionnez d'abord une famille, puis le sujet précis qui vous concerne.",
+      "blocks": [
+        {
+          "id": "field-famille",
+          "type": "field",
+          "config": {
+            "dataId": 1,
+            "dataName": "famille",
+            "dataType": "choice",
+            "label": "Quelle famille d'interrogation vous concerne ?",
+            "hint": "Choisissez la grande catégorie qui correspond à votre question sur la voiture électrique.",
+            "required": true,
+            "options": [
+              {
+                "value": "financial",
+                "label": "Coût et financement"
+              },
+              {
+                "value": "usage",
+                "label": "Autonomie et recharge"
+              },
+              {
+                "value": "confidence",
+                "label": "Confiance et habitudes"
+              },
+              {
+                "value": "territorial",
+                "label": "Logement et géographie"
+              },
+              {
+                "value": "environment",
+                "label": "Environnement et choix de société"
+              }
+            ]
+          }
+        },
+        {
+          "id": "chap-sujet-wrapper",
+          "type": "chapter",
+          "config": {
+            "title": "Précisez votre interrogation",
+            "blocks": [
+              {
+                "id": "field-sujet",
+                "type": "field",
+                "config": {
+                  "dataId": 2,
+                  "dataName": "sujet",
+                  "dataType": "choice",
+                  "label": "Précisez votre interrogation",
+                  "hint": "Sujet précis dans la famille sélectionnée.",
+                  "required": true,
+                  "options": [
+                    {
+                      "value": "financial.purchase_price",
+                      "label": "Le prix d'achat me paraît trop élevé"
+                    },
+                    {
+                      "value": "financial.resale",
+                      "label": "Je doute de la valeur de revente"
+                    },
+                    {
+                      "value": "financial.charging_install",
+                      "label": "L'installation d'une borne à domicile me semble coûteuse"
+                    },
+                    {
+                      "value": "financial.battery_cost",
+                      "label": "Je redoute le coût d'un remplacement de batterie"
+                    },
+                    {
+                      "value": "usage.range_anxiety",
+                      "label": "L'autonomie me paraît insuffisante"
+                    },
+                    {
+                      "value": "usage.charge_time",
+                      "label": "Le temps de recharge me paraît trop long"
+                    },
+                    {
+                      "value": "usage.charging_network",
+                      "label": "Le réseau de bornes publiques me semble insuffisant"
+                    },
+                    {
+                      "value": "usage.reliability",
+                      "label": "Je crains que les bornes soient souvent en panne"
+                    },
+                    {
+                      "value": "confidence.fear_stranded",
+                      "label": "Je crains de tomber en panne d'énergie"
+                    },
+                    {
+                      "value": "confidence.technology_anxiety",
+                      "label": "La technologie me paraît complexe"
+                    },
+                    {
+                      "value": "confidence.habit_change",
+                      "label": "Je ne souhaite pas modifier mes habitudes"
+                    },
+                    {
+                      "value": "territorial.apartment",
+                      "label": "Je suis locataire ou en appartement sans borne"
+                    },
+                    {
+                      "value": "territorial.rural",
+                      "label": "Je vis en zone rurale, les bornes me semblent rares"
+                    },
+                    {
+                      "value": "territorial.long_distance",
+                      "label": "Je fais régulièrement de longs trajets"
+                    },
+                    {
+                      "value": "environment.carbon_footprint",
+                      "label": "Je doute du bilan environnemental réel"
+                    },
+                    {
+                      "value": "environment.lithium_mining",
+                      "label": "L'impact de l'extraction du lithium me préoccupe"
+                    },
+                    {
+                      "value": "environment.forced_change",
+                      "label": "Le calendrier réglementaire me semble contraignant"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "reponse",
+      "label": "Ce que disent les données",
+      "description": "Chiffres clés, analyse synthétique et conseil pratique pour le sujet sélectionné.",
+      "blocks": [
+        {
+          "id": "chap-sujet-financial-purchase_price",
+          "type": "chapter",
+          "config": {
+            "title": "Le coût d'achat après aides publiques",
+            "blocks": [
+              {
+                "id": "txt-stats-financial-purchase_price",
+                "type": "text-section",
+                "config": {
+                  "title": "Chiffres clés",
+                  "variant": "info",
+                  "content": "• 5 000 € — Bonus écologique maximal en 2024 (sous conditions de revenus).\n  ↳ Source : Décret n° 2023-1214\n\n• 1 000 € — Prime à la conversion en cas de mise au rebut d'un véhicule thermique ancien.\n  ↳ Source : Service-public.fr 2024\n\n• 7 000 € — Bonus écologique majoré pour les ménages dont le revenu fiscal de référence est inférieur à 15 400 €.\n  ↳ Source : Décret n° 2023-1214\n\n• ≈ 23 000 € — Prix moyen d'un véhicule électrique neuf de segment B après bonus (exemple : Renault 5 E-Tech).\n  ↳ Source : AAA Data 2024"
+                }
+              },
+              {
+                "id": "txt-insight-financial-purchase_price",
+                "type": "text-section",
+                "config": {
+                  "title": "Analyse",
+                  "variant": "default",
+                  "content": "Plutôt que de comparer uniquement le prix d'achat, le coût total de possession (TCO) sur 5 ans intègre le carburant, l'entretien, l'assurance et la décote. Selon l'ADEME, l'électricité revient en moyenne à un tiers du coût de l'essence au kilomètre, et l'entretien d'un véhicule électrique est environ 40 % moins coûteux (pas de vidange, d'embrayage ni de distribution)."
+                }
+              },
+              {
+                "id": "txt-tip-financial-purchase_price",
+                "type": "text-section",
+                "config": {
+                  "title": "Conseil pratique",
+                  "variant": "success",
+                  "content": "Pour un comparatif sur votre situation précise, utilisez le simulateur « Achat d'une voiture électrique » du portail."
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "chap-sujet-financial-resale",
+          "type": "chapter",
+          "config": {
+            "title": "La valeur de revente des véhicules électriques",
+            "blocks": [
+              {
+                "id": "txt-stats-financial-resale",
+                "type": "text-section",
+                "config": {
+                  "title": "Chiffres clés",
+                  "variant": "info",
+                  "content": "• −20 % — Décote moyenne d'un véhicule électrique de 3 ans par rapport au neuf (−35 % pour un thermique équivalent).\n  ↳ Source : Argus / Autobiz 2024\n\n• +28 % — Hausse des prix de l'occasion électrique observée entre 2021 et 2023.\n  ↳ Source : AAA Data 2023\n\n• 8 ans / 160 000 km — Garantie constructeur réglementaire minimale sur la batterie en Europe.\n  ↳ Source : Règlement UE 2023"
+                }
+              },
+              {
+                "id": "txt-insight-financial-resale",
+                "type": "text-section",
+                "config": {
+                  "title": "Analyse",
+                  "variant": "default",
+                  "content": "La valeur résiduelle s'améliore avec la maturation du marché de l'occasion. La garantie batterie obligatoire de 8 ans constitue un repère stable pour les acheteurs en seconde main, ce qui contribue à soutenir les prix."
+                }
+              },
+              {
+                "id": "txt-tip-financial-resale",
+                "type": "text-section",
+                "config": {
+                  "title": "Conseil pratique",
+                  "variant": "success",
+                  "content": "Un véhicule électrique d'occasion encore sous garantie batterie peut représenter un compromis pertinent entre prix d'achat et risque technique."
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "chap-sujet-financial-charging_install",
+          "type": "chapter",
+          "config": {
+            "title": "Coût d'installation et aides disponibles",
+            "blocks": [
+              {
+                "id": "txt-stats-financial-charging_install",
+                "type": "text-section",
+                "config": {
+                  "title": "Chiffres clés",
+                  "variant": "info",
+                  "content": "• 500 € — Aide ADVENIR pour l'installation d'un point de recharge en maison individuelle.\n  ↳ Source : ADVENIR / AFIREV 2024\n\n• 75 % — Part des recharges effectuées à domicile ou sur le lieu de travail.\n  ↳ Source : ADEME 2023\n\n• 800 à 1 500 € — Plage de coût d'installation d'une borne murale (matériel + pose).\n  ↳ Source : FFIE 2024\n\n• 75 % / 300 € — Crédit d'impôt pour la mise en place d'un système de charge à domicile, plafonné à 300 € par équipement.\n  ↳ Source : CGI art. 200 quater C"
+                }
+              },
+              {
+                "id": "txt-insight-financial-charging_install",
+                "type": "text-section",
+                "config": {
+                  "title": "Analyse",
+                  "variant": "default",
+                  "content": "Le cumul de l'aide ADVENIR et du crédit d'impôt couvre une part importante du coût pour une maison individuelle. En copropriété, la loi LOM (2019) garantit à chaque résident un « droit à la prise » : la copropriété ne peut pas s'opposer à l'installation d'une borne individuelle dans un parking privatif."
+                }
+              },
+              {
+                "id": "txt-tip-financial-charging_install",
+                "type": "text-section",
+                "config": {
+                  "title": "Conseil pratique",
+                  "variant": "success",
+                  "content": "Pour un projet en copropriété, faire la demande au syndic par lettre recommandée — le délai de réponse est encadré (3 mois)."
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "chap-sujet-financial-battery_cost",
+          "type": "chapter",
+          "config": {
+            "title": "Durée de vie réelle des batteries",
+            "blocks": [
+              {
+                "id": "txt-stats-financial-battery_cost",
+                "type": "text-section",
+                "config": {
+                  "title": "Chiffres clés",
+                  "variant": "info",
+                  "content": "• 90 % — Capacité résiduelle moyenne d'une batterie après 8 ans d'usage, selon les études terrain.\n  ↳ Source : Recurrent Auto 2023\n\n• < 2 % — Taux de remplacement de batterie observé sous garantie constructeur.\n  ↳ Source : ADAC 2024\n\n• 8 ans / 160 000 km — Garantie batterie réglementaire minimale en Europe.\n  ↳ Source : Règlement UE 2023\n\n• −89 % — Baisse du coût des batteries lithium-ion entre 2010 et 2023.\n  ↳ Source : BloombergNEF 2023"
+                }
+              },
+              {
+                "id": "txt-insight-financial-battery_cost",
+                "type": "text-section",
+                "config": {
+                  "title": "Analyse",
+                  "variant": "default",
+                  "content": "Les retours d'expérience disponibles depuis l'arrivée des premiers véhicules électriques grand public montrent une dégradation lente et progressive — pas d'effondrement brutal. Sous garantie, les remplacements complets restent très rares, et le coût d'un module unitaire (en cas de défaut localisé) est sensiblement inférieur à celui d'un remplacement total."
+                }
+              },
+              {
+                "id": "txt-tip-financial-battery_cost",
+                "type": "text-section",
+                "config": {
+                  "title": "Conseil pratique",
+                  "variant": "success",
+                  "content": "Pour l'achat d'occasion, demander un rapport d'état de santé de la batterie (SOH) : la plupart des constructeurs et garages le fournissent gratuitement."
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "chap-sujet-usage-range_anxiety",
+          "type": "chapter",
+          "config": {
+            "title": "Autonomie réelle face aux trajets quotidiens",
+            "blocks": [
+              {
+                "id": "txt-stats-usage-range_anxiety",
+                "type": "text-section",
+                "config": {
+                  "title": "Chiffres clés",
+                  "variant": "info",
+                  "content": "• 30 km — Distance médiane domicile-travail en France.\n  ↳ Source : INSEE 2023\n\n• 350 à 600 km — Autonomie WLTP des véhicules électriques commercialisés en France en 2024.\n  ↳ Source : AVERE 2024\n\n• 95 % — Part des trajets en France réalisables sans recharge intermédiaire avec un véhicule électrique récent.\n  ↳ Source : ADEME 2023\n\n• 41 km — Distance moyenne parcourue en voiture par jour et par personne en France.\n  ↳ Source : ENTD / ADEME"
+                }
+              },
+              {
+                "id": "txt-insight-usage-range_anxiety",
+                "type": "text-section",
+                "config": {
+                  "title": "Analyse",
+                  "variant": "default",
+                  "content": "L'autonomie est l'interrogation la plus fréquemment citée dans les enquêtes d'opinion. Les données d'usage montrent toutefois que la grande majorité des trajets du quotidien tiennent dans une seule charge hebdomadaire pour la plupart des conducteurs. Le ressenti d'anxiété diminue rapidement après quelques semaines d'usage."
+                }
+              },
+              {
+                "id": "txt-tip-usage-range_anxiety",
+                "type": "text-section",
+                "config": {
+                  "title": "Conseil pratique",
+                  "variant": "success",
+                  "content": "Avant l'achat, regarder son kilométrage annuel réel sur la carte grise et la décomposition entre trajets quotidiens et longs trajets — l'écart avec les besoins théoriques est souvent important."
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "chap-sujet-usage-charge_time",
+          "type": "chapter",
+          "config": {
+            "title": "Temps de recharge selon les usages",
+            "blocks": [
+              {
+                "id": "txt-stats-usage-charge_time",
+                "type": "text-section",
+                "config": {
+                  "title": "Chiffres clés",
+                  "variant": "info",
+                  "content": "• ≈ 8 h — Recharge complète sur prise renforcée domestique 7 kW.\n  ↳ Source : IEC 61851\n\n• ≈ 30 min — Recharge de 20 à 80 % sur borne rapide DC 50–150 kW.\n  ↳ Source : Constructeurs 2024\n\n• +150 % — Croissance du réseau de bornes rapides en France entre 2021 et 2024.\n  ↳ Source : AFIREV 2024"
+                }
+              },
+              {
+                "id": "txt-insight-usage-charge_time",
+                "type": "text-section",
+                "config": {
+                  "title": "Analyse",
+                  "variant": "default",
+                  "content": "Le modèle d'usage diffère du plein d'essence : la majorité des conducteurs rechargent à domicile la nuit et démarrent le matin avec une batterie pleine. La borne rapide n'intervient que pour les longs trajets, et une pause de 25 à 30 minutes y suffit pour ajouter 200 à 300 km d'autonomie."
+                }
+              },
+              {
+                "id": "txt-tip-usage-charge_time",
+                "type": "text-section",
+                "config": {
+                  "title": "Conseil pratique",
+                  "variant": "success",
+                  "content": "Sur autoroute, planifier la recharge sur des aires équipées de bornes ≥ 150 kW — le gain de temps par rapport aux bornes ≤ 50 kW est significatif."
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "chap-sujet-usage-charging_network",
+          "type": "chapter",
+          "config": {
+            "title": "État actuel du réseau de bornes en France",
+            "blocks": [
+              {
+                "id": "txt-stats-usage-charging_network",
+                "type": "text-section",
+                "config": {
+                  "title": "Chiffres clés",
+                  "variant": "info",
+                  "content": "• ≈ 130 000 — Points de charge publics ouverts en France fin 2024.\n  ↳ Source : AFIREV / GIREVE 2024\n\n• 100 % — Aires de service autoroutières équipées en bornes de recharge rapide.\n  ↳ Source : ASFA 2024\n\n• ×3 — Multiplication du nombre de points de charge publics en France entre 2021 et 2024.\n  ↳ Source : AFIREV 2024"
+                }
+              },
+              {
+                "id": "txt-insight-usage-charging_network",
+                "type": "text-section",
+                "config": {
+                  "title": "Analyse",
+                  "variant": "default",
+                  "content": "La couverture autoroutière nationale est désormais complète et les zones urbaines denses sont bien équipées. Les zones rurales restent un point de vigilance, mais le rythme de déploiement reste soutenu, notamment grâce au cofinancement de l'État et des collectivités."
+                }
+              },
+              {
+                "id": "txt-tip-usage-charging_network",
+                "type": "text-section",
+                "config": {
+                  "title": "Conseil pratique",
+                  "variant": "success",
+                  "content": "Avant un long trajet, repérer les bornes sur le parcours via Chargemap ou A Better Route Planner (ABRP) — ces applications intègrent les statuts de fonctionnement en temps réel."
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "chap-sujet-usage-reliability",
+          "type": "chapter",
+          "config": {
+            "title": "Fiabilité du réseau de recharge",
+            "blocks": [
+              {
+                "id": "txt-stats-usage-reliability",
+                "type": "text-section",
+                "config": {
+                  "title": "Chiffres clés",
+                  "variant": "info",
+                  "content": "• 78 % — Taux de disponibilité moyen des bornes publiques en France en 2023.\n  ↳ Source : AFIREV 2023\n\n• 91 % — Taux de disponibilité des bornes rapides sur autoroute.\n  ↳ Source : AFIREV 2023\n\n• 99 % — Objectif réglementaire de disponibilité fixé par le règlement européen AFIR à horizon 2030.\n  ↳ Source : Règlement UE AFIR"
+                }
+              },
+              {
+                "id": "txt-insight-usage-reliability",
+                "type": "text-section",
+                "config": {
+                  "title": "Analyse",
+                  "variant": "default",
+                  "content": "La fiabilité s'améliore progressivement, sous l'effet conjoint de la réglementation européenne (AFIR, 2023) et de la concurrence entre opérateurs. Les réseaux des opérateurs principaux (Tesla Supercharger, IONITY, Fastned, Electra) atteignent déjà des taux de disponibilité supérieurs à 97 %."
+                }
+              },
+              {
+                "id": "txt-tip-usage-reliability",
+                "type": "text-section",
+                "config": {
+                  "title": "Conseil pratique",
+                  "variant": "success",
+                  "content": "Pour les longs trajets, privilégier les opérateurs reconnus pour leur fiabilité et la qualité de leur supervision en temps réel."
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "chap-sujet-confidence-fear_stranded",
+          "type": "chapter",
+          "config": {
+            "title": "Le risque de panne d'énergie en pratique",
+            "blocks": [
+              {
+                "id": "txt-stats-confidence-fear_stranded",
+                "type": "text-section",
+                "config": {
+                  "title": "Chiffres clés",
+                  "variant": "info",
+                  "content": "• 0,04 % — Part des interventions de dépannage pour panne d'énergie sur véhicules électriques (vs 0,6 % pour les thermiques).\n  ↳ Source : RAC Foundation 2023\n\n• 2 alertes — Niveaux d'alerte successifs sur la plupart des véhicules électriques (20 % puis 10 % de batterie).\n  ↳ Source : ADAC 2023"
+                }
+              },
+              {
+                "id": "txt-insight-confidence-fear_stranded",
+                "type": "text-section",
+                "config": {
+                  "title": "Analyse",
+                  "variant": "default",
+                  "content": "Les systèmes de navigation embarqués anticipent l'autonomie restante en fonction du parcours, du relief et de la météo, et proposent automatiquement les bornes adaptées. Le risque réel de panne d'énergie est sensiblement plus faible qu'avec un véhicule thermique, à condition d'utiliser la navigation connectée pour les longs trajets."
+                }
+              },
+              {
+                "id": "txt-tip-confidence-fear_stranded",
+                "type": "text-section",
+                "config": {
+                  "title": "Conseil pratique",
+                  "variant": "success",
+                  "content": "Activer la navigation connectée fournie par le constructeur : elle recalcule l'autonomie en temps réel et adapte la vitesse de croisière si nécessaire."
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "chap-sujet-confidence-technology_anxiety",
+          "type": "chapter",
+          "config": {
+            "title": "Complexité mécanique comparée",
+            "blocks": [
+              {
+                "id": "txt-stats-confidence-technology_anxiety",
+                "type": "text-section",
+                "config": {
+                  "title": "Chiffres clés",
+                  "variant": "info",
+                  "content": "• ≈ 20 — Nombre de pièces mobiles dans un moteur électrique (contre ≈ 2 000 dans un moteur thermique avec sa transmission).\n  ↳ Source : IEA 2023\n\n• 4,5/5 — Note de satisfaction moyenne des propriétaires de véhicules électriques en France.\n  ↳ Source : UFC-Que Choisir 2023\n\n• ≈ 90 % — Part des propriétaires de véhicule électrique déclarant ne pas vouloir revenir au thermique.\n  ↳ Source : Kantar 2023"
+                }
+              },
+              {
+                "id": "txt-insight-confidence-technology_anxiety",
+                "type": "text-section",
+                "config": {
+                  "title": "Analyse",
+                  "variant": "default",
+                  "content": "La motorisation électrique est mécaniquement plus simple : pas de boîte de vitesses à plusieurs rapports, pas de distribution, pas de système d'échappement complexe. L'interface change avec le mode de conduite « une pédale » (frein régénératif), mais l'expérience est généralement décrite comme plus simple après quelques jours d'usage."
+                }
+              },
+              {
+                "id": "txt-tip-confidence-technology_anxiety",
+                "type": "text-section",
+                "config": {
+                  "title": "Conseil pratique",
+                  "variant": "success",
+                  "content": "Un essai d'au moins 48 h, idéalement sur un week-end mêlant trajets quotidiens et un déplacement plus long, permet de se forger un avis concret."
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "chap-sujet-confidence-habit_change",
+          "type": "chapter",
+          "config": {
+            "title": "Ce qui change dans l'usage quotidien",
+            "blocks": [
+              {
+                "id": "txt-stats-confidence-habit_change",
+                "type": "text-section",
+                "config": {
+                  "title": "Chiffres clés",
+                  "variant": "info",
+                  "content": "• ≈ 5 min — Temps moyen quotidien consacré à la gestion de la recharge (brancher/débrancher).\n  ↳ Source : Études usagers ADEME 2023\n\n• ≈ 2 semaines — Durée d'adaptation moyenne déclarée par les nouveaux propriétaires.\n  ↳ Source : AVERE 2023"
+                }
+              },
+              {
+                "id": "txt-insight-confidence-habit_change",
+                "type": "text-section",
+                "config": {
+                  "title": "Analyse",
+                  "variant": "default",
+                  "content": "Le principal changement d'habitude consiste à brancher le véhicule en rentrant chez soi (ou au travail), comme on branche un téléphone. La conduite, l'entretien et les démarches administratives restent identiques à un véhicule thermique. Le passage à la recharge planifiée plutôt qu'au plein réactif modifie la temporalité, sans nécessairement la complexifier."
+                }
+              },
+              {
+                "id": "txt-tip-confidence-habit_change",
+                "type": "text-section",
+                "config": {
+                  "title": "Conseil pratique",
+                  "variant": "success",
+                  "content": "La location longue durée (1 à 3 mois) peut être un format intermédiaire pour tester l'usage avant un achat ferme."
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "chap-sujet-territorial-apartment",
+          "type": "chapter",
+          "config": {
+            "title": "Droits des locataires et copropriétaires",
+            "blocks": [
+              {
+                "id": "txt-stats-territorial-apartment",
+                "type": "text-section",
+                "config": {
+                  "title": "Chiffres clés",
+                  "variant": "info",
+                  "content": "• Loi LOM 2019 — Droit à la prise : toute copropriété doit permettre l'installation d'une borne individuelle en parking privatif.\n  ↳ Source : Loi d'Orientation des Mobilités\n\n• 3 mois — Délai maximum imposé à la copropriété pour se prononcer après demande formelle.\n  ↳ Source : Code de la construction et de l'habitation\n\n• ≈ 75 % — Part des Français ayant accès à au moins une borne publique à moins de 1 km de leur domicile en 2024.\n  ↳ Source : AFIREV 2024"
+                }
+              },
+              {
+                "id": "txt-insight-territorial-apartment",
+                "type": "text-section",
+                "config": {
+                  "title": "Analyse",
+                  "variant": "default",
+                  "content": "La loi LOM (2019) a clarifié le cadre du droit à la prise pour les copropriétés : un refus motivé par une raison non technique est désormais contestable juridiquement. Pour les locataires sans accès à une borne privée, les recharges au travail, sur les parkings publics et les centres commerciaux couvrent une part importante des besoins."
+                }
+              },
+              {
+                "id": "txt-tip-territorial-apartment",
+                "type": "text-section",
+                "config": {
+                  "title": "Conseil pratique",
+                  "variant": "success",
+                  "content": "Faire la demande au syndic par lettre recommandée avec accusé de réception, en mentionnant l'article L. 111-3-8 du Code de la construction."
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "chap-sujet-territorial-rural",
+          "type": "chapter",
+          "config": {
+            "title": "Véhicule électrique en zone rurale",
+            "blocks": [
+              {
+                "id": "txt-stats-territorial-rural",
+                "type": "text-section",
+                "config": {
+                  "title": "Chiffres clés",
+                  "variant": "info",
+                  "content": "• +45 % — Croissance du nombre de bornes en zones rurales entre 2022 et 2024.\n  ↳ Source : AFIREV 2024\n\n• ≈ 85 % — Part des ménages ruraux résidant en maison individuelle, condition favorable à la recharge à domicile.\n  ↳ Source : INSEE 2023\n\n• ≈ 4 € — Coût d'une recharge complète de 60 kWh à domicile en heures creuses (0,17 €/kWh).\n  ↳ Source : EDF 2024"
+                }
+              },
+              {
+                "id": "txt-insight-territorial-rural",
+                "type": "text-section",
+                "config": {
+                  "title": "Analyse",
+                  "variant": "default",
+                  "content": "En milieu rural, la recharge à domicile en heures creuses constitue souvent le scénario le plus économique, du fait de la prévalence des maisons individuelles. La dépendance au réseau public reste secondaire pour la majorité des usages. Les grands rouleurs (> 30 000 km / an) constituent un cas particulier à étudier au cas par cas."
+                }
+              },
+              {
+                "id": "txt-tip-territorial-rural",
+                "type": "text-section",
+                "config": {
+                  "title": "Conseil pratique",
+                  "variant": "success",
+                  "content": "Vérifier auprès de son fournisseur l'option heures creuses : la recharge nocturne y est environ 30 % moins chère qu'en tarif de base."
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "chap-sujet-territorial-long_distance",
+          "type": "chapter",
+          "config": {
+            "title": "Longs trajets en véhicule électrique",
+            "blocks": [
+              {
+                "id": "txt-stats-territorial-long_distance",
+                "type": "text-section",
+                "config": {
+                  "title": "Chiffres clés",
+                  "variant": "info",
+                  "content": "• 25 à 30 min — Durée moyenne d'une recharge 20–80 % sur borne rapide haute puissance (≥ 150 kW).\n  ↳ Source : Constructeurs 2024\n\n• 100 % — Aires d'autoroute françaises équipées en recharge rapide fin 2024.\n  ↳ Source : ASFA 2024\n\n• ≈ 1 — Pause de recharge nécessaire en moyenne sur un trajet d'environ 450 km avec un véhicule récent.\n  ↳ Source : Tests Argus 2024"
+                }
+              },
+              {
+                "id": "txt-insight-territorial-long_distance",
+                "type": "text-section",
+                "config": {
+                  "title": "Analyse",
+                  "variant": "default",
+                  "content": "Pour les longs trajets ponctuels (vacances, déplacements professionnels occasionnels), le maillage autoroutier permet une expérience comparable au thermique, avec une pause supplémentaire qui peut coïncider avec une pause repas. Pour un usage très intensif (plusieurs longs trajets hebdomadaires), un véhicule à grande autonomie ou un hybride rechargeable mérite étude."
+                }
+              },
+              {
+                "id": "txt-tip-territorial-long_distance",
+                "type": "text-section",
+                "config": {
+                  "title": "Conseil pratique",
+                  "variant": "success",
+                  "content": "Avant un long trajet, simuler le parcours avec une application dédiée (ABRP, Chargemap) — cela permet d'estimer précisément la durée et les coûts de recharge."
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "chap-sujet-environment-carbon_footprint",
+          "type": "chapter",
+          "config": {
+            "title": "Bilan carbone du véhicule électrique en France",
+            "blocks": [
+              {
+                "id": "txt-stats-environment-carbon_footprint",
+                "type": "text-section",
+                "config": {
+                  "title": "Chiffres clés",
+                  "variant": "info",
+                  "content": "• −70 % — Réduction des émissions de CO₂ sur le cycle de vie complet en France par rapport à un véhicule thermique équivalent.\n  ↳ Source : ADEME ACV 2022\n\n• 2 à 3 ans — Durée moyenne nécessaire pour que le bilan carbone d'un véhicule électrique devienne favorable par rapport au thermique (en France).\n  ↳ Source : ADEME 2022\n\n• −50 % — Réduction des émissions à l'échelle du mix électrique européen moyen (plus carboné que le mix français).\n  ↳ Source : Transport & Environment 2021\n\n• 22 gCO₂/kWh — Intensité carbone moyenne de l'électricité française (vs 400 g/kWh environ pour l'Allemagne).\n  ↳ Source : RTE 2023"
+                }
+              },
+              {
+                "id": "txt-insight-environment-carbon_footprint",
+                "type": "text-section",
+                "config": {
+                  "title": "Analyse",
+                  "variant": "default",
+                  "content": "L'analyse de cycle de vie (ACV) de l'ADEME prend en compte la fabrication de la batterie, son usage et sa fin de vie. En France, l'intensité carbone du mix électrique (faible grâce au nucléaire et aux renouvelables) rend le bilan particulièrement favorable. Le surcoût carbone initial lié à la production de la batterie est compensé après 2 à 3 ans d'usage moyen."
+                }
+              },
+              {
+                "id": "txt-tip-environment-carbon_footprint",
+                "type": "text-section",
+                "config": {
+                  "title": "Conseil pratique",
+                  "variant": "success",
+                  "content": "Le bilan dépend du pays d'utilisation : il est particulièrement favorable en France, en Suède et en Norvège (mix électrique peu carboné)."
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "chap-sujet-environment-lithium_mining",
+          "type": "chapter",
+          "config": {
+            "title": "Lithium et ressources minières",
+            "blocks": [
+              {
+                "id": "txt-stats-environment-lithium_mining",
+                "type": "text-section",
+                "config": {
+                  "title": "Chiffres clés",
+                  "variant": "info",
+                  "content": "• ≈ 8 kg — Quantité de lithium dans une batterie de véhicule électrique de segment B.\n  ↳ Source : Constructeurs 2024\n\n• 95 % — Taux minimal de recyclage des batteries imposé par la réglementation européenne à horizon 2031.\n  ↳ Source : Règlement UE Batteries 2023\n\n• 0 % — Part de cobalt dans les nouvelles batteries LFP (lithium-fer-phosphate), de plus en plus répandues.\n  ↳ Source : IEA 2023"
+                }
+              },
+              {
+                "id": "txt-insight-environment-lithium_mining",
+                "type": "text-section",
+                "config": {
+                  "title": "Analyse",
+                  "variant": "default",
+                  "content": "L'extraction minière reste un sujet réel, qui fait l'objet d'efforts d'encadrement (réglementation européenne, audits, traçabilité). Les chimies récentes (LFP, sodium-ion) réduisent ou éliminent les métaux critiques comme le cobalt. À mettre en perspective avec l'impact cumulé de l'extraction et du raffinage du pétrole sur la durée de vie d'un véhicule thermique."
+                }
+              },
+              {
+                "id": "txt-tip-environment-lithium_mining",
+                "type": "text-section",
+                "config": {
+                  "title": "Conseil pratique",
+                  "variant": "success",
+                  "content": "Si l'origine des matériaux est un critère personnel, privilégier les modèles équipés de batteries LFP — moins de lithium, pas de cobalt, et durée de vie élevée."
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "chap-sujet-environment-forced_change",
+          "type": "chapter",
+          "config": {
+            "title": "Calendrier de la transition automobile en Europe",
+            "blocks": [
+              {
+                "id": "txt-stats-environment-forced_change",
+                "type": "text-section",
+                "config": {
+                  "title": "Chiffres clés",
+                  "variant": "info",
+                  "content": "• 2035 — Fin de la vente de voitures neuves thermiques en Europe (règlement UE 2023/851).\n  ↳ Source : Règlement UE 2023/851\n\n• 2040-2050 — Horizon estimé pour que la majorité du parc en circulation soit électrifié.\n  ↳ Source : AIE 2024\n\n• ≈ 90 % — Part des propriétaires actuels de véhicule électrique déclarant ne pas envisager de revenir au thermique.\n  ↳ Source : Kantar 2024"
+                }
+              },
+              {
+                "id": "txt-insight-environment-forced_change",
+                "type": "text-section",
+                "config": {
+                  "title": "Analyse",
+                  "variant": "default",
+                  "content": "L'échéance 2035 concerne uniquement la vente de véhicules neufs, pas les voitures déjà en circulation ni le marché de l'occasion. La transition réelle du parc s'étalera sur plusieurs décennies. La réglementation laisse aux ménages le temps de s'adapter à leur rythme."
+                }
+              },
+              {
+                "id": "txt-tip-environment-forced_change",
+                "type": "text-section",
+                "config": {
+                  "title": "Conseil pratique",
+                  "variant": "success",
+                  "content": "Suivre les évolutions du barème de bonus écologique et de la prime à la conversion, qui orientent fortement le coût d'entrée selon les profils."
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "rules": [
+    {
+      "id": "r-show-sujet-wrapper",
+      "name": "Afficher la sélection du sujet quand une famille est choisie",
+      "conditions": {
+        "kind": "condition",
+        "operand": 1,
+        "operator": "present"
+      },
+      "ifActions": [
+        {
+          "kind": "showObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-wrapper"
+          }
+        }
+      ],
+      "elseActions": [
+        {
+          "kind": "hideObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-wrapper"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r-show-step-reponse",
+      "name": "Afficher l'étape de réponse quand un sujet est sélectionné",
+      "conditions": {
+        "kind": "condition",
+        "operand": 2,
+        "operator": "present"
+      },
+      "ifActions": [
+        {
+          "kind": "showObject",
+          "target": {
+            "type": "step",
+            "id": 2
+          }
+        }
+      ],
+      "elseActions": [
+        {
+          "kind": "hideObject",
+          "target": {
+            "type": "step",
+            "id": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "r-show-financial-purchase_price",
+      "name": "Afficher le chapitre du sujet financial.purchase_price",
+      "conditions": {
+        "kind": "condition",
+        "operand": 2,
+        "operator": "=",
+        "value": "\"financial.purchase_price\""
+      },
+      "ifActions": [
+        {
+          "kind": "showObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-financial-purchase_price"
+          }
+        }
+      ],
+      "elseActions": [
+        {
+          "kind": "hideObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-financial-purchase_price"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r-show-financial-resale",
+      "name": "Afficher le chapitre du sujet financial.resale",
+      "conditions": {
+        "kind": "condition",
+        "operand": 2,
+        "operator": "=",
+        "value": "\"financial.resale\""
+      },
+      "ifActions": [
+        {
+          "kind": "showObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-financial-resale"
+          }
+        }
+      ],
+      "elseActions": [
+        {
+          "kind": "hideObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-financial-resale"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r-show-financial-charging_install",
+      "name": "Afficher le chapitre du sujet financial.charging_install",
+      "conditions": {
+        "kind": "condition",
+        "operand": 2,
+        "operator": "=",
+        "value": "\"financial.charging_install\""
+      },
+      "ifActions": [
+        {
+          "kind": "showObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-financial-charging_install"
+          }
+        }
+      ],
+      "elseActions": [
+        {
+          "kind": "hideObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-financial-charging_install"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r-show-financial-battery_cost",
+      "name": "Afficher le chapitre du sujet financial.battery_cost",
+      "conditions": {
+        "kind": "condition",
+        "operand": 2,
+        "operator": "=",
+        "value": "\"financial.battery_cost\""
+      },
+      "ifActions": [
+        {
+          "kind": "showObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-financial-battery_cost"
+          }
+        }
+      ],
+      "elseActions": [
+        {
+          "kind": "hideObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-financial-battery_cost"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r-show-usage-range_anxiety",
+      "name": "Afficher le chapitre du sujet usage.range_anxiety",
+      "conditions": {
+        "kind": "condition",
+        "operand": 2,
+        "operator": "=",
+        "value": "\"usage.range_anxiety\""
+      },
+      "ifActions": [
+        {
+          "kind": "showObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-usage-range_anxiety"
+          }
+        }
+      ],
+      "elseActions": [
+        {
+          "kind": "hideObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-usage-range_anxiety"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r-show-usage-charge_time",
+      "name": "Afficher le chapitre du sujet usage.charge_time",
+      "conditions": {
+        "kind": "condition",
+        "operand": 2,
+        "operator": "=",
+        "value": "\"usage.charge_time\""
+      },
+      "ifActions": [
+        {
+          "kind": "showObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-usage-charge_time"
+          }
+        }
+      ],
+      "elseActions": [
+        {
+          "kind": "hideObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-usage-charge_time"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r-show-usage-charging_network",
+      "name": "Afficher le chapitre du sujet usage.charging_network",
+      "conditions": {
+        "kind": "condition",
+        "operand": 2,
+        "operator": "=",
+        "value": "\"usage.charging_network\""
+      },
+      "ifActions": [
+        {
+          "kind": "showObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-usage-charging_network"
+          }
+        }
+      ],
+      "elseActions": [
+        {
+          "kind": "hideObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-usage-charging_network"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r-show-usage-reliability",
+      "name": "Afficher le chapitre du sujet usage.reliability",
+      "conditions": {
+        "kind": "condition",
+        "operand": 2,
+        "operator": "=",
+        "value": "\"usage.reliability\""
+      },
+      "ifActions": [
+        {
+          "kind": "showObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-usage-reliability"
+          }
+        }
+      ],
+      "elseActions": [
+        {
+          "kind": "hideObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-usage-reliability"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r-show-confidence-fear_stranded",
+      "name": "Afficher le chapitre du sujet confidence.fear_stranded",
+      "conditions": {
+        "kind": "condition",
+        "operand": 2,
+        "operator": "=",
+        "value": "\"confidence.fear_stranded\""
+      },
+      "ifActions": [
+        {
+          "kind": "showObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-confidence-fear_stranded"
+          }
+        }
+      ],
+      "elseActions": [
+        {
+          "kind": "hideObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-confidence-fear_stranded"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r-show-confidence-technology_anxiety",
+      "name": "Afficher le chapitre du sujet confidence.technology_anxiety",
+      "conditions": {
+        "kind": "condition",
+        "operand": 2,
+        "operator": "=",
+        "value": "\"confidence.technology_anxiety\""
+      },
+      "ifActions": [
+        {
+          "kind": "showObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-confidence-technology_anxiety"
+          }
+        }
+      ],
+      "elseActions": [
+        {
+          "kind": "hideObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-confidence-technology_anxiety"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r-show-confidence-habit_change",
+      "name": "Afficher le chapitre du sujet confidence.habit_change",
+      "conditions": {
+        "kind": "condition",
+        "operand": 2,
+        "operator": "=",
+        "value": "\"confidence.habit_change\""
+      },
+      "ifActions": [
+        {
+          "kind": "showObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-confidence-habit_change"
+          }
+        }
+      ],
+      "elseActions": [
+        {
+          "kind": "hideObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-confidence-habit_change"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r-show-territorial-apartment",
+      "name": "Afficher le chapitre du sujet territorial.apartment",
+      "conditions": {
+        "kind": "condition",
+        "operand": 2,
+        "operator": "=",
+        "value": "\"territorial.apartment\""
+      },
+      "ifActions": [
+        {
+          "kind": "showObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-territorial-apartment"
+          }
+        }
+      ],
+      "elseActions": [
+        {
+          "kind": "hideObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-territorial-apartment"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r-show-territorial-rural",
+      "name": "Afficher le chapitre du sujet territorial.rural",
+      "conditions": {
+        "kind": "condition",
+        "operand": 2,
+        "operator": "=",
+        "value": "\"territorial.rural\""
+      },
+      "ifActions": [
+        {
+          "kind": "showObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-territorial-rural"
+          }
+        }
+      ],
+      "elseActions": [
+        {
+          "kind": "hideObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-territorial-rural"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r-show-territorial-long_distance",
+      "name": "Afficher le chapitre du sujet territorial.long_distance",
+      "conditions": {
+        "kind": "condition",
+        "operand": 2,
+        "operator": "=",
+        "value": "\"territorial.long_distance\""
+      },
+      "ifActions": [
+        {
+          "kind": "showObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-territorial-long_distance"
+          }
+        }
+      ],
+      "elseActions": [
+        {
+          "kind": "hideObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-territorial-long_distance"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r-show-environment-carbon_footprint",
+      "name": "Afficher le chapitre du sujet environment.carbon_footprint",
+      "conditions": {
+        "kind": "condition",
+        "operand": 2,
+        "operator": "=",
+        "value": "\"environment.carbon_footprint\""
+      },
+      "ifActions": [
+        {
+          "kind": "showObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-environment-carbon_footprint"
+          }
+        }
+      ],
+      "elseActions": [
+        {
+          "kind": "hideObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-environment-carbon_footprint"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r-show-environment-lithium_mining",
+      "name": "Afficher le chapitre du sujet environment.lithium_mining",
+      "conditions": {
+        "kind": "condition",
+        "operand": 2,
+        "operator": "=",
+        "value": "\"environment.lithium_mining\""
+      },
+      "ifActions": [
+        {
+          "kind": "showObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-environment-lithium_mining"
+          }
+        }
+      ],
+      "elseActions": [
+        {
+          "kind": "hideObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-environment-lithium_mining"
+          }
+        }
+      ]
+    },
+    {
+      "id": "r-show-environment-forced_change",
+      "name": "Afficher le chapitre du sujet environment.forced_change",
+      "conditions": {
+        "kind": "condition",
+        "operand": 2,
+        "operator": "=",
+        "value": "\"environment.forced_change\""
+      },
+      "ifActions": [
+        {
+          "kind": "showObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-environment-forced_change"
+          }
+        }
+      ],
+      "elseActions": [
+        {
+          "kind": "hideObject",
+          "target": {
+            "type": "chapter",
+            "id": "chap-sujet-environment-forced_change"
+          }
+        }
+      ]
+    }
+  ],
+  "footnotes": [],
+  "groups": []
+}

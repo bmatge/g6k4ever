@@ -134,11 +134,29 @@ export function Simulator(props: SimulatorProps): JSX.Element {
     return true;
   };
 
+  const isStepper = definition.metadata.navigation === "stepper";
+  // En mode free : on cache les steps invisibles avant rendu (ordre actuel).
+  // En mode stepper : on garde toutes les steps pour le compteur "N sur Total",
+  // et on délègue la navigation à StepperView qui sait sauter les invisibles.
+  const visibleSteps = useMemo(
+    () => definition.steps.filter((step) => isVisible("step", step.id)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- isVisible reads state.visibility
+    [definition.steps, state.visibility],
+  );
+
   return (
     <div className="g6k-simulator">
-      {definition.steps
-        .filter((step) => isVisible("step", step.id))
-        .map((step) => (
+      {isStepper ? (
+        <StepperView
+          steps={definition.steps}
+          blocks={blocks}
+          state={renderState}
+          values={state.values}
+          isVisible={isVisible}
+          allBlocks={blocks}
+        />
+      ) : (
+        visibleSteps.map((step) => (
           <StepView
             key={String(step.id)}
             step={step}
@@ -146,7 +164,8 @@ export function Simulator(props: SimulatorProps): JSX.Element {
             state={renderState}
             isVisible={isVisible}
           />
-        ))}
+        ))
+      )}
       <NotificationsView state={state} />
     </div>
   );
@@ -171,6 +190,174 @@ function StepView({ step, blocks, state, isVisible }: StepViewProps): JSX.Elemen
       <BlocksList blocks={step.blocks} registry={blocks} state={state} isVisible={isVisible} />
     </section>
   );
+}
+
+interface StepperViewProps {
+  steps: Step[];
+  blocks: BlockRegistry;
+  state: BlockRenderState;
+  values: Map<number, unknown>;
+  isVisible: (type: string, id: string | number) => boolean;
+  allBlocks: BlockRegistry;
+}
+
+/**
+ * Mode wizard : une seule étape rendue à la fois, navigation avec
+ * `fr-stepper` DSFR + boutons Précédent / Suivant. Activé par
+ * `metadata.navigation: "stepper"`.
+ *
+ * Visibilité dynamique : quand une règle masque/affiche une étape, la liste
+ * `steps` reçue est déjà filtrée. Si l'utilisateur était sur une étape qui
+ * vient de disparaître, on reclamp `currentIndex` au max disponible.
+ *
+ * Validation "Suivant" : on collecte récursivement tous les blocs `field`
+ * visibles de l'étape courante avec `config.required: true`, et on vérifie
+ * que la Data associée a une valeur définie (non `undefined`, non chaîne
+ * vide). Sinon le bouton est désactivé avec un message d'aide.
+ */
+function StepperView({
+  steps,
+  blocks,
+  state,
+  values,
+  isVisible,
+}: StepperViewProps): JSX.Element {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Reclamp si l'étape courante dépasse le total (cas extrême).
+  const safeIndex = Math.min(currentIndex, Math.max(0, steps.length - 1));
+  const currentStep = steps[safeIndex];
+
+  if (!currentStep) {
+    return (
+      <div className="fr-container fr-py-4w">
+        <p>Aucune étape à afficher pour le moment.</p>
+      </div>
+    );
+  }
+
+  const total = steps.length;
+  // Compteur stable : numérateur = index courant + 1, dénominateur = total
+  // des étapes du simulateur. En mode stepper la visibilité step (rules
+  // `hide step`) est ignorée pour la navigation : c'est la validation
+  // `required` qui empêche de sauter une étape sans données.
+  const counterPosition = safeIndex + 1;
+  const counterTotal = total;
+
+  const nextIdx = safeIndex < total - 1 ? safeIndex + 1 : -1;
+  const prevIdx = safeIndex > 0 ? safeIndex - 1 : -1;
+  const isLast = nextIdx === -1;
+  const isFirst = prevIdx === -1;
+
+  // Collecte récursive des dataIds requis (visibles) de l'étape courante.
+  const requiredDataIds = collectRequiredDataIds(currentStep.blocks, isVisible);
+  const missingRequired = requiredDataIds.filter((id) => {
+    const v = values.get(id);
+    return v === undefined || v === null || v === "";
+  });
+  const canAdvance = missingRequired.length === 0;
+
+  return (
+    <div className="fr-container fr-py-2w g6k-stepper">
+      {/* Stepper DSFR — montre la position dans les étapes visibles */}
+      <div className="fr-stepper">
+        <h2 className="fr-stepper__title">
+          {currentStep.label}
+          <span className="fr-stepper__state">
+            Étape {counterPosition} sur {counterTotal}
+          </span>
+        </h2>
+        <div
+          className="fr-stepper__steps"
+          data-fr-current-step={counterPosition}
+          data-fr-steps={counterTotal}
+        />
+        {!isLast && nextIdx >= 0 ? (
+          <p className="fr-stepper__details">
+            <span className="fr-text--bold">Étape suivante :</span> {steps[nextIdx]!.label}
+          </p>
+        ) : null}
+      </div>
+
+      {currentStep.description ? (
+        <p className="fr-text--lead">{currentStep.description}</p>
+      ) : null}
+
+      <BlocksList blocks={currentStep.blocks} registry={blocks} state={state} isVisible={isVisible} />
+
+      {!canAdvance ? (
+        <p className="fr-text--sm" style={{ opacity: 0.75, marginTop: "1rem" }}>
+          Renseignez les champs obligatoires pour passer à l'étape suivante.
+        </p>
+      ) : null}
+
+      <ul className="fr-btns-group fr-btns-group--inline-md fr-mt-3w">
+        <li>
+          <button
+            type="button"
+            className="fr-btn fr-btn--secondary"
+            disabled={isFirst}
+            onClick={() => prevIdx >= 0 && setCurrentIndex(prevIdx)}
+          >
+            Précédent
+          </button>
+        </li>
+        <li>
+          {isLast ? (
+            <button
+              type="button"
+              className="fr-btn fr-btn--tertiary"
+              onClick={() => {
+                // Aller à la première step visible
+                for (let i = 0; i < total; i++) {
+                  if (isVisible("step", steps[i]!.id)) {
+                    setCurrentIndex(i);
+                    return;
+                  }
+                }
+                setCurrentIndex(0);
+              }}
+            >
+              Recommencer
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="fr-btn"
+              disabled={!canAdvance}
+              onClick={() => nextIdx >= 0 && setCurrentIndex(nextIdx)}
+            >
+              Suivant
+            </button>
+          )}
+        </li>
+      </ul>
+    </div>
+  );
+}
+
+/**
+ * Descente récursive dans les blocs visibles d'une étape pour collecter les
+ * `dataId` des fields `required: true`. Les chapters/envelopes masqués sont
+ * ignorés. Utilisé par le stepper pour décider si "Suivant" est cliquable.
+ */
+function collectRequiredDataIds(
+  blocks: ReadonlyArray<BlockLike>,
+  isVisible: (type: string, id: string | number) => boolean,
+): number[] {
+  const ids: number[] = [];
+  const visit = (list: ReadonlyArray<BlockLike>): void => {
+    for (const b of list) {
+      if (!isVisible(b.type, b.id)) continue;
+      const cfg = (b.config ?? {}) as { dataId?: number; required?: boolean; blocks?: BlockLike[] };
+      if (b.type === "field" && cfg.required === true && typeof cfg.dataId === "number") {
+        ids.push(cfg.dataId);
+      }
+      if (Array.isArray(cfg.blocks)) visit(cfg.blocks);
+    }
+  };
+  visit(blocks);
+  return ids;
 }
 
 interface BlockLike {

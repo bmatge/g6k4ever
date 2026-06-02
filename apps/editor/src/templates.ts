@@ -16,6 +16,7 @@ export function createBlankSimulator(slug: string, label: string): Simulator {
       defaultLocale: "fr-FR",
       dateFormat: "dd/MM/yyyy",
       authors: [],
+      navigation: "free",
     },
     outputKind: "decision",
     data: [
@@ -49,5 +50,6 @@ export function createBlankSimulator(slug: string, label: string): Simulator {
     ],
     rules: [],
     footnotes: [],
+    groups: [],
   };
 }
