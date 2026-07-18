@@ -75,13 +75,13 @@ describe("<SimulatorEditor> — verrou détenu par un autre (F9.5)", () => {
 
     fireEvent.click(await screen.findByRole("button", { name: /Reprendre la main/ }));
 
-    expect(await screen.findByText(/Verrou acquis/)).toBeInTheDocument();
+    expect(await screen.findByText(/Vous éditez/)).toBeInTheDocument();
     expect(acquireLock).toHaveBeenLastCalledWith("demo", true);
     expect(screen.getByRole("button", { name: /Enregistrer le brouillon/ })).toBeEnabled();
     expect(screen.queryByText(/Quelqu'un d'autre édite/)).not.toBeInTheDocument();
   });
 
-  it("verrou libre : badge « Verrou acquis », pas d'alerte", async () => {
+  it("verrou libre : badge « Vous éditez », pas d'alerte", async () => {
     const acquireLock = vi.fn().mockResolvedValue({
       status: "acquired",
       lock: { simulatorId: 1, userId: "moi", acquiredAt: 1, expiresAt: 9000 },
@@ -94,7 +94,7 @@ describe("<SimulatorEditor> — verrou détenu par un autre (F9.5)", () => {
       />,
     );
 
-    expect(await screen.findByText(/Verrou acquis/)).toBeInTheDocument();
+    expect(await screen.findByText(/Vous éditez/)).toBeInTheDocument();
     expect(screen.queryByText(/Quelqu'un d'autre édite/)).not.toBeInTheDocument();
   });
 });
