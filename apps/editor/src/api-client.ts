@@ -29,6 +29,24 @@ export interface LockInfo {
   expiresAt: number;
 }
 
+/**
+ * Résultat structuré d'une opération sur le verrou d'édition (F9.5).
+ * `held-by-other` est un état métier normal (renvoyé en HTTP 423 par l'API),
+ * PAS une erreur : il est retourné, jamais levé.
+ */
+export type LockAcquireResult =
+  | { status: "acquired"; lock: LockInfo }
+  | { status: "held-by-other"; heldBy: string; expiresAt: number };
+
+export type LockHeartbeatResult =
+  | { status: "renewed"; lock: LockInfo }
+  | { status: "held-by-other"; heldBy: string; expiresAt: number };
+
+export type LockReleaseResult =
+  | { status: "released" }
+  | { status: "not-locked" }
+  | { status: "held-by-other"; heldBy: string };
+
 export class ApiError extends Error {
   constructor(
     readonly status: number,
@@ -58,6 +76,7 @@ export class ApiClient {
     method: string,
     path: string,
     body?: unknown,
+    opts: { acceptStatuses?: number[] } = {},
   ): Promise<T> {
     const res = await fetch(`${this.baseUrl}${path}`, {
       method,
@@ -74,7 +93,7 @@ export class ApiClient {
     } catch {
       json = null;
     }
-    if (!res.ok) {
+    if (!res.ok && !(opts.acceptStatuses ?? []).includes(res.status)) {
       const message =
         json && typeof json === "object" && "error" in json
           ? String((json as { error: unknown }).error)
@@ -110,16 +129,27 @@ export class ApiClient {
   }
 
   // Lock
-  acquireLock(slug: string, force = false): Promise<{ status: string; lock?: LockInfo; heldBy?: string }> {
-    return this.request("POST", `/simulators/${slug}/lock${force ? "?force=true" : ""}`);
+  //
+  // L'API répond 423 (Locked) quand le verrou est détenu par quelqu'un d'autre.
+  // Côté client c'est un état métier, pas une erreur : ces méthodes renvoient
+  // un statut structuré au lieu de lever une `ApiError` (F9.5). Les autres
+  // erreurs HTTP (401, 404, …) continuent de lever une `ApiError`.
+  acquireLock(slug: string, force = false): Promise<LockAcquireResult> {
+    return this.request("POST", `/simulators/${slug}/lock${force ? "?force=true" : ""}`, undefined, {
+      acceptStatuses: [423],
+    });
   }
 
-  heartbeatLock(slug: string): Promise<{ status: string; lock?: LockInfo }> {
-    return this.request("POST", `/simulators/${slug}/lock/heartbeat`);
+  heartbeatLock(slug: string): Promise<LockHeartbeatResult> {
+    return this.request("POST", `/simulators/${slug}/lock/heartbeat`, undefined, {
+      acceptStatuses: [423],
+    });
   }
 
-  releaseLock(slug: string, force = false): Promise<{ status: string }> {
-    return this.request("DELETE", `/simulators/${slug}/lock${force ? "?force=true" : ""}`);
+  releaseLock(slug: string, force = false): Promise<LockReleaseResult> {
+    return this.request("DELETE", `/simulators/${slug}/lock${force ? "?force=true" : ""}`, undefined, {
+      acceptStatuses: [423],
+    });
   }
 
   // Run
