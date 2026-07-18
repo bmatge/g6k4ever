@@ -100,7 +100,7 @@ export function RulesEditor({ rules, onChange, data, editable }: RulesEditorProp
             />
 
             <ActionListEditor
-              label="Si vrai"
+              label="Quand c'est vrai"
               actions={rule.ifActions}
               onChange={(ifActions) => update(i, { ...rule, ifActions })}
               data={data}

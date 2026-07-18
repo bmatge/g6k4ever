@@ -13,7 +13,7 @@ export function MetadataForm({ value, onChange, slugLocked }: MetadataFormProps)
     <div className="fr-mb-4w">
       <div className="fr-input-group">
         <label className="fr-label" htmlFor="meta-name">
-          Slug (nom interne)
+          Identifiant URL
           <span className="fr-hint-text">Lettres minuscules, chiffres et tirets uniquement</span>
         </label>
         <input
@@ -27,7 +27,7 @@ export function MetadataForm({ value, onChange, slugLocked }: MetadataFormProps)
       </div>
       <div className="fr-input-group">
         <label className="fr-label" htmlFor="meta-label">
-          Libellé public
+          Nom du simulateur
         </label>
         <input
           className="fr-input"

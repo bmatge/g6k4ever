@@ -199,7 +199,7 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
             </span>
           ) : null}
           {lockStatus === "acquired" ? (
-            <span className="fr-badge fr-badge--success fr-mr-1w">Verrou acquis</span>
+            <span className="fr-badge fr-badge--success fr-mr-1w">Vous éditez</span>
           ) : null}
           <button
             type="button"
@@ -276,7 +276,14 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
                         aria-current={s === section ? "page" : undefined}
                         onClick={() => setSection(s)}
                       >
-                        {s === "test" ? <>▶ {SECTION_LABELS[s]}</> : SECTION_LABELS[s]}
+                        {s === "test" ? (
+                          <>
+                            <span className="fr-icon-play-circle-line fr-icon--sm" aria-hidden="true" />{" "}
+                            {SECTION_LABELS[s]}
+                          </>
+                        ) : (
+                          SECTION_LABELS[s]
+                        )}
                       </button>
                     </li>
                   ))}
@@ -294,11 +301,11 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
                     href={`http://localhost:5173?sim=${encodeURIComponent(slug)}&source=api`}
                     target="_blank"
                     rel="noopener"
-                    className="fr-btn fr-btn--secondary fr-btn--sm fr-mb-1w"
+                    className="fr-btn fr-btn--secondary fr-btn--sm fr-btn--icon-right fr-icon-external-link-line fr-mb-1w"
                     style={{ display: "block", textAlign: "center" }}
                     title="Ouvrir dans un onglet standalone (prêt à iframe)"
                   >
-                    Ouvrir standalone ↗
+                    Aperçu pleine page
                   </a>
                   <button
                     type="button"
@@ -307,7 +314,7 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
                     onClick={() => handleExportJson()}
                     title="Télécharger la définition JSON"
                   >
-                    Exporter JSON
+                    Télécharger la définition
                   </button>
                 </div>
               </div>
@@ -390,7 +397,7 @@ function TestPanel({ draft, functions, hasNonInlineSources, slug }: TestPanelPro
       <div className="fr-grid-row fr-grid-row--middle fr-mb-2w">
         <div className="fr-col">
           <h2 className="fr-h4" style={{ margin: 0 }}>
-            ▶ Tester
+            <span className="fr-icon-play-circle-line" aria-hidden="true" /> Tester
           </h2>
           <p className="fr-text--xs" style={{ opacity: 0.7, margin: 0 }}>
             Aperçu live — moteur exécuté côté navigateur, instantané.
@@ -401,9 +408,9 @@ function TestPanel({ draft, functions, hasNonInlineSources, slug }: TestPanelPro
             href={`http://localhost:5173?sim=${encodeURIComponent(slug)}&source=api`}
             target="_blank"
             rel="noopener"
-            className="fr-link"
+            className="fr-link fr-icon-external-link-line fr-link--icon-right"
           >
-            Ouvrir standalone ↗
+            Aperçu pleine page
           </a>
         </div>
       </div>

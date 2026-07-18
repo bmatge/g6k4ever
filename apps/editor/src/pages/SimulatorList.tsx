@@ -76,7 +76,7 @@ export function SimulatorList({ api, onSelect }: SimulatorListProps): JSX.Elemen
               <h3 className="fr-card__title">Nouveau simulateur</h3>
               <div className="fr-input-group">
                 <label className="fr-label" htmlFor="new-slug">
-                  Slug (identifiant URL)
+                  Identifiant URL
                 </label>
                 <input
                   id="new-slug"
@@ -89,7 +89,7 @@ export function SimulatorList({ api, onSelect }: SimulatorListProps): JSX.Elemen
               </div>
               <div className="fr-input-group">
                 <label className="fr-label" htmlFor="new-label">
-                  Libellé public
+                  Nom du simulateur
                 </label>
                 <input
                   id="new-label"

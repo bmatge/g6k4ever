@@ -2,6 +2,13 @@ import type { JSX } from "react";
 import type { DataSource, ColumnSpec, ParameterSpec, Data } from "@g6k4ever/schema";
 import { InlineRowsEditor } from "./InlineRowsEditor.js";
 
+/** Libellés français des types de sources (audit UX, § Wording). */
+const SOURCE_KIND_LABELS: Record<DataSource["kind"], string> = {
+  inline: "Tableau saisi à la main",
+  database: "Base de données SQL",
+  api: "API",
+};
+
 interface SourcesEditorProps {
   sources: DataSource[];
   onChange: (next: DataSource[]) => void;
@@ -75,7 +82,7 @@ export function SourcesEditor({ sources, onChange, data, editable }: SourcesEdit
       {sources.map((source, i) => (
         <details key={i} className="fr-mb-3w" open={i === 0}>
           <summary className="fr-text--lg">
-            <strong>{source.id}</strong> · <code>{source.kind}</code>
+            <strong>{source.id}</strong> · {SOURCE_KIND_LABELS[source.kind]}
           </summary>
           <div className="fr-pl-2w fr-pt-1w">
             <div className="fr-grid-row fr-grid-row--gutters">
@@ -120,7 +127,7 @@ export function SourcesEditor({ sources, onChange, data, editable }: SourcesEdit
             {source.kind === "database" ? (
               <>
                 <div className="fr-input-group">
-                  <label className="fr-label" htmlFor={`src-conn-${i}`}>Connection ID</label>
+                  <label className="fr-label" htmlFor={`src-conn-${i}`}>Identifiant de connexion</label>
                   <input
                     id={`src-conn-${i}`}
                     className="fr-input"
@@ -132,7 +139,11 @@ export function SourcesEditor({ sources, onChange, data, editable }: SourcesEdit
                 </div>
                 <div className="fr-input-group">
                   <label className="fr-label" htmlFor={`src-query-${i}`}>
-                    Requête SQL (paramètres positionnels <code>%1$s</code>, <code>%2$s</code>…)
+                    Requête SQL
+                    <span className="fr-hint-text">
+                      Comment utiliser les paramètres ? Insérez-les en position : <code>%1$s</code>,{" "}
+                      <code>%2$s</code>… (voir le tableau Paramètres ci-dessous)
+                    </span>
                   </label>
                   <textarea
                     id={`src-query-${i}`}
@@ -242,7 +253,7 @@ export function SourcesEditor({ sources, onChange, data, editable }: SourcesEdit
           disabled={!editable}
           onClick={() => add("inline")}
         >
-          + Inline
+          + Tableau saisi à la main
         </button>
         <button
           type="button"
@@ -250,7 +261,7 @@ export function SourcesEditor({ sources, onChange, data, editable }: SourcesEdit
           disabled={!editable}
           onClick={() => add("database")}
         >
-          + Database (SQL)
+          + Base de données SQL
         </button>
         <button
           type="button"

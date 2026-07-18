@@ -26,8 +26,8 @@ describe("<MetadataForm>", () => {
         slugLocked={false}
       />,
     );
-    expect((screen.getByLabelText(/Slug/i) as HTMLInputElement).value).toBe("test");
-    expect((screen.getByLabelText(/Libellé public/i) as HTMLInputElement).value).toBe("Test");
+    expect((screen.getByLabelText(/Identifiant URL/i) as HTMLInputElement).value).toBe("test");
+    expect((screen.getByLabelText(/Nom du simulateur/i) as HTMLInputElement).value).toBe("Test");
     expect((screen.getByLabelText(/Description/i) as HTMLTextAreaElement).value).toBe(
       "Une description",
     );
@@ -48,7 +48,7 @@ describe("<MetadataForm>", () => {
         slugLocked={true}
       />,
     );
-    expect((screen.getByLabelText(/Slug/i) as HTMLInputElement).disabled).toBe(true);
+    expect((screen.getByLabelText(/Identifiant URL/i) as HTMLInputElement).disabled).toBe(true);
   });
 
   it("appelle onChange quand on modifie le libellé", () => {
@@ -67,7 +67,7 @@ describe("<MetadataForm>", () => {
         slugLocked={true}
       />,
     );
-    fireEvent.change(screen.getByLabelText(/Libellé public/i), { target: { value: "Nouveau" } });
+    fireEvent.change(screen.getByLabelText(/Nom du simulateur/i), { target: { value: "Nouveau" } });
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ label: "Nouveau" }));
   });
 });
