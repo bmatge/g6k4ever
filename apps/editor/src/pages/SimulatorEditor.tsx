@@ -13,6 +13,8 @@ import { CoherenceChecker } from "../widgets/CoherenceChecker.js";
 
 const HEARTBEAT_INTERVAL_MS = 5 * 60 * 1000;
 
+const READ_ONLY_HINT = "Vous êtes en lecture seule — reprenez la main pour modifier.";
+
 interface SimulatorEditorProps {
   api: ApiClient;
   slug: string;
@@ -67,10 +69,12 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
         setDraft(data.simulator.draftDefinition);
         const lockRes = await api.acquireLock(slug);
         if (cancelled) return;
-        if (lockRes.status === "acquired") setLockStatus("acquired");
-        else if (lockRes.status === "held-by-other") {
+        if (lockRes.status === "acquired") {
+          setLockStatus("acquired");
+          setLockHeldBy(null);
+        } else {
           setLockStatus("held-by-other");
-          setLockHeldBy(lockRes.heldBy ?? "?");
+          setLockHeldBy(lockRes.heldBy);
         }
       } catch (err) {
         if (err instanceof ApiError && err.status === 404) setLockStatus("not-found");
@@ -86,7 +90,17 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
   useEffect(() => {
     if (lockStatus !== "acquired") return;
     const id = setInterval(() => {
-      void api.heartbeatLock(slug).catch(() => undefined);
+      void api
+        .heartbeatLock(slug)
+        .then((res) => {
+          // Le verrou a pu être repris de force par quelqu'un d'autre entre
+          // deux heartbeats — on repasse alors en lecture seule.
+          if (res.status === "held-by-other") {
+            setLockStatus("held-by-other");
+            setLockHeldBy(res.heldBy);
+          }
+        })
+        .catch(() => undefined);
     }, HEARTBEAT_INTERVAL_MS);
     return () => clearInterval(id);
   }, [api, slug, lockStatus]);
@@ -139,6 +153,9 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
       if (res.status === "acquired") {
         setLockStatus("acquired");
         setLockHeldBy(null);
+      } else {
+        setLockStatus("held-by-other");
+        setLockHeldBy(res.heldBy);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
@@ -178,14 +195,7 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
         <div className="fr-col-auto">
           {lockStatus === "held-by-other" ? (
             <span className="fr-badge fr-badge--warning fr-mr-1w">
-              Lecture seule — édité par {lockHeldBy} ·{" "}
-              <button
-                type="button"
-                onClick={() => void handleForceTakeOver()}
-                style={{ background: "none", border: "none", textDecoration: "underline" }}
-              >
-                forcer
-              </button>
+              Lecture seule — édité par {lockHeldBy}
             </span>
           ) : null}
           {lockStatus === "acquired" ? (
@@ -196,6 +206,7 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
             className="fr-btn fr-btn--secondary fr-mr-1w"
             onClick={() => void handleSave()}
             disabled={!editable || saving}
+            title={!editable ? READ_ONLY_HINT : undefined}
           >
             {saving ? "Enregistrement…" : "Enregistrer le brouillon"}
           </button>
@@ -204,11 +215,28 @@ export function SimulatorEditor({ api, slug, onClose }: SimulatorEditorProps): J
             className="fr-btn"
             onClick={() => void handlePublish()}
             disabled={!editable || saving}
+            title={!editable ? READ_ONLY_HINT : undefined}
           >
             Publier
           </button>
         </div>
       </div>
+
+      {lockStatus === "held-by-other" ? (
+        <div className="fr-alert fr-alert--info fr-alert--sm fr-mb-2w">
+          <p>
+            <strong>Quelqu'un d'autre édite ce simulateur ({lockHeldBy}).</strong> Vous pouvez
+            consulter en lecture seule, ou demander à reprendre la main.
+          </p>
+          <button
+            type="button"
+            className="fr-btn fr-btn--sm fr-btn--secondary fr-mt-1w"
+            onClick={() => void handleForceTakeOver()}
+          >
+            Reprendre la main
+          </button>
+        </div>
+      ) : null}
 
       {error ? <div className="fr-alert fr-alert--error fr-mb-2w"><p>{error}</p></div> : null}
 
