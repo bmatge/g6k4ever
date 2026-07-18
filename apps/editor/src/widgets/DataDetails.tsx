@@ -73,7 +73,7 @@ export function DataDetails({ data, onChange, sources, allData = [], editable }:
         </div>
         <div className="fr-col-12 fr-col-md-6">
           <div className="fr-input-group">
-            <label className="fr-label" htmlFor={`dd-returnpath-${data.id}`}>Colonne (returnPath)</label>
+            <label className="fr-label" htmlFor={`dd-returnpath-${data.id}`}>Colonne à lire</label>
             {columnNames.length > 0 ? (
               <select
                 id={`dd-returnpath-${data.id}`}
@@ -105,7 +105,7 @@ export function DataDetails({ data, onChange, sources, allData = [], editable }:
       {/* Content expression */}
       <div className="fr-input-group fr-mb-1w">
         <label className="fr-label">
-          Expression <code>content</code> (calcul automatique — ex. <code>#100 + #101</code>)
+          Calcul automatique (ex. <code>#100 + #101</code>)
         </label>
         <ExpressionEditor
           value={data.content ?? ""}

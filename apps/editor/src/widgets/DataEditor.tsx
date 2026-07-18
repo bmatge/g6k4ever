@@ -105,9 +105,10 @@ function Row({
   editable,
 }: RowProps): JSX.Element {
   const tags: string[] = [];
-  if (d.source) tags.push(`src:${d.source.sourceId}`);
-  if (d.content) tags.push("computed");
-  if (d.type === "choice" && d.options && d.options.length > 0) tags.push(`${d.options.length} opts`);
+  if (d.source) tags.push(`Source : ${d.source.sourceId}`);
+  if (d.content) tags.push("Calculée");
+  if (d.type === "choice" && d.options && d.options.length > 0)
+    tags.push(`${d.options.length} option${d.options.length > 1 ? "s" : ""}`);
 
   return (
     <>
@@ -150,7 +151,10 @@ function Row({
             onClick={onToggle}
             style={{ textAlign: "left" }}
           >
-            {isOpen ? "▾" : "▸"}{" "}
+            <span
+              className={isOpen ? "fr-icon-arrow-down-s-line" : "fr-icon-arrow-right-s-line"}
+              aria-hidden="true"
+            />{" "}
             {tags.length > 0 ? (
               <span className="fr-text--xs">{tags.join(" · ")}</span>
             ) : (

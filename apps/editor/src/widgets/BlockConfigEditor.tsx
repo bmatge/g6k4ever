@@ -116,7 +116,7 @@ function FieldConfigForm({
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
           <div className="fr-input-group">
-            <label className="fr-label" htmlFor={`fc-widget-${block.id}`}>Widget (optionnel)</label>
+            <label className="fr-label" htmlFor={`fc-widget-${block.id}`}>Affichage spécial (optionnel)</label>
             <input
               id={`fc-widget-${block.id}`}
               className="fr-input"
@@ -161,7 +161,7 @@ function TextSectionForm({
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
           <div className="fr-input-group">
-            <label className="fr-label" htmlFor="ts-variant">Variant DSFR</label>
+            <label className="fr-label" htmlFor="ts-variant">Apparence</label>
             <select
               id="ts-variant"
               className="fr-select"
@@ -169,10 +169,10 @@ function TextSectionForm({
               value={String(config["variant"] ?? "default")}
               onChange={(e) => setField("variant", e.target.value)}
             >
-              <option value="default">default</option>
-              <option value="info">info</option>
-              <option value="warning">warning</option>
-              <option value="success">success</option>
+              <option value="default">Standard</option>
+              <option value="info">Info</option>
+              <option value="warning">Alerte</option>
+              <option value="success">Succès</option>
             </select>
           </div>
         </div>

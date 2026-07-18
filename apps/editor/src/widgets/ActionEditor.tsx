@@ -26,6 +26,22 @@ const OBJECT_TARGET_TYPES: ObjectTargetType[] = [
   "data",
 ];
 
+/** Libellés français des types de cibles (audit UX, § Wording — francisation). */
+const OBJECT_TARGET_LABELS: Record<ObjectTargetType, string> = {
+  step: "Étape",
+  panel: "Panneau",
+  fieldset: "Groupe de champs",
+  field: "Champ",
+  section: "Section",
+  chapter: "Chapitre",
+  footnote: "Note de bas de page",
+  blockinfo: "Bloc info",
+  prenote: "Note avant champ",
+  postnote: "Note après champ",
+  action: "Action",
+  data: "Donnée",
+};
+
 const DEFAULT_ACTION: Action = {
   kind: "showObject",
   target: { type: "blockinfo", id: "result" },
@@ -141,10 +157,10 @@ function ActionRow({ action, onChange, data, editable }: ActionRowProps): JSX.El
         >
           <option value="showObject">Montrer</option>
           <option value="hideObject">Masquer</option>
-          <option value="setAttribute">Affecter</option>
+          <option value="setAttribute">Calculer la valeur de…</option>
           <option value="unsetAttribute">Réinitialiser</option>
-          <option value="notifyError">Erreur</option>
-          <option value="notifyWarning">Avertir</option>
+          <option value="notifyError">Bloquer avec un message</option>
+          <option value="notifyWarning">Afficher un avertissement</option>
         </select>
       </div>
 
@@ -160,7 +176,7 @@ function ActionRow({ action, onChange, data, editable }: ActionRowProps): JSX.El
               }
             >
               {OBJECT_TARGET_TYPES.map((t) => (
-                <option key={t} value={t}>{t}</option>
+                <option key={t} value={t}>{OBJECT_TARGET_LABELS[t]}</option>
               ))}
             </select>
           </div>
